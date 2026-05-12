@@ -1527,6 +1527,8 @@ window.addEventListener('DOMContentLoaded', () => {
         renderQ1Deals();
         renderHist2025Table();
         renderCompTriTable();
+        // Q2 canal cards (Q2 é o painel padrão visível)
+        if (tableRows.length > 0) { _q2CanalReady = true; renderQ2CanalCards(); }
         switchTab(d.active_tab || 'dashboard');
       })
       .catch(() => {
