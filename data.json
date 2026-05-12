@@ -1335,6 +1335,36 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "manual"
+    },
+    {
+      "id": "cont_59186379620",
+      "dealId": "59186379620",
+      "cliente": "Doctoralia BR",
+      "vigencia": "",
+      "inicio": "11/05",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": 16000,
+      "valorTotal": 96000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_60177802569",
+      "dealId": "60177802569",
+      "cliente": "Global",
+      "vigencia": "",
+      "inicio": "12/05",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": 15500,
+      "valorTotal": 46500,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "hs_overrides": {
@@ -1375,5 +1405,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-12T13:28:24.301Z"
+  "snapshot_at": "2026-05-12T13:57:21.447Z"
 }
