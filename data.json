@@ -1323,31 +1323,17 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_1778592474818",
-      "cliente": "Global",
-      "vigencia": "",
-      "inicio": "",
-      "fim": "",
-      "duracao": null,
-      "cadeiras": null,
-      "valorRPO": null,
-      "valorTotal": null,
-      "tipoContrato": "",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
       "id": "cont_59186379620",
       "dealId": "59186379620",
       "cliente": "Doctoralia BR",
       "vigencia": "",
       "inicio": "11/05",
       "fim": "",
-      "duracao": null,
+      "duracao": 6,
       "cadeiras": null,
       "valorRPO": 16000,
       "valorTotal": 96000,
-      "tipoContrato": "",
+      "tipoContrato": "Sem Contrato",
       "linkContrato": "",
       "source": "hs"
     },
@@ -1358,12 +1344,12 @@
       "vigencia": "",
       "inicio": "12/05",
       "fim": "",
-      "duracao": null,
+      "duracao": 3,
       "cadeiras": null,
       "valorRPO": 15500,
       "valorTotal": 46500,
-      "tipoContrato": "",
-      "linkContrato": "",
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "https://drive.google.com/file/d/1rW-8fOWD-m6nUTndpvXQtcU2d6_7uCCm/view?usp=sharing",
       "source": "hs"
     }
   ],
@@ -1405,5 +1391,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-12T13:57:21.447Z"
+  "snapshot_at": "2026-05-12T19:41:56.677Z"
 }
