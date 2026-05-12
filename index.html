@@ -178,6 +178,28 @@
   .filt-dur-btn.active-filt { background:var(--accent); color:#fff; border-color:var(--accent); }
   .dur-sel { appearance:none; border:none; background:transparent; font-size:11px;
     font-weight:700; cursor:pointer; text-align:center; width:100%; outline:none; }
+
+  /* ── Dashboard sub-tabs ─────────────────────── */
+  .dash-subtabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:16px; }
+  .dash-sub { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700;
+    cursor:pointer; border:2px solid var(--border); background:#fff; color:var(--text2);
+    transition:all .15s; white-space:nowrap; }
+  .dash-sub:hover { border-color:var(--accent); color:var(--accent); background:#f5f3ff; }
+  .dash-sub.ds-active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* ── Historical tables ──────────────────────── */
+  .hist-table { width:100%; font-size:12px; border-collapse:collapse; }
+  .hist-table th, .hist-table td { padding:6px 10px; border-bottom:1px solid var(--border); text-align:right; }
+  .hist-table th { background:#f3f2ff; color:var(--accent2); text-align:center; font-weight:700; text-transform:uppercase; font-size:10px; letter-spacing:.5px; }
+  .hist-table td:first-child, .hist-table th:first-child { text-align:left; }
+  .hist-table tbody tr:hover td { background:#f5f3ff; }
+  .hist-table .total-row td { font-weight:700; background:#f0effe; border-top:2px solid var(--accent); }
+
+  .q-badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
+  .qb-green { background:#dcfce7; color:#15803d; }
+  .qb-red   { background:#fee2e2; color:#991b1b; }
+  .qb-blue  { background:#dbeafe; color:#1e40af; }
+  .qb-yellow{ background:#fef3c7; color:#92400e; }
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans text-gray-800">
@@ -237,6 +259,17 @@
 
 <div id="panel-dashboard">
 <main class="max-w-screen-2xl mx-auto px-4 py-6 space-y-8">
+
+<!-- Sub-tabs do Dashboard -->
+<div class="dash-subtabs">
+  <button class="dash-sub ds-active" onclick="switchDashSub('q2-2026')">🎯 Q2 2026 — Atual</button>
+  <button class="dash-sub" onclick="switchDashSub('q1-2026')">✅ Q1 2026</button>
+  <button class="dash-sub" onclick="switchDashSub('hist-2025')">📅 Histórico 2025</button>
+  <button class="dash-sub" onclick="switchDashSub('comp-tri')">📈 Comparativo Trimestral</button>
+</div>
+
+<!-- ═══ SUB-PAINEL: Q2 2026 (atual) ═══ -->
+<div id="dash-sub-q2-2026">
 
 <!-- ══════════════════════════════════════════════
      SEÇÃO 1 — OKRs
@@ -484,6 +517,201 @@
   </div>
 </section>
 
+</div><!-- /dash-sub-q2-2026 -->
+
+<!-- ═══ SUB-PAINEL: Q1 2026 ═══ -->
+<div id="dash-sub-q1-2026" style="display:none" class="space-y-8">
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
+    <span class="text-lg font-bold">Q1 2026 — Consolidado</span>
+    <span class="text-blue-200 text-sm font-medium">Janeiro a Março · Meta R$ 2.500.000</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+    <!-- Resumo Q1 -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">META</p>
+        <p class="text-lg font-bold" style="color:var(--text);">R$ 2.500.000</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;">
+        <p class="text-xs font-semibold mb-1" style="color:#92400e;">REALIZADO</p>
+        <p class="text-lg font-bold" style="color:#92400e;">R$ 1.186.500</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
+        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">RECEITA CASA</p>
+        <p class="text-lg font-bold" style="color:#0369a1;">R$ 796.500</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">UP + REN</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
+        <p class="text-xs font-semibold mb-1" style="color:#166534;">RECEITA NOVOS</p>
+        <p class="text-lg font-bold" style="color:#16a34a;">R$ 390.000</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">NTW + OUT + MKT + INB</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">ATINGIMENTO</p>
+        <p class="text-lg font-bold" style="color:#dc2626;">47,46%</p>
+        <div class="relative h-2 rounded-full overflow-hidden mt-2" style="background:#ede9fe;">
+          <div class="h-full rounded-full" style="width:47.46%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela de deals Q1 -->
+    <div class="overflow-x-auto">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Serviço</th><th>Canal</th><th>Valor (R$)</th>
+            <th>Data</th><th>Mês</th><th>Alocações</th><th>Tipo</th><th>Semana</th>
+          </tr>
+        </thead>
+        <tbody id="q1-deals-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3" style="text-align:left;font-weight:700;">TOTAL Q1 2026</td>
+            <td style="font-weight:700;color:var(--accent);">R$ 1.186.500,00</td>
+            <td colspan="5"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Gráfico receita mensal Q1 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Mês — Q1 2026</h3>
+      <div class="relative h-52">
+        <canvas id="chartQ1mensal"></canvas>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /dash-sub-q1-2026 -->
+
+<!-- ═══ SUB-PAINEL: Histórico 2025 ═══ -->
+<div id="dash-sub-hist-2025" style="display:none" class="space-y-8">
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
+    <span class="text-lg font-bold">Histórico 2025</span>
+    <span class="text-blue-200 text-sm font-medium">Faturamento mês a mês · Meta anual R$ 5.950.000</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+    <!-- Resumo 2025 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">META ANUAL</p>
+        <p class="text-lg font-bold" style="color:var(--text);">R$ 5.950.000</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-color:#86efac;">
+        <p class="text-xs font-semibold mb-1" style="color:#166534;">REALIZADO</p>
+        <p class="text-lg font-bold" style="color:#16a34a;">R$ 7.150.520</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">ATINGIMENTO</p>
+        <p class="text-lg font-bold" style="color:#16a34a;">120,2%</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
+        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">SUPERÁVIT</p>
+        <p class="text-lg font-bold" style="color:#0369a1;">R$ 1.200.520</p>
+      </div>
+    </div>
+
+    <!-- Gráfico Meta vs Realizado 2025 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Meta Linear vs Resultado Acumulado — 2025</h3>
+      <div class="relative h-64">
+        <canvas id="chart2025acum"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabela mensal 2025 -->
+    <div class="overflow-x-auto">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>Mês</th><th>Meta Linear</th><th>Acumulado</th><th>Resultado Mensal</th><th>Δ Meta</th>
+          </tr>
+        </thead>
+        <tbody id="hist-2025-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td style="text-align:left;">TOTAL 2025</td>
+            <td>R$ 5.950.000</td>
+            <td>R$ 7.150.520</td>
+            <td>R$ 7.150.520</td>
+            <td><span class="q-badge qb-green">+20,2%</span></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Gráfico barras mensal -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Faturamento Mensal — 2025</h3>
+      <div class="relative h-56">
+        <canvas id="chart2025mensal"></canvas>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /dash-sub-hist-2025 -->
+
+<!-- ═══ SUB-PAINEL: Comparativo Trimestral ═══ -->
+<div id="dash-sub-comp-tri" style="display:none" class="space-y-8">
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
+    <span class="text-lg font-bold">Comparativo Trimestral</span>
+    <span class="text-blue-200 text-sm font-medium">2023 · 2024 · 2025 · 2026</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+    <!-- Gráfico barras agrupadas -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Trimestre — 4 anos</h3>
+      <div class="relative h-72">
+        <canvas id="chartCompTri"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabela comparativa -->
+    <div class="overflow-x-auto">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th></th><th>2023</th><th>2024</th><th>2025</th><th>2026</th><th>Δ 25→26</th>
+          </tr>
+        </thead>
+        <tbody id="comp-tri-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td style="text-align:left;">TOTAL ANUAL</td>
+            <td id="comp-total-2023"></td>
+            <td id="comp-total-2024"></td>
+            <td id="comp-total-2025"></td>
+            <td id="comp-total-2026"></td>
+            <td id="comp-delta-total"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Insight cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="comp-insights">
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /dash-sub-comp-tri -->
+
 </main>
 </div><!-- /panel-dashboard -->
 
@@ -708,6 +936,265 @@
 // ─── VIEWER MODE ────────────────────────────────
 const IS_VIEWER = !['localhost','127.0.0.1'].includes(location.hostname);
 
+// ─── DASHBOARD SUB-TABS ─────────────────────────
+const DASH_SUBS = ['q2-2026','q1-2026','hist-2025','comp-tri'];
+let _histChartsReady = false;
+
+function switchDashSub(key) {
+  DASH_SUBS.forEach(k => {
+    const el = document.getElementById('dash-sub-' + k);
+    if (el) el.style.display = k === key ? '' : 'none';
+  });
+  document.querySelectorAll('.dash-sub').forEach(b => b.classList.remove('ds-active'));
+  const idx = DASH_SUBS.indexOf(key);
+  if (idx >= 0) document.querySelectorAll('.dash-sub')[idx]?.classList.add('ds-active');
+
+  // Lazy init dos gráficos históricos (Chart.js precisa do canvas visível)
+  if (!_histChartsReady && key !== 'q2-2026') {
+    _histChartsReady = true;
+    setTimeout(initHistoricalCharts, 50);
+  }
+}
+
+// ─── Q1 2026 DATA ───────────────────────────────
+const Q1_DEALS = [
+  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:204000, data:'19/01', mes:'Jan', alocacoes:'4', tipo:'Enterprise', semana:'Sem 2' },
+  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:102000, data:'30/01', mes:'Jan', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Flowa',           servico:'RPO', canal:'MKT', valor:48000,  data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Cielo',           servico:'RPO', canal:'NTW', valor:51000,  data:'03/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 4' },
+  { cliente:'Ilegra',          servico:'RPO', canal:'NTW', valor:48000,  data:'06/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 5' },
+  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:144000, data:'13/02', mes:'Fev', alocacoes:'3', tipo:'Enterprise', semana:'Sem 5' },
+  { cliente:'Localiza',        servico:'RPO', canal:'OUT', valor:90000,  data:'19/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 5' },
+  { cliente:'Facta Tech',      servico:'RPO', canal:'REN', valor:90000,  data:'02/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
+  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:51000,  data:'04/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
+  { cliente:'Caffeine Army',   servico:'RPO', canal:'MKT', valor:51000,  data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
+  { cliente:'Jeitto',          servico:'RPO', canal:'REN', valor:46500,  data:'16/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
+  { cliente:'Sanar',           servico:'RPO', canal:'REN', valor:15000,  data:'20/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
+  { cliente:'Stellantis',      servico:'RPO', canal:'REN', valor:96000,  data:'23/01', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 11' },
+  { cliente:'dLocal',          servico:'RPO', canal:'NTW', valor:68000,  data:'25/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
+  { cliente:'Frete.com',       servico:'RPO', canal:'NTW', valor:34000,  data:'30/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 13' },
+  { cliente:'Riachuelo',       servico:'RPO', canal:'UP',  valor:48000,  data:'31/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
+];
+
+// ─── 2025 MONTHLY DATA ─────────────────────────
+const HIST_2025 = [
+  { mes:'Janeiro',   meta:270000,    acum:310600,    mensal:310600   },
+  { mes:'Fevereiro', meta:540000,    acum:731000,    mensal:420400   },
+  { mes:'Março',     meta:810000,    acum:1004000,   mensal:273000   },
+  { mes:'Abril',     meta:1190000,   acum:1724000,   mensal:720000   },
+  { mes:'Maio',      meta:1570000,   acum:2514000,   mensal:790000   },
+  { mes:'Junho',     meta:1950000,   acum:2702000,   mensal:188000   },
+  { mes:'Julho',     meta:2616667,   acum:4328000,   mensal:1626000  },
+  { mes:'Agosto',    meta:3283333,   acum:4756520,   mensal:428520   },
+  { mes:'Setembro',  meta:3950000,   acum:5125520,   mensal:369000   },
+  { mes:'Outubro',   meta:4616667,   acum:5515520,   mensal:390000   },
+  { mes:'Novembro',  meta:5283333,   acum:5935520,   mensal:420000   },
+  { mes:'Dezembro',  meta:5950000,   acum:7150520,   mensal:1215000  },
+];
+
+// ─── QUARTERLY COMPARISON DATA ──────────────────
+const COMP_TRI = {
+  2023: [2004688, 1783650, 927724, 2191150],
+  2024: [1734900, 2243950, 1665200, 1685016],
+  2025: [1004000, 1698000, 2423520, 2025000],
+  2026: [1186500, null, null, null], // Q1 consolidado; Q2-Q4 pendentes
+};
+
+function renderQ1Deals() {
+  const tbody = document.getElementById('q1-deals-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  Q1_DEALS.forEach(d => {
+    const canalCls = CANAIS_CORES[d.canal?.toUpperCase()] || '';
+    const tipoCls  = { 'Enterprise':'tag-enterprise', 'GG':'tag-gg', 'SMB':'tag-smb' }[d.tipo] || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:600;">${d.cliente}</td>
+      <td style="text-align:center;">${d.servico}</td>
+      <td style="text-align:center;"><span class="tag ${canalCls}">${d.canal}</span></td>
+      <td style="font-weight:600;color:var(--accent);">${fmtBRL(d.valor)}</td>
+      <td style="text-align:center;">${d.data}</td>
+      <td style="text-align:center;">${d.mes}</td>
+      <td style="text-align:center;">${d.alocacoes}</td>
+      <td style="text-align:center;"><span class="tag ${tipoCls}">${d.tipo}</span></td>
+      <td style="text-align:center;">${d.semana}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderHist2025Table() {
+  const tbody = document.getElementById('hist-2025-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  HIST_2025.forEach(d => {
+    const delta = d.acum - d.meta;
+    const pct   = ((d.acum / d.meta - 1) * 100).toFixed(1);
+    const cls   = delta >= 0 ? 'qb-green' : 'qb-red';
+    const sign  = delta >= 0 ? '+' : '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:600;">${d.mes}</td>
+      <td>${fmtBRL(d.meta)}</td>
+      <td style="font-weight:600;">${fmtBRL(d.acum)}</td>
+      <td>${fmtBRL(d.mensal)}</td>
+      <td><span class="q-badge ${cls}">${sign}${pct}%</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderCompTriTable() {
+  const tbody = document.getElementById('comp-tri-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const labels = ['Q1','Q2','Q3','Q4'];
+  const totals = { 2023:0, 2024:0, 2025:0, 2026:0 };
+
+  labels.forEach((q, qi) => {
+    const v23 = COMP_TRI[2023][qi];
+    const v24 = COMP_TRI[2024][qi];
+    const v25 = COMP_TRI[2025][qi];
+    let v26   = COMP_TRI[2026][qi];
+    // Q2 2026: usa receita ao vivo da tabela Revenue
+    if (qi === 1 && v26 === null) {
+      v26 = tableRows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
+      COMP_TRI[2026][1] = v26;
+    }
+
+    totals[2023] += v23 || 0;
+    totals[2024] += v24 || 0;
+    totals[2025] += v25 || 0;
+    totals[2026] += v26 || 0;
+
+    const delta = v26 !== null && v25 ? ((v26 / v25 - 1) * 100).toFixed(1) : null;
+    const dcls  = delta !== null ? (parseFloat(delta) >= 0 ? 'qb-green' : 'qb-red') : 'qb-yellow';
+    const dsign = delta !== null && parseFloat(delta) >= 0 ? '+' : '';
+    const dlbl  = delta !== null ? `${dsign}${delta}%` : 'em andamento';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:700;">${q}</td>
+      <td>${fmtBRL(v23)}</td>
+      <td>${fmtBRL(v24)}</td>
+      <td>${fmtBRL(v25)}</td>
+      <td style="font-weight:600;">${v26 !== null ? fmtBRL(v26) : '<span style="color:var(--muted);">—</span>'}</td>
+      <td><span class="q-badge ${dcls}">${dlbl}</span></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Totals row
+  document.getElementById('comp-total-2023').textContent = fmtBRL(totals[2023]);
+  document.getElementById('comp-total-2024').textContent = fmtBRL(totals[2024]);
+  document.getElementById('comp-total-2025').textContent = fmtBRL(totals[2025]);
+  document.getElementById('comp-total-2026').textContent = fmtBRL(totals[2026]);
+  const totalDelta = totals[2025] ? ((totals[2026] / totals[2025] - 1) * 100).toFixed(1) : null;
+  const tdcls = totalDelta !== null && parseFloat(totalDelta) >= 0 ? 'qb-green' : 'qb-red';
+  document.getElementById('comp-delta-total').innerHTML = totalDelta !== null
+    ? `<span class="q-badge ${tdcls}">${parseFloat(totalDelta)>=0?'+':''}${totalDelta}%</span>` : '';
+
+  // Insights
+  const insEl = document.getElementById('comp-insights');
+  if (insEl) {
+    // Best quarter ever
+    const allQ = [];
+    [2023,2024,2025,2026].forEach(y => COMP_TRI[y].forEach((v,qi) => { if (v) allQ.push({y,q:qi+1,v}); }));
+    allQ.sort((a,b) => b.v - a.v);
+    const best = allQ[0];
+    // YoY growth
+    const t26 = totals[2026], t25Partial = COMP_TRI[2025].slice(0, COMP_TRI[2026].filter(v=>v!==null).length).reduce((s,v)=>s+v,0);
+    const yoyPct = t25Partial ? ((t26/t25Partial-1)*100).toFixed(1) : null;
+    insEl.innerHTML = `
+      <div class="rounded-xl p-4 border" style="background:#f0fdf4;border-color:#86efac;">
+        <p class="text-xs font-semibold mb-1" style="color:#166534;">MELHOR TRIMESTRE</p>
+        <p class="text-lg font-bold" style="color:#16a34a;">${fmtBRL(best.v)}</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">Q${best.q} ${best.y}</p>
+      </div>
+      <div class="rounded-xl p-4 border" style="background:#f0f9ff;border-color:#bae6fd;">
+        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">YOY (PERÍODOS EQUIV.)</p>
+        <p class="text-lg font-bold" style="color:${yoyPct&&parseFloat(yoyPct)>=0?'#16a34a':'#dc2626'};">${yoyPct!==null?(parseFloat(yoyPct)>=0?'+':'')+yoyPct+'%':'—'}</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">2026 vs 2025 (mesmos Qs)</p>
+      </div>
+      <div class="rounded-xl p-4 border" style="background:#faf5ff;border-color:#d8b4fe;">
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">TOTAL 2025</p>
+        <p class="text-lg font-bold" style="color:#7c3aed;">${fmtBRL(totals[2025])}</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">Meta era R$ 5.950.000</p>
+      </div>`;
+  }
+}
+
+function initHistoricalCharts() {
+  // ── Q1 2026: barras mensais ──
+  const q1porMes = { 'Jan':0, 'Fev':0, 'Mar':0 };
+  Q1_DEALS.forEach(d => { q1porMes[d.mes] = (q1porMes[d.mes]||0) + d.valor; });
+  const ctxQ1 = document.getElementById('chartQ1mensal');
+  if (ctxQ1) new Chart(ctxQ1, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(q1porMes),
+      datasets: [{ label:'Receita', data:Object.values(q1porMes),
+        backgroundColor:['#818cf8','#6366f1','#4f46e5'], borderRadius:6 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false },
+      tooltip:{ callbacks:{ label: c => 'R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
+      scales: darkScales() }
+  });
+
+  // ── 2025: Meta vs Acumulado (linhas) ──
+  const ctx2025a = document.getElementById('chart2025acum');
+  if (ctx2025a) new Chart(ctx2025a, {
+    type: 'line',
+    data: {
+      labels: HIST_2025.map(d => d.mes.slice(0,3)),
+      datasets: [
+        { label:'Meta Linear', data:HIST_2025.map(d=>d.meta), borderColor:'#94a3b8', borderDash:[6,3],
+          pointRadius:3, tension:0.3, fill:false },
+        { label:'Acumulado', data:HIST_2025.map(d=>d.acum), borderColor:'#6366f1', borderWidth:3,
+          pointRadius:4, tension:0.3, fill:{ target:'origin', above:'rgba(99,102,241,0.08)' }}
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{
+      tooltip:{ callbacks:{ label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
+      scales: darkScales() }
+  });
+
+  // ── 2025: Barras mensais ──
+  const ctx2025m = document.getElementById('chart2025mensal');
+  if (ctx2025m) new Chart(ctx2025m, {
+    type: 'bar',
+    data: {
+      labels: HIST_2025.map(d => d.mes.slice(0,3)),
+      datasets: [{ label:'Mensal', data:HIST_2025.map(d=>d.mensal),
+        backgroundColor: HIST_2025.map((_,i) => i%2===0 ? '#818cf8' : '#6366f1'), borderRadius:5 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false },
+      tooltip:{ callbacks:{ label: c => 'R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
+      scales: darkScales() }
+  });
+
+  // ── Comparativo trimestral: barras agrupadas ──
+  const ctxComp = document.getElementById('chartCompTri');
+  if (ctxComp) new Chart(ctxComp, {
+    type: 'bar',
+    data: {
+      labels: ['Q1','Q2','Q3','Q4'],
+      datasets: [
+        { label:'2023', data:COMP_TRI[2023], backgroundColor:'#d1d5db', borderRadius:4 },
+        { label:'2024', data:COMP_TRI[2024], backgroundColor:'#93c5fd', borderRadius:4 },
+        { label:'2025', data:COMP_TRI[2025], backgroundColor:'#818cf8', borderRadius:4 },
+        { label:'2026', data:COMP_TRI[2026].map(v => v||0), backgroundColor:'#4f46e5', borderRadius:4 },
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ tooltip:{ callbacks:{ label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }},
+        legend:{ position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:16 }}},
+      scales: darkScales() }
+  });
+
+  // Render tables
+  renderQ1Deals();
+  renderHist2025Table();
+  renderCompTriTable();
+}
+
 // ─── CONSTANTS ──────────────────────────────────
 const META_RECEITA = 2_100_000;
 let PIPELINE_ID  = localStorage.getItem('hs_pipeline') || '873229319';
@@ -764,6 +1251,9 @@ window.addEventListener('DOMContentLoaded', () => {
         updateCicloChart();
         updateFunilChart();
         rebuildLineChart();
+        renderQ1Deals();
+        renderHist2025Table();
+        renderCompTriTable();
         switchTab(d.active_tab || 'dashboard');
       })
       .catch(() => {
@@ -787,6 +1277,11 @@ window.addEventListener('DOMContentLoaded', () => {
   renderTable();
   renderCadeiras();
   renderContratos();
+
+  // Render tabelas históricas (não precisam de canvas visível)
+  renderQ1Deals();
+  renderHist2025Table();
+  renderCompTriTable();
 
   // Restaura aba ativa
   const activeTab = localStorage.getItem('active_tab') || 'dashboard';
