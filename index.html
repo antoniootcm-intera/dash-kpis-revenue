@@ -523,10 +523,7 @@
     <span class="text-lg font-bold">Vendas por Canal — Q2 2026</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-4">
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="q2-canal-cards"></div>
-    <div class="relative h-48">
-      <canvas id="chartQ2canal"></canvas>
-    </div>
+    <div id="q2-canal-blocks"></div>
   </div>
 </section>
 
@@ -602,10 +599,7 @@
     <!-- Vendas por Canal Q1 2026 -->
     <div>
       <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Q1 2026</h3>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="q1-canal-cards"></div>
-      <div class="relative h-48 mt-4">
-        <canvas id="chartQ1canal"></canvas>
-      </div>
+      <div id="q1-canal-blocks"></div>
     </div>
 
   </div>
@@ -1271,7 +1265,9 @@ const CANAL_COLORS = {
   'INB': { bg:'#ede9fe', bc:'#c4b5fd', tc:'#5b21b6', chart:'#a78bfa' },
 };
 
-function renderCanalBreakdown(deals, cardsId, chartId, chartLabel) {
+const CASA_CANAIS = ['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO'];
+
+function renderCanalBreakdown(deals, containerId) {
   const agg = {};
   const count = {};
   deals.forEach(d => {
@@ -1279,40 +1275,50 @@ function renderCanalBreakdown(deals, cardsId, chartId, chartLabel) {
     agg[c]   = (agg[c]||0) + (parseFloat(d.valor)||0);
     count[c] = (count[c]||0) + 1;
   });
-  // Separar casa vs novos
-  const CASA = ['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO'];
-  const canais = Object.keys(agg).sort((a,b) => agg[b]-agg[a]);
 
-  const cardsEl = document.getElementById(cardsId);
-  if (cardsEl) {
-    cardsEl.innerHTML = canais.map(c => {
-      const cc = CANAL_COLORS[c] || { bg:'#f3f4f6', bc:'#d1d5db', tc:'#374151', chart:'#9ca3af' };
-      const tipo = CASA.includes(c) ? 'Casa' : 'Novos';
-      return `<div class="rounded-xl p-3 border text-center" style="background:${cc.bg};border-color:${cc.bc};">
-        <p class="text-xs font-bold mb-1" style="color:${cc.tc};">${c}</p>
-        <p class="text-base font-bold" style="color:${cc.tc};">${fmtBRL(agg[c])}</p>
-        <p class="text-xs mt-1" style="color:#94a3b8;">${count[c]} venda${count[c]>1?'s':''} · ${tipo}</p>
-      </div>`;
-    }).join('');
-  }
+  const canaisCasa  = Object.keys(agg).filter(c => CASA_CANAIS.includes(c)).sort((a,b) => agg[b]-agg[a]);
+  const canaisNovos = Object.keys(agg).filter(c => !CASA_CANAIS.includes(c)).sort((a,b) => agg[b]-agg[a]);
+  const totalCasa   = canaisCasa.reduce((s,c) => s+agg[c], 0);
+  const totalNovos  = canaisNovos.reduce((s,c) => s+agg[c], 0);
+  const countCasa   = canaisCasa.reduce((s,c) => s+count[c], 0);
+  const countNovos  = canaisNovos.reduce((s,c) => s+count[c], 0);
 
-  const ctx = document.getElementById(chartId);
-  if (ctx) new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: canais,
-      datasets: [{ label: chartLabel, data: canais.map(c => agg[c]),
-        backgroundColor: canais.map(c => (CANAL_COLORS[c]||{chart:'#9ca3af'}).chart), borderRadius:5 }]
-    },
-    options: { responsive:true, maintainAspectRatio:false, indexAxis:'y',
-      plugins:{ legend:{display:false},
-        tooltip:{ callbacks:{ label: c => 'R$ '+(c.raw||0).toLocaleString('pt-BR') }}},
-      scales: darkScales() }
-  });
+  const cardHTML = (canais) => canais.map(c => {
+    const cc = CANAL_COLORS[c] || { bg:'#f3f4f6', bc:'#d1d5db', tc:'#374151', chart:'#9ca3af' };
+    return `<div class="rounded-xl p-3 border text-center" style="background:${cc.bg};border-color:${cc.bc};">
+      <p class="text-xs font-bold mb-1" style="color:${cc.tc};">${c}</p>
+      <p class="text-base font-bold" style="color:${cc.tc};">${fmtBRL(agg[c])}</p>
+      <p class="text-xs mt-1" style="color:#94a3b8;">${count[c]} venda${count[c]>1?'s':''}</p>
+    </div>`;
+  }).join('');
+
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = `
+    <!-- Bloco Receita da Casa -->
+    <div class="mb-5">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-xs font-bold uppercase tracking-widest" style="color:#0369a1;">Receita da Casa</span>
+        <span style="font-size:11px;color:#94a3b8;">REN + UP</span>
+        <span class="ml-auto text-sm font-bold" style="color:#0369a1;">${fmtBRL(totalCasa)}</span>
+        <span style="font-size:11px;color:#94a3b8;">${countCasa} venda${countCasa!==1?'s':''}</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-${Math.min(canaisCasa.length,4)} gap-3">${cardHTML(canaisCasa) || '<p class="text-xs col-span-full" style="color:var(--muted);">Nenhuma venda nesta categoria</p>'}</div>
+    </div>
+    <!-- Bloco Novas Aquisições -->
+    <div>
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-xs font-bold uppercase tracking-widest" style="color:#16a34a;">Novas Aquisições</span>
+        <span style="font-size:11px;color:#94a3b8;">NTW · OUT · INB · MKT</span>
+        <span class="ml-auto text-sm font-bold" style="color:#16a34a;">${fmtBRL(totalNovos)}</span>
+        <span style="font-size:11px;color:#94a3b8;">${countNovos} venda${countNovos!==1?'s':''}</span>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-${Math.min(canaisNovos.length,4)} gap-3">${cardHTML(canaisNovos) || '<p class="text-xs col-span-full" style="color:var(--muted);">Nenhuma venda nesta categoria</p>'}</div>
+    </div>`;
 }
 
 function renderQ2CanalCards() {
-  renderCanalBreakdown(tableRows, 'q2-canal-cards', 'chartQ2canal', 'Q2 2026');
+  renderCanalBreakdown(tableRows, 'q2-canal-blocks');
 }
 
 function initHistoricalCharts() {
@@ -1458,7 +1464,7 @@ function initHistoricalCharts() {
   renderQ1Deals();
   renderHist2025Table();
   renderCompTriTable();
-  renderCanalBreakdown(Q1_DEALS, 'q1-canal-cards', 'chartQ1canal', 'Q1 2026');
+  renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
   renderQ2CanalCards();
 }
 
