@@ -658,6 +658,19 @@
       </div>
     </div>
 
+    <!-- Metas trimestrais 2025 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Metas Trimestrais 2025 — Realizado vs Meta</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="metas-tri-2025-cards"></div>
+    </div>
+
+    <!-- Gráfico metas tri 2025 -->
+    <div>
+      <div class="relative h-52">
+        <canvas id="chart2025triMeta"></canvas>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -675,7 +688,7 @@
 
     <!-- Gráfico barras agrupadas -->
     <div>
-      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Trimestre — 4 anos</h3>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Trimestre — Casa vs Novos (4 anos)</h3>
       <div class="relative h-72">
         <canvas id="chartCompTri"></canvas>
       </div>
@@ -993,11 +1006,36 @@ const HIST_2025 = [
 ];
 
 // ─── QUARTERLY COMPARISON DATA ──────────────────
+// Totais e breakdown Casa (Renovação) vs Novos (Vendas) — fonte: planilha consolidada
 const COMP_TRI = {
-  2023: [2004688, 1783650, 927724, 2191150],
-  2024: [1734900, 2243950, 1665200, 1685016],
-  2025: [1004000, 1698000, 2423520, 2025000],
-  2026: [1186500, null, null, null], // Q1 consolidado; Q2-Q4 pendentes
+  2023: {
+    total:  [912000, 1336900, 679923, 2191150],
+    casa:   [555500, 1336900, 666223, 1641150],
+    novos:  [356500, 0,       13700,  550000],
+  },
+  2024: {
+    total:  [1734900, 2243950, 1665200, 1634016],
+    casa:   [1215400, 1824750, 1131400, 1378516],
+    novos:  [519500,  419200,  533800,  255500],
+  },
+  2025: {
+    total:  [1004000, 1698000, 2423520, 2025000],
+    casa:   [929500,  863000,  2177520, 1587000],
+    novos:  [74500,   835000,  246000,  438000],
+  },
+  2026: {
+    total:  [1186500, null, null, null], // Q1 consolidado; Q2-Q4 pendentes
+    casa:   [796500,  null, null, null],
+    novos:  [390000,  null, null, null],
+  },
+};
+
+// Metas trimestrais 2025
+const METAS_TRI_2025 = {
+  Q1: 810000,
+  Q2: 1140000,
+  Q3: 2000000,
+  Q4: 2000000,
 };
 
 function renderQ1Deals() {
@@ -1047,46 +1085,76 @@ function renderCompTriTable() {
   if (!tbody) return;
   tbody.innerHTML = '';
   const labels = ['Q1','Q2','Q3','Q4'];
-  const totals = { 2023:0, 2024:0, 2025:0, 2026:0 };
+  const sums = { 2023:{t:0,c:0,n:0}, 2024:{t:0,c:0,n:0}, 2025:{t:0,c:0,n:0,meta:0}, 2026:{t:0,c:0,n:0} };
+  const metaKeys = ['Q1','Q2','Q3','Q4'];
 
   labels.forEach((q, qi) => {
-    const v23 = COMP_TRI[2023][qi];
-    const v24 = COMP_TRI[2024][qi];
-    const v25 = COMP_TRI[2025][qi];
-    let v26   = COMP_TRI[2026][qi];
-    // Q2 2026: usa receita ao vivo da tabela Revenue
+    const g = (yr, field) => COMP_TRI[yr][field][qi];
+    let v26 = g(2026,'total'), c26 = g(2026,'casa'), n26 = g(2026,'novos');
+
+    // Q2 2026: calcula ao vivo da tabela Revenue
     if (qi === 1 && v26 === null) {
+      const CASA_CANAIS = ['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO'];
       v26 = tableRows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
-      COMP_TRI[2026][1] = v26;
+      c26 = tableRows.filter(r => CASA_CANAIS.includes((r.canal||'').toUpperCase())).reduce((s,r) => s+(parseFloat(r.valor)||0), 0);
+      n26 = v26 - c26;
+      COMP_TRI[2026].total[1] = v26;
+      COMP_TRI[2026].casa[1]  = c26;
+      COMP_TRI[2026].novos[1] = n26;
     }
 
-    totals[2023] += v23 || 0;
-    totals[2024] += v24 || 0;
-    totals[2025] += v25 || 0;
-    totals[2026] += v26 || 0;
+    [2023,2024,2025,2026].forEach(y => {
+      const t = y===2026 ? (qi<=1?v26:null) : g(y,'total');
+      const c = y===2026 ? (qi<=1?c26:null) : g(y,'casa');
+      const n = y===2026 ? (qi<=1?n26:null) : g(y,'novos');
+      sums[y].t += t||0; sums[y].c += c||0; sums[y].n += n||0;
+    });
 
-    const delta = v26 !== null && v25 ? ((v26 / v25 - 1) * 100).toFixed(1) : null;
+    const meta25 = METAS_TRI_2025[q] || 0;
+    sums[2025].meta += meta25;
+    const real25 = g(2025,'total');
+    const ating25 = meta25 ? ((real25/meta25*100)).toFixed(0) : '—';
+    const ating25cls = meta25 && real25 >= meta25 ? 'qb-green' : 'qb-red';
+
+    const delta = v26 !== null && g(2025,'total') ? ((v26 / g(2025,'total') - 1) * 100).toFixed(1) : null;
     const dcls  = delta !== null ? (parseFloat(delta) >= 0 ? 'qb-green' : 'qb-red') : 'qb-yellow';
     const dsign = delta !== null && parseFloat(delta) >= 0 ? '+' : '';
     const dlbl  = delta !== null ? `${dsign}${delta}%` : 'em andamento';
 
+    const cell = (yr) => {
+      const t = yr===2026 ? (qi<=1 ? v26 : null) : g(yr,'total');
+      const c = yr===2026 ? (qi<=1 ? c26 : null) : g(yr,'casa');
+      const n = yr===2026 ? (qi<=1 ? n26 : null) : g(yr,'novos');
+      if (t === null) return '<span style="color:var(--muted);">—</span>';
+      return `<div style="font-weight:600;">${fmtBRL(t)}</div>
+        <div style="font-size:10px;margin-top:2px;">
+          <span style="color:#0369a1;">Casa ${fmtBRL(c)}</span> ·
+          <span style="color:#16a34a;">Novos ${fmtBRL(n)}</span>
+        </div>`;
+    };
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="text-align:left;font-weight:700;">${q}</td>
-      <td>${fmtBRL(v23)}</td>
-      <td>${fmtBRL(v24)}</td>
-      <td>${fmtBRL(v25)}</td>
-      <td style="font-weight:600;">${v26 !== null ? fmtBRL(v26) : '<span style="color:var(--muted);">—</span>'}</td>
+      <td style="text-align:left;font-weight:700;">${q}
+        <div style="font-size:10px;color:var(--muted);font-weight:400;">Meta 25: ${fmtBRL(meta25)}</div>
+      </td>
+      <td>${cell(2023)}</td>
+      <td>${cell(2024)}</td>
+      <td>${cell(2025)}
+        <div style="font-size:10px;margin-top:2px;"><span class="q-badge ${ating25cls}" style="font-size:9px;">${ating25}% meta</span></div>
+      </td>
+      <td>${cell(2026)}</td>
       <td><span class="q-badge ${dcls}">${dlbl}</span></td>`;
     tbody.appendChild(tr);
   });
 
   // Totals row
-  document.getElementById('comp-total-2023').textContent = fmtBRL(totals[2023]);
-  document.getElementById('comp-total-2024').textContent = fmtBRL(totals[2024]);
-  document.getElementById('comp-total-2025').textContent = fmtBRL(totals[2025]);
-  document.getElementById('comp-total-2026').textContent = fmtBRL(totals[2026]);
-  const totalDelta = totals[2025] ? ((totals[2026] / totals[2025] - 1) * 100).toFixed(1) : null;
+  const fmtTot = (yr) => `<div>${fmtBRL(sums[yr].t)}</div><div style="font-size:10px;"><span style="color:#0369a1;">C ${fmtBRL(sums[yr].c)}</span> · <span style="color:#16a34a;">N ${fmtBRL(sums[yr].n)}</span></div>`;
+  document.getElementById('comp-total-2023').innerHTML = fmtTot(2023);
+  document.getElementById('comp-total-2024').innerHTML = fmtTot(2024);
+  document.getElementById('comp-total-2025').innerHTML = fmtTot(2025);
+  document.getElementById('comp-total-2026').innerHTML = fmtTot(2026);
+  const totalDelta = sums[2025].t ? ((sums[2026].t / sums[2025].t - 1) * 100).toFixed(1) : null;
   const tdcls = totalDelta !== null && parseFloat(totalDelta) >= 0 ? 'qb-green' : 'qb-red';
   document.getElementById('comp-delta-total').innerHTML = totalDelta !== null
     ? `<span class="q-badge ${tdcls}">${parseFloat(totalDelta)>=0?'+':''}${totalDelta}%</span>` : '';
@@ -1094,14 +1162,16 @@ function renderCompTriTable() {
   // Insights
   const insEl = document.getElementById('comp-insights');
   if (insEl) {
-    // Best quarter ever
     const allQ = [];
-    [2023,2024,2025,2026].forEach(y => COMP_TRI[y].forEach((v,qi) => { if (v) allQ.push({y,q:qi+1,v}); }));
+    [2023,2024,2025,2026].forEach(y => COMP_TRI[y].total.forEach((v,qi) => { if (v) allQ.push({y,q:qi+1,v}); }));
     allQ.sort((a,b) => b.v - a.v);
     const best = allQ[0];
-    // YoY growth
-    const t26 = totals[2026], t25Partial = COMP_TRI[2025].slice(0, COMP_TRI[2026].filter(v=>v!==null).length).reduce((s,v)=>s+v,0);
+    const qsCom = COMP_TRI[2026].total.filter(v=>v!==null).length;
+    const t26 = sums[2026].t, t25Partial = COMP_TRI[2025].total.slice(0, qsCom).reduce((s,v)=>s+v,0);
     const yoyPct = t25Partial ? ((t26/t25Partial-1)*100).toFixed(1) : null;
+    // Casa % growth
+    const c26 = sums[2026].c, c25 = COMP_TRI[2025].casa.slice(0,qsCom).reduce((s,v)=>s+v,0);
+    const casaPct = c25 ? ((c26/c25-1)*100).toFixed(1) : null;
     insEl.innerHTML = `
       <div class="rounded-xl p-4 border" style="background:#f0fdf4;border-color:#86efac;">
         <p class="text-xs font-semibold mb-1" style="color:#166534;">MELHOR TRIMESTRE</p>
@@ -1109,14 +1179,14 @@ function renderCompTriTable() {
         <p class="text-xs mt-1" style="color:#94a3b8;">Q${best.q} ${best.y}</p>
       </div>
       <div class="rounded-xl p-4 border" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">YOY (PERÍODOS EQUIV.)</p>
+        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">YOY TOTAL (PERÍODOS EQUIV.)</p>
         <p class="text-lg font-bold" style="color:${yoyPct&&parseFloat(yoyPct)>=0?'#16a34a':'#dc2626'};">${yoyPct!==null?(parseFloat(yoyPct)>=0?'+':'')+yoyPct+'%':'—'}</p>
-        <p class="text-xs mt-1" style="color:#94a3b8;">2026 vs 2025 (mesmos Qs)</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">2026 vs 2025 (Q1${qsCom>1?'–Q'+qsCom:''})</p>
       </div>
       <div class="rounded-xl p-4 border" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">TOTAL 2025</p>
-        <p class="text-lg font-bold" style="color:#7c3aed;">${fmtBRL(totals[2025])}</p>
-        <p class="text-xs mt-1" style="color:#94a3b8;">Meta era R$ 5.950.000</p>
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">YOY RECEITA CASA</p>
+        <p class="text-lg font-bold" style="color:${casaPct&&parseFloat(casaPct)>=0?'#16a34a':'#dc2626'};">${casaPct!==null?(parseFloat(casaPct)>=0?'+':'')+casaPct+'%':'—'}</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">Casa 26 ${fmtBRL(c26)} vs 25 ${fmtBRL(c25)}</p>
       </div>`;
   }
 }
@@ -1170,21 +1240,74 @@ function initHistoricalCharts() {
       scales: darkScales() }
   });
 
-  // ── Comparativo trimestral: barras agrupadas ──
+  // ── Comparativo trimestral: barras agrupadas com stacked Casa/Novos ──
   const ctxComp = document.getElementById('chartCompTri');
   if (ctxComp) new Chart(ctxComp, {
     type: 'bar',
     data: {
       labels: ['Q1','Q2','Q3','Q4'],
       datasets: [
-        { label:'2023', data:COMP_TRI[2023], backgroundColor:'#d1d5db', borderRadius:4 },
-        { label:'2024', data:COMP_TRI[2024], backgroundColor:'#93c5fd', borderRadius:4 },
-        { label:'2025', data:COMP_TRI[2025], backgroundColor:'#818cf8', borderRadius:4 },
-        { label:'2026', data:COMP_TRI[2026].map(v => v||0), backgroundColor:'#4f46e5', borderRadius:4 },
+        { label:'2023 Casa',  data:COMP_TRI[2023].casa,  backgroundColor:'#d1d5db', stack:'s2023', borderRadius:2 },
+        { label:'2023 Novos', data:COMP_TRI[2023].novos, backgroundColor:'rgba(209,213,219,0.5)', stack:'s2023', borderRadius:2 },
+        { label:'2024 Casa',  data:COMP_TRI[2024].casa,  backgroundColor:'#93c5fd', stack:'s2024', borderRadius:2 },
+        { label:'2024 Novos', data:COMP_TRI[2024].novos, backgroundColor:'rgba(147,197,253,0.5)', stack:'s2024', borderRadius:2 },
+        { label:'2025 Casa',  data:COMP_TRI[2025].casa,  backgroundColor:'#818cf8', stack:'s2025', borderRadius:2 },
+        { label:'2025 Novos', data:COMP_TRI[2025].novos, backgroundColor:'rgba(129,140,248,0.5)', stack:'s2025', borderRadius:2 },
+        { label:'2026 Casa',  data:COMP_TRI[2026].casa.map(v=>v||0),  backgroundColor:'#4f46e5', stack:'s2026', borderRadius:2 },
+        { label:'2026 Novos', data:COMP_TRI[2026].novos.map(v=>v||0), backgroundColor:'rgba(79,70,229,0.5)', stack:'s2026', borderRadius:2 },
       ]
     },
     options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ tooltip:{ callbacks:{ label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }},
+      plugins:{
+        tooltip:{ callbacks:{ label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }},
+        legend:{ position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:12, font:{size:10},
+          filter: item => item.text.includes('Casa') // só mostra labels "Casa" na legenda (para não poluir)
+        }}
+      },
+      scales: { ...darkScales(), x:{ ...darkScales().x, stacked:true }, y:{ ...darkScales().y, stacked:true }}}
+  });
+
+  // ── 2025: Metas trimestrais (cards + chart) ──
+  const triQ  = ['Q1','Q2','Q3','Q4'];
+  const triR  = [
+    COMP_TRI[2025].total[0], COMP_TRI[2025].total[1],
+    COMP_TRI[2025].total[2], COMP_TRI[2025].total[3]
+  ];
+  const triM = triQ.map(q => METAS_TRI_2025[q]);
+
+  const cardsEl = document.getElementById('metas-tri-2025-cards');
+  if (cardsEl) {
+    cardsEl.innerHTML = triQ.map((q, i) => {
+      const pct = triM[i] ? (triR[i] / triM[i] * 100).toFixed(0) : 0;
+      const ok  = triR[i] >= triM[i];
+      const bg  = ok ? '#f0fdf4' : '#fef2f2';
+      const bc  = ok ? '#86efac' : '#fca5a5';
+      const tc  = ok ? '#16a34a' : '#dc2626';
+      return `
+        <div class="rounded-xl p-4 border text-center" style="background:${bg};border-color:${bc};">
+          <p class="text-xs font-bold mb-1" style="color:${tc};">${q} 2025</p>
+          <p class="text-sm font-bold" style="color:var(--text);">${fmtBRL(triR[i])}</p>
+          <p class="text-xs" style="color:var(--muted);">Meta: ${fmtBRL(triM[i])}</p>
+          <div class="relative h-2 rounded-full overflow-hidden mt-2" style="background:#e5e7eb;">
+            <div class="h-full rounded-full" style="width:${Math.min(pct,100)}%;background:${tc};"></div>
+          </div>
+          <p class="text-xs font-bold mt-1" style="color:${tc};">${pct}%</p>
+        </div>`;
+    }).join('');
+  }
+
+  const ctx2025tri = document.getElementById('chart2025triMeta');
+  if (ctx2025tri) new Chart(ctx2025tri, {
+    type: 'bar',
+    data: {
+      labels: triQ,
+      datasets: [
+        { label:'Meta', data:triM, backgroundColor:'rgba(148,163,184,0.3)', borderColor:'#94a3b8', borderWidth:2, borderDash:[4,2], borderRadius:4 },
+        { label:'Realizado', data:triR, backgroundColor:triR.map((v,i) => v>=triM[i] ? '#16a34a' : '#ef4444'), borderRadius:4 },
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ tooltip:{ callbacks:{ label: c => c.dataset.label+': R$ '+(c.raw||0).toLocaleString('pt-BR') }},
         legend:{ position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:16 }}},
       scales: darkScales() }
   });
