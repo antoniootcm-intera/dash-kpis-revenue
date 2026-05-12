@@ -913,8 +913,8 @@
       "dealId": "59186379620",
       "servico": "RPO",
       "cliente": "Doctoralia BR",
-      "vigencia": "maio/2026",
-      "dataInicio": "11/05",
+      "vigencia": "novembro/2026",
+      "dataInicio": "11/11",
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -926,7 +926,7 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "ATIVO",
+        "DESALOCAÇÃO",
         "DESALOCADO"
       ],
       "source": "hs",
@@ -937,23 +937,24 @@
       "dealId": "60177802569",
       "servico": "RPO",
       "cliente": "Global",
-      "vigencia": "",
-      "dataInicio": "12/05",
+      "vigencia": "agosto/2026",
+      "dataInicio": "12/08",
       "meses": [
-        "",
-        "",
-        "",
-        "",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
         "ATIVO",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO"
       ],
-      "source": "hs"
+      "source": "hs",
+      "duracao": 3
     }
   ],
   "contratos_rows": [
@@ -1320,6 +1321,20 @@
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "cadeiras"
+    },
+    {
+      "id": "cont_1778592474818",
+      "cliente": "Global",
+      "vigencia": "",
+      "inicio": "",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "manual"
     }
   ],
   "hs_overrides": {
@@ -1350,7 +1365,7 @@
     "59419154613"
   ],
   "okr_state": {
-    "input-realizado": "708000",
+    "input-realizado": "754500",
     "input-clientes": "0",
     "input-duracao": "64",
     "cac-gastos": "0",
@@ -1360,5 +1375,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-12T13:25:06.300Z"
+  "snapshot_at": "2026-05-12T13:28:24.301Z"
 }
