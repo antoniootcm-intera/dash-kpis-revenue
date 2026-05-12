@@ -209,8 +209,13 @@
       <button onclick="exportCSV()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm px-3 py-1.5 rounded-lg font-medium transition">
         ⬇ CSV
       </button>
-      <button onclick="publicarSnapshot()" class="text-sm px-3 py-1.5 rounded-lg font-medium transition text-white" style="background:var(--accent);" title="Gera data.json para publicar no GitHub Pages">
-        💾 Publicar snapshot
+      <input id="gh-token" type="password" placeholder="GitHub Token (para publicar)"
+        class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-52 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        oninput="localStorage.setItem('gh_token', this.value)" />
+      <button onclick="publicarSnapshot()" id="btn-publicar"
+        class="text-sm px-4 py-1.5 rounded-lg font-semibold transition text-white flex items-center gap-1"
+        style="background:var(--accent);" title="Publica direto no GitHub Pages — sem terminal">
+        🚀 Publicar
       </button>
     </div>
     <!-- viewer banner -->
@@ -769,6 +774,8 @@ window.addEventListener('DOMContentLoaded', () => {
   if (saved) document.getElementById('hubspot-token').value = saved;
   const savedPipeline = localStorage.getItem('hs_pipeline');
   if (savedPipeline) { document.getElementById('hubspot-pipeline').value = savedPipeline; PIPELINE_ID = savedPipeline; }
+  const savedGH = localStorage.getItem('gh_token');
+  if (savedGH) document.getElementById('gh-token').value = savedGH;
 
   restoreOKRInputs();
   updateLockIcon();
@@ -880,35 +887,71 @@ function restoreOKRFromState(state) {
   } catch(e) { _restoring = false; }
 }
 
-// Gera data.json para publicar no GitHub Pages
-function publicarSnapshot() {
-  const okrIds = ['input-realizado','input-clientes','input-duracao','input-retencao',
-                  'nps-meta','nps-real','enps-meta','enps-real','cac-gastos','chart-meta','chart-periodo',
-                  'input-meta-novos-clientes'];
-  const okrState = {};
-  okrIds.forEach(id => { okrState[id] = document.getElementById(id)?.value; });
+// Publica direto no GitHub Pages via API — sem terminal, sem download
+async function publicarSnapshot() {
+  const ghToken = localStorage.getItem('gh_token') || document.getElementById('gh-token')?.value;
+  if (!ghToken) {
+    alert('Cole seu GitHub Token no campo ao lado do botão 🚀 Publicar.\n\nCrie um em: github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → marcar "repo"');
+    return;
+  }
 
-  const snapshot = {
-    table_rows:     tableRows,
-    cadeiras_rows:  cadeirasRows,
-    contratos_rows: contratosRows,
-    hs_overrides:   hsOverrides,
-    hs_deleted:     [...hsDeleted],
-    okr_state:      okrState,
-    realizado_locked: realizadoLocked,
-    active_tab:     localStorage.getItem('active_tab') || 'dashboard',
-    snapshot_at:    new Date().toISOString()
-    // hs_token e hs_pipeline NÃO incluídos por segurança
-  };
+  const btn = document.getElementById('btn-publicar');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Publicando…';
+  btn.disabled = true;
 
-  const json = JSON.stringify(snapshot, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
-  a.download = 'data.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  setStatus('✓ data.json gerado — mova para ~/intera-dashboard/ e faça git push', 'green');
+  const REPO  = 'antoniootcm-intera/dash-kpis-revenue';
+  const FILE  = 'data.json';
+  const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+  const AUTH  = { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' };
+
+  try {
+    // 1. Busca SHA atual do arquivo (necessário para update)
+    const getRes  = await fetch(API, { headers: AUTH });
+    const getJson = await getRes.json();
+    const sha     = getJson.sha; // undefined se arquivo não existir ainda
+
+    // 2. Monta snapshot (sem token HubSpot/GitHub)
+    const okrIds = ['input-realizado','input-clientes','input-duracao','input-retencao',
+                    'nps-meta','nps-real','enps-meta','enps-real','cac-gastos','chart-meta','chart-periodo',
+                    'input-meta-novos-clientes'];
+    const okrState = {};
+    okrIds.forEach(id => { okrState[id] = document.getElementById(id)?.value; });
+
+    const snapshot = {
+      table_rows:       tableRows,
+      cadeiras_rows:    cadeirasRows,
+      contratos_rows:   contratosRows,
+      hs_overrides:     hsOverrides,
+      hs_deleted:       [...hsDeleted],
+      okr_state:        okrState,
+      realizado_locked: realizadoLocked,
+      active_tab:       localStorage.getItem('active_tab') || 'dashboard',
+      snapshot_at:      new Date().toISOString()
+    };
+
+    // 3. Encode para base64 (suporta UTF-8)
+    const json    = JSON.stringify(snapshot, null, 2);
+    const content = btoa(unescape(encodeURIComponent(json)));
+
+    // 4. PUT para o GitHub
+    const body = { message: `snapshot ${new Date().toLocaleString('pt-BR')}`, content };
+    if (sha) body.sha = sha; // necessário para atualizar arquivo existente
+
+    const putRes = await fetch(API, { method: 'PUT', headers: AUTH, body: JSON.stringify(body) });
+
+    if (putRes.ok) {
+      setStatus('✓ Publicado! Link atualiza em ~30s → antoniootcm-intera.github.io/dash-kpis-revenue/', 'green');
+    } else {
+      const err = await putRes.json();
+      setStatus('✗ Erro: ' + (err.message || putRes.status), 'red');
+    }
+  } catch(e) {
+    setStatus('✗ Falha na conexão: ' + e.message, 'red');
+  } finally {
+    btn.innerHTML = orig;
+    btn.disabled  = false;
+  }
 }
 
 function calcCAC() {
