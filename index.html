@@ -517,6 +517,19 @@
   </div>
 </section>
 
+<!-- Vendas por Canal Q2 2026 (ao vivo) -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
+    <span class="text-lg font-bold">Vendas por Canal — Q2 2026</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-4">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="q2-canal-cards"></div>
+    <div class="relative h-48">
+      <canvas id="chartQ2canal"></canvas>
+    </div>
+  </div>
+</section>
+
 </div><!-- /dash-sub-q2-2026 -->
 
 <!-- ═══ SUB-PAINEL: Q1 2026 ═══ -->
@@ -583,6 +596,15 @@
       <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Mês — Q1 2026</h3>
       <div class="relative h-52">
         <canvas id="chartQ1mensal"></canvas>
+      </div>
+    </div>
+
+    <!-- Vendas por Canal Q1 2026 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Q1 2026</h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="q1-canal-cards"></div>
+      <div class="relative h-48 mt-4">
+        <canvas id="chartQ1canal"></canvas>
       </div>
     </div>
 
@@ -994,6 +1016,8 @@ const IS_VIEWER = !['localhost','127.0.0.1'].includes(location.hostname);
 const DASH_SUBS = ['q2-2026','q1-2026','hist-2025','comp-tri'];
 let _histChartsReady = false;
 
+let _q2CanalReady = false;
+
 function switchDashSub(key) {
   DASH_SUBS.forEach(k => {
     const el = document.getElementById('dash-sub-' + k);
@@ -1007,6 +1031,11 @@ function switchDashSub(key) {
   if (!_histChartsReady && key !== 'q2-2026') {
     _histChartsReady = true;
     setTimeout(initHistoricalCharts, 50);
+  }
+  // Lazy init do canal Q2 (precisa canvas visível + dados carregados)
+  if (!_q2CanalReady && key === 'q2-2026' && tableRows.length > 0) {
+    _q2CanalReady = true;
+    setTimeout(renderQ2CanalCards, 50);
   }
 }
 
@@ -1232,6 +1261,60 @@ function renderCompTriTable() {
   }
 }
 
+// ─── VENDAS POR CANAL (genérica) ────────────────
+const CANAL_COLORS = {
+  'UP':  { bg:'#dbeafe', bc:'#93c5fd', tc:'#1e40af', chart:'#60a5fa' },
+  'NTW': { bg:'#f0fdf4', bc:'#86efac', tc:'#166534', chart:'#4ade80' },
+  'MKT': { bg:'#fff7ed', bc:'#fdba74', tc:'#c2410c', chart:'#fb923c' },
+  'OUT': { bg:'#fce7f3', bc:'#f9a8d4', tc:'#9d174d', chart:'#f472b6' },
+  'REN': { bg:'#fef3c7', bc:'#fde68a', tc:'#92400e', chart:'#fbbf24' },
+  'INB': { bg:'#ede9fe', bc:'#c4b5fd', tc:'#5b21b6', chart:'#a78bfa' },
+};
+
+function renderCanalBreakdown(deals, cardsId, chartId, chartLabel) {
+  const agg = {};
+  const count = {};
+  deals.forEach(d => {
+    const c = (d.canal || 'N/D').toUpperCase();
+    agg[c]   = (agg[c]||0) + (parseFloat(d.valor)||0);
+    count[c] = (count[c]||0) + 1;
+  });
+  // Separar casa vs novos
+  const CASA = ['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO'];
+  const canais = Object.keys(agg).sort((a,b) => agg[b]-agg[a]);
+
+  const cardsEl = document.getElementById(cardsId);
+  if (cardsEl) {
+    cardsEl.innerHTML = canais.map(c => {
+      const cc = CANAL_COLORS[c] || { bg:'#f3f4f6', bc:'#d1d5db', tc:'#374151', chart:'#9ca3af' };
+      const tipo = CASA.includes(c) ? 'Casa' : 'Novos';
+      return `<div class="rounded-xl p-3 border text-center" style="background:${cc.bg};border-color:${cc.bc};">
+        <p class="text-xs font-bold mb-1" style="color:${cc.tc};">${c}</p>
+        <p class="text-base font-bold" style="color:${cc.tc};">${fmtBRL(agg[c])}</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">${count[c]} venda${count[c]>1?'s':''} · ${tipo}</p>
+      </div>`;
+    }).join('');
+  }
+
+  const ctx = document.getElementById(chartId);
+  if (ctx) new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: canais,
+      datasets: [{ label: chartLabel, data: canais.map(c => agg[c]),
+        backgroundColor: canais.map(c => (CANAL_COLORS[c]||{chart:'#9ca3af'}).chart), borderRadius:5 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label: c => 'R$ '+(c.raw||0).toLocaleString('pt-BR') }}},
+      scales: darkScales() }
+  });
+}
+
+function renderQ2CanalCards() {
+  renderCanalBreakdown(tableRows, 'q2-canal-cards', 'chartQ2canal', 'Q2 2026');
+}
+
 function initHistoricalCharts() {
   // ── Q1 2026: barras mensais ──
   const q1porMes = { 'Jan':0, 'Fev':0, 'Mar':0 };
@@ -1371,10 +1454,12 @@ function initHistoricalCharts() {
       scales: darkScales() }
   });
 
-  // Render tables
+  // Render tables + canal breakdowns
   renderQ1Deals();
   renderHist2025Table();
   renderCompTriTable();
+  renderCanalBreakdown(Q1_DEALS, 'q1-canal-cards', 'chartQ1canal', 'Q1 2026');
+  renderQ2CanalCards();
 }
 
 // ─── CONSTANTS ──────────────────────────────────
@@ -1464,6 +1549,12 @@ window.addEventListener('DOMContentLoaded', () => {
   renderQ1Deals();
   renderHist2025Table();
   renderCompTriTable();
+
+  // Render Q2 canal cards (Q2 é a sub-tab padrão — canvas visível)
+  if (tableRows.length > 0) {
+    _q2CanalReady = true;
+    renderQ2CanalCards();
+  }
 
   // Restaura aba ativa
   const activeTab = localStorage.getItem('active_tab') || 'dashboard';
