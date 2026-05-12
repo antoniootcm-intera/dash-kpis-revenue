@@ -760,6 +760,10 @@ window.addEventListener('DOMContentLoaded', () => {
         renderContratos();
         if (d.okr_state) restoreOKRFromState(d.okr_state);
         updateLockIcon();
+        // Atualiza os gráficos com os dados carregados (em admin isso ocorre via fetchHubSpot)
+        updateCicloChart();
+        updateFunilChart();
+        rebuildLineChart();
         switchTab(d.active_tab || 'dashboard');
       })
       .catch(() => {
