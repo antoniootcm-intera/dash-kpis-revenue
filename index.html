@@ -454,7 +454,7 @@
     <table class="w-full text-sm" id="revenue-table">
       <thead class="bg-blue-50 text-blue-800 text-xs uppercase tracking-wide">
         <tr>
-          <th class="px-1 py-2 no-print"></th>
+          <th class="px-1 py-2 no-print admin-only"></th>
           <th class="px-3 py-2 text-left">Cliente</th>
           <th class="px-3 py-2 text-left">Serviço</th>
           <th class="px-3 py-2 text-left">Canal</th>
@@ -466,7 +466,7 @@
           <th class="px-3 py-2 text-center">Tipo</th>
           <th class="px-3 py-2 text-center">Semana</th>
           <th class="px-3 py-2 text-right">Ciclo (dias)</th>
-          <th class="px-3 py-2 text-center no-print">Ações</th>
+          <th class="px-3 py-2 text-center no-print admin-only">Ações</th>
         </tr>
       </thead>
       <tbody id="revenue-tbody" class="divide-y divide-gray-100">
@@ -1312,9 +1312,10 @@ function processDeals(deals) {
   updateFunilChart();
   rebuildLineChart();
 
-  // Auto-link: cria cadeira para cada deal ganho (se ainda não existir)
-  wonRows.forEach(row => linkDealToCadeira(row));
+  // Auto-link: cria cadeira E contrato para cada deal ganho (se ainda não existirem)
+  wonRows.forEach(row => { linkDealToCadeira(row); linkDealToContrato(row); });
   renderCadeiras();
+  renderContratos();
 
   // Atualiza realizado apenas se não estiver travado manualmente
   const totalWon = wonRows.reduce((s, r) => s + r.valor, 0);
@@ -1513,14 +1514,18 @@ function saveOverride(i, key, val) {
 }
 
 function addRow() {
-  tableRows.push({
+  const newRow = {
     id: 'manual_' + Date.now(),
     cliente: 'Novo Cliente', servico: 'RPO', canal: 'NTW',
     valor: 0, mensalidade: 0, data: '', mes: MESES[new Date().getMonth()],
     alocacoes: '', tipo: 'N/D', semana: 1, ciclo: 0,
     source: 'manual'
-  });
+  };
+  tableRows.push(newRow);
+  // Cria contrato automaticamente para o novo negócio
+  linkDealToContrato(newRow);
   renderTable();
+  renderContratos();
   saveTableState();
 }
 
@@ -1982,6 +1987,29 @@ function linkDealToCadeira(row) {
     source:    'hs'
   });
   saveCadeirasState();
+}
+
+// Auto-cria contrato para cada novo negócio (HubSpot ou manual)
+function linkDealToContrato(row) {
+  const dealKey = String(row.id);
+  // não duplica se já existe contrato vinculado a este deal
+  if (contratosRows.some(c => c.dealId === dealKey)) return;
+  contratosRows.push({
+    id:           'cont_' + dealKey,
+    dealId:       dealKey,
+    cliente:      row.cliente || '',
+    vigencia:     '',
+    inicio:       row.data || '',
+    fim:          '',
+    duracao:      null,
+    cadeiras:     null,
+    valorRPO:     row.mensalidade || null,
+    valorTotal:   row.valor || null,
+    tipoContrato: '',
+    linkContrato: '',
+    source:       row.source || 'manual'
+  });
+  saveContratosState();
 }
 
 // ── Drag & Drop (cadeiras) ───────────────────────
