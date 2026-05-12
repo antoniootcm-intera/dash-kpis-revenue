@@ -898,23 +898,24 @@
       "dealId": "59186379620",
       "servico": "RPO",
       "cliente": "Doctoralia BR",
-      "vigencia": "",
+      "vigencia": "maio/2026",
       "dataInicio": "11/05",
       "meses": [
-        "",
-        "",
-        "",
-        "",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
         "ATIVO",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "DESALOCADO"
       ],
-      "source": "hs"
+      "source": "hs",
+      "duracao": 6
     }
   ],
   "contratos_rows": [
@@ -1307,13 +1308,13 @@
   "okr_state": {
     "input-realizado": "708000",
     "input-clientes": "0",
-    "input-duracao": "63",
+    "input-duracao": "66",
     "cac-gastos": "0",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "contratos",
-  "snapshot_at": "2026-05-12T00:34:16.989Z"
+  "active_tab": "cadeiras",
+  "snapshot_at": "2026-05-12T00:35:01.739Z"
 }
