@@ -1,0 +1,2405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard de Vendas B2B — INTERA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  /* ── INTERA Light Theme — Roxo + Preto ─────────── */
+  :root {
+    --accent:  #6366f1;
+    --accent2: #4f46e5;
+    --accent-light: #ede9fe;
+    --black:   #111118;
+    --text:    #1a1a2e;
+    --text2:   #4b4b6a;
+    --muted:   #9ca3af;
+    --border:  #e5e4f0;
+    --surface: #ffffff;
+    --bg:      #f8f7ff;
+  }
+
+  body { background: var(--bg) !important; color: var(--text) !important; }
+
+  /* Header */
+  header { background: #fff !important; border-bottom: 1px solid var(--border) !important; box-shadow: 0 1px 3px rgba(99,102,241,0.08) !important; }
+  header .text-blue-700, .text-blue-700 { color: var(--accent) !important; }
+  header .text-gray-400 { color: var(--muted) !important; }
+
+  /* Barras de seção — roxo sólido */
+  .bg-blue-700  { background: var(--black) !important; }
+  .bg-blue-800  { background: #1e1e2e !important; }
+  .bg-blue-600  { background: var(--accent) !important; }
+
+  /* Superfícies */
+  .bg-white   { background: #ffffff !important; }
+  .bg-gray-50 { background: var(--bg) !important; }
+  .bg-gray-100{ background: #f0effe !important; }
+  .bg-blue-50 { background: #f3f2ff !important; }
+
+  /* Bordas */
+  .border-gray-200, .border-gray-100 { border-color: var(--border) !important; }
+
+  /* Textos */
+  .text-gray-800 { color: var(--text)  !important; }
+  .text-gray-700 { color: var(--text)  !important; }
+  .text-gray-600 { color: var(--text2) !important; }
+  .text-gray-500 { color: var(--text2) !important; }
+  .text-gray-400 { color: var(--muted) !important; }
+  .text-blue-800 { color: var(--accent2) !important; }
+
+  /* Inputs */
+  input:not([type=range]), select { border-color: var(--border) !important; color: var(--text) !important; background: #fff !important; }
+  input::placeholder { color: var(--muted) !important; }
+  [contenteditable]:focus { outline: 2px solid var(--accent); border-radius: 2px; }
+  input[type=range] { accent-color: var(--accent); }
+
+  /* Botões header */
+  .bg-gray-200 { background: #f0effe !important; color: var(--text) !important; }
+  .hover\:bg-gray-300:hover { background: var(--accent-light) !important; }
+  .hover\:bg-blue-700:hover { background: var(--accent2) !important; }
+
+  /* Tabela */
+  thead.bg-blue-50 th { background: #f3f2ff !important; color: var(--accent2) !important; }
+  tbody tr:hover { background: #f3f2ff !important; }
+  tr.drag-over   { border-top: 2px solid var(--accent); background: var(--accent-light) !important; }
+  tr.dragging    { opacity: 0.4; }
+  .divide-y > * + * { border-color: var(--border) !important; }
+
+  /* Barras de progresso */
+  .progress-bar { transition: width 0.6s ease; }
+  .bg-blue-500  { background: var(--accent) !important; }
+
+  /* Tags — ajustadas para light */
+  .tag { display:inline-block; padding:2px 8px; border-radius:9999px; font-size:11px; font-weight:600; }
+  .tag-upsell    { background:#dbeafe; color:#1e40af; }
+  .tag-ntw       { background:#d1fae5; color:#065f46; }
+  .tag-renovacao { background:#fef3c7; color:#92400e; }
+  .tag-out       { background:#fce7f3; color:#9d174d; }
+  .tag-inb       { background:#ede9fe; color:#5b21b6; }
+  .tag-mkt       { background:#ffedd5; color:#c2410c; }
+  .tag-enterprise{ background:#ede9fe; color:#4338ca; }
+  .tag-gg        { background:#d1fae5; color:#065f46; }
+  .tag-smb       { background:#fef9c3; color:#854d0e; }
+
+  /* Drag handle */
+  .drag-handle { cursor: grab; color: var(--muted); user-select: none; padding: 0 6px; font-size: 16px; }
+  .drag-handle:hover { color: var(--accent); }
+  .drag-handle:active { cursor: grabbing; }
+
+  /* Select canal */
+  .select-canal { appearance: none; cursor: pointer; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #c4c2e8; border-radius: 3px; }
+
+  @media print { .no-print { display:none!important; } }
+
+  /* ── Viewer mode ─────────────────────────── */
+  body.viewer-mode .admin-only { display: none !important; }
+  body.viewer-mode [contenteditable="true"] { pointer-events: none !important; outline: none !important; cursor: default !important; }
+  body.viewer-mode [contenteditable="true"]:hover { background: transparent !important; }
+  body.viewer-mode .cad-badge { pointer-events: none !important; cursor: default !important; }
+  body.viewer-mode .cad-badge:hover { filter: none !important; transform: none !important; }
+  body.viewer-mode .drag-handle { display: none !important; }
+  body.viewer-mode select { pointer-events: none !important; appearance: none !important; -webkit-appearance: none !important; background: transparent !important; }
+  body.viewer-mode input { pointer-events: none !important; }
+  body.viewer-mode .cont-cell:hover { background: transparent !important; }
+  body.viewer-mode .cont-cell:focus { outline: none !important; background: transparent !important; }
+  body.viewer-mode .filt-dur-btn, body.viewer-mode .rfilt { pointer-events: auto !important; } /* filters still clickable */
+
+  /* viewer banner */
+  #viewer-banner { display: none; }
+  body.viewer-mode #viewer-banner { display: flex; }
+
+  /* ── Tabs ─────────────────────────────────── */
+  #tab-nav { background:#fff; border-bottom:1px solid var(--border); }
+  .tab-btn { padding:10px 22px; font-size:13px; font-weight:600; border-bottom:3px solid transparent;
+             cursor:pointer; color:var(--text2); background:none; border-top:none; border-left:none; border-right:none;
+             transition:all 0.15s; }
+  .tab-btn.active { border-bottom-color:var(--accent); color:var(--accent); }
+  .tab-btn:hover:not(.active) { color:var(--text); background:var(--accent-light); }
+
+  /* ── Cadeiras status badges ─────────────────── */
+  .cad-badge {
+    display:block; width:100%; border-radius:5px; padding:4px 2px;
+    font-size:10px; font-weight:700; text-align:center; cursor:pointer;
+    user-select:none; transition:filter 0.12s, transform 0.1s; letter-spacing:.3px;
+    white-space:nowrap;
+  }
+  .cad-badge:hover  { filter:brightness(0.88); transform:scale(1.04); }
+  .cad-badge:active { transform:scale(0.97); }
+  .cb-ativo      { background:#16a34a; color:#fff; }
+  .cb-saindo     { background:#d97706; color:#fff; }
+  .cb-fora       { background:#94a3b8; color:#fff; }
+  .cb-vazio      { background:#f1f5f9; color:#cbd5e1; }
+
+  /* ── Cadeiras table ─────────────────────────── */
+  #cadeiras-table td, #cadeiras-table th { border-bottom:1px solid #ede9fe; }
+  #cadeiras-table tbody tr:hover td { background: #f5f3ff !important; }
+  #cadeiras-table tbody tr:nth-child(even) td:not(.cad-mes-td) { background:#faf9ff; }
+  .cad-mes-td { padding:4px 3px !important; }
+  .cad-mes-th-cur { background:#ede9fe !important; color:var(--accent) !important;
+                    border-bottom:2px solid var(--accent) !important; font-weight:800; }
+  #cadeiras-table th button { background:none; border:none; cursor:pointer;
+    color:inherit; padding:0; font:inherit; display:flex; align-items:center; gap:4px; }
+  #cadeiras-table th button:hover { color:var(--accent); }
+  /* ── Revenue filter chips ───────────────────── */
+  .rfilt { padding:3px 12px; border-radius:20px; font-size:11px; font-weight:700;
+    cursor:pointer; border:2px solid var(--rc,#6366f1);
+    background:#fff; color:var(--rc,#6366f1); transition:all .15s; }
+  .rfilt:hover    { background:var(--rc,#6366f1); color:var(--rct,#fff); }
+  .rfilt.active-rfilt { background:var(--rc,#6366f1); color:var(--rct,#fff); }
+
+  /* ── Contratos table ────────────────────────── */
+  #contratos-table td, #contratos-table th { border-bottom:1px solid #ede9fe; }
+  #contratos-table tbody tr:hover td { background:#f5f3ff !important; }
+  #contratos-table tbody tr:nth-child(even) td { background:#faf9ff; }
+  .cont-cell { display:inline-block; min-width:60px; padding:2px 4px; border-radius:4px; transition:background .1s; }
+  .cont-cell:hover  { background:#ede9fe; }
+  .cont-cell:focus  { background:#ede9fe; outline:2px solid var(--accent); }
+  .cont-tipo { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
+               font-weight:600; text-align:center; outline:none; width:100%; }
+  .cont-dur  { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
+               font-weight:700; text-align:center; outline:none; color:var(--accent); }
+  .tag-oc   { background:#fef3c7; color:#92400e; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
+  .tag-cs   { background:#dcfce7; color:#15803d; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
+  .tag-sc   { background:#fee2e2; color:#991b1b; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
+  .link-contrato { color:var(--accent); font-size:11px; font-weight:600; text-decoration:underline; cursor:pointer; }
+
+  .filt-dur-btn { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
+    cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--text2);
+    transition:all .15s; }
+  .filt-dur-btn:hover   { border-color:var(--accent); color:var(--accent); background:#f5f3ff; }
+  .filt-dur-btn.active-filt { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .dur-sel { appearance:none; border:none; background:transparent; font-size:11px;
+    font-weight:700; cursor:pointer; text-align:center; width:100%; outline:none; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+
+<!-- ══════════════════════════════════════════════
+     HEADER + TOKEN
+══════════════════════════════════════════════ -->
+<header class="bg-white shadow-sm sticky top-0 z-50 no-print">
+  <div class="max-w-screen-2xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+    <div class="flex items-center gap-2 flex-1 min-w-0">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm" style="background:var(--black)">I</div>
+      <span class="font-bold text-blue-700 text-lg">INTERA</span>
+      <span class="text-gray-400 text-sm hidden sm:inline">/ Dash KPIs de Revenue</span>
+    </div>
+    <!-- admin-only controls -->
+    <div class="admin-only flex items-center gap-2 flex-wrap">
+      <input id="hubspot-token" type="password" placeholder="Cole seu HubSpot Access Token…"
+        class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        oninput="localStorage.setItem('hs_token', this.value)" />
+      <input id="hubspot-pipeline" type="text" placeholder="Pipeline ID (opcional)"
+        class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-44 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        oninput="PIPELINE_ID=this.value; localStorage.setItem('hs_pipeline', this.value)" />
+      <button onclick="testConnection()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-3 py-1.5 rounded-lg font-medium transition">
+        Testar Token
+      </button>
+      <button onclick="fetchHubSpot()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-1.5 rounded-lg font-medium transition">
+        Carregar HubSpot
+      </button>
+      <button onclick="exportCSV()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm px-3 py-1.5 rounded-lg font-medium transition">
+        ⬇ CSV
+      </button>
+      <button onclick="publicarSnapshot()" class="text-sm px-3 py-1.5 rounded-lg font-medium transition text-white" style="background:var(--accent);" title="Gera data.json para publicar no GitHub Pages">
+        💾 Publicar snapshot
+      </button>
+    </div>
+    <!-- viewer banner -->
+    <div id="viewer-banner" class="items-center gap-2 text-xs" style="color:var(--text2);">
+      <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full font-semibold" style="background:#f0effe;color:var(--accent);">👁 Modo visualização</span>
+    </div>
+    <div id="sync-status" class="text-xs text-gray-400"></div>
+  </div>
+</header>
+
+<!-- Tab navigation -->
+<div id="tab-nav" class="no-print">
+  <div class="max-w-screen-2xl mx-auto px-4 flex">
+    <button id="tab-dashboard"  class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button id="tab-cadeiras"  class="tab-btn" onclick="switchTab('cadeiras')">🪑 Controle de Cadeiras</button>
+    <button id="tab-contratos" class="tab-btn" onclick="switchTab('contratos')">📋 Controle de Contratos</button>
+  </div>
+</div>
+
+<div id="panel-dashboard">
+<main class="max-w-screen-2xl mx-auto px-4 py-6 space-y-8">
+
+<!-- ══════════════════════════════════════════════
+     SEÇÃO 1 — OKRs
+══════════════════════════════════════════════ -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
+    <span class="text-lg font-bold">OKRs</span>
+    <span class="text-blue-200 text-sm font-medium">— Consolidar a marca Intera como referência em soluções de RPO</span>
+  </div>
+
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+    <!-- ── Linha 1: Meta de Receita (full width) ── -->
+    <div>
+      <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:var(--accent);">KR1 — Crescer a base de forma sustentável</p>
+      <div class="rounded-2xl p-5 border" style="background:linear-gradient(135deg,#f8f7ff 0%,#ede9fe 100%);border-color:#c4c2e8;">
+        <div class="flex flex-wrap justify-between items-start gap-4 mb-3">
+          <div>
+            <p class="text-xs font-semibold" style="color:var(--text2);">META DE RECEITA</p>
+            <p class="text-2xl font-bold mt-0.5" style="color:var(--black);">R$ <span id="meta-receita-label">2.100.000,00</span></p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs font-semibold" style="color:var(--text2);">REALIZADO</p>
+            <p class="text-2xl font-bold mt-0.5 text-yellow-500" id="realizado-label">R$ 516.000,00</p>
+          </div>
+          <div class="flex gap-2 items-center no-print self-end">
+            <label class="text-xs" style="color:var(--muted);">Realizado (R$):</label>
+            <input type="number" id="input-realizado" value="516000" step="1000"
+              class="border rounded px-2 py-1 text-xs w-32"
+              oninput="lockRealizado(); updateOKR('receita', this.value)" />
+            <button onclick="unlockRealizado()" title="Sincronizar com HubSpot"
+              class="text-xs hover:text-blue-600 no-print" style="color:var(--muted);" id="btn-unlock-realizado">🔒</button>
+          </div>
+        </div>
+        <div class="relative h-4 rounded-full overflow-hidden" style="background:#d8d5f5;">
+          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:24.57%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+        </div>
+        <div class="flex justify-between mt-2">
+          <span class="text-xs font-semibold text-yellow-500" id="pct-receita">24,57%</span>
+          <div class="flex flex-wrap gap-4 text-xs no-print">
+            <span style="color:var(--muted);">Gastos: <input type="number" id="cac-gastos" value="0" step="500" class="border rounded px-1.5 py-0.5 w-24 ml-1" oninput="calcCAC()" /></span>
+            <span style="color:var(--muted);">CAC: <strong id="cac-value" style="color:var(--accent);">—</strong></span>
+            <span style="color:var(--muted);">Novos clientes: <strong id="cac-novos" style="color:var(--accent);">0</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Linha 2: 4 KPIs em grid ── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+      <!-- Receita Casa -->
+      <div class="rounded-xl p-4 border" style="background:#f0f9ff;border-color:#bae6fd;">
+        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">RECEITA CASA</p>
+        <p class="text-xs mb-2" style="color:#94a3b8;">REN + UP · Meta R$ 1.500.000</p>
+        <p id="receita-casa-valor" class="text-xl font-bold mb-2" style="color:#0369a1;">R$ 0,00</p>
+        <div class="relative h-2 rounded-full overflow-hidden" style="background:#e0f2fe;">
+          <div id="bar-receita-casa" class="progress-bar h-full rounded-full" style="width:0%;background:#0284c7;"></div>
+        </div>
+        <span id="pct-receita-casa" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
+      </div>
+
+      <!-- Receita Novos -->
+      <div class="rounded-xl p-4 border" style="background:#f0fdf4;border-color:#86efac;">
+        <p class="text-xs font-semibold mb-1" style="color:#166534;">RECEITA NOVOS</p>
+        <p class="text-xs mb-2" style="color:#94a3b8;">NTW, OUT, INB, MKT… · Meta R$ 600.000</p>
+        <p id="receita-novos-valor" class="text-xl font-bold mb-2" style="color:#16a34a;">R$ 0,00</p>
+        <div class="relative h-2 rounded-full overflow-hidden" style="background:#dcfce7;">
+          <div id="bar-receita-novos" class="progress-bar h-full rounded-full" style="width:0%;background:#16a34a;"></div>
+        </div>
+        <span id="pct-receita-novos" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
+      </div>
+
+      <!-- Novos Clientes -->
+      <div class="rounded-xl p-4 border" style="background:#faf5ff;border-color:#d8b4fe;">
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">NOVOS CLIENTES</p>
+        <p class="text-xs mb-2" style="color:#94a3b8;">Meta: <span id="novos-clientes-meta-label">8</span> clientes</p>
+        <p id="novos-clientes-valor" class="text-xl font-bold mb-2" style="color:#7c3aed;">0</p>
+        <div class="relative h-2 rounded-full overflow-hidden" style="background:#ede9fe;">
+          <div id="bar-novos-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:#7c3aed;"></div>
+        </div>
+        <div class="flex items-center justify-between mt-1">
+          <span id="pct-novos-clientes" class="text-xs" style="color:#94a3b8;">0%</span>
+          <input type="number" id="input-meta-novos-clientes" value="8" min="1"
+            class="border rounded px-1.5 py-0.5 text-xs w-14 no-print"
+            oninput="updateReceitaCards(); saveOKRInputs()" />
+        </div>
+      </div>
+
+      <!-- Crescimento base + Duração juntos -->
+      <div class="rounded-xl p-4 border space-y-3" style="background:#f8f7ff;border-color:#e0dff7;">
+        <!-- Crescimento -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <p class="text-xs font-semibold" style="color:var(--text2);">CRESCIMENTO BASE</p>
+            <span class="text-xs font-bold text-green-600" id="pct-clientes">0%</span>
+          </div>
+          <p class="text-xs mb-1" style="color:#94a3b8;">Meta: +10% de clientes</p>
+          <div class="relative h-2 rounded-full overflow-hidden bg-gray-200">
+            <div id="bar-clientes" class="progress-bar h-full rounded-full bg-green-500" style="width:0%;"></div>
+          </div>
+          <input type="number" id="input-clientes" value="0" min="0" max="100"
+            class="border rounded px-1.5 py-0.5 text-xs w-16 mt-1 no-print"
+            oninput="setBar('bar-clientes','pct-clientes',this.value,'green')" />
+        </div>
+        <!-- Divisor -->
+        <div style="border-top:1px solid var(--border);"></div>
+        <!-- Duração -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <p class="text-xs font-semibold" style="color:var(--text2);">DURAÇÃO +5 MESES</p>
+            <span class="text-xs font-bold" style="color:var(--accent);" id="pct-duracao">52,63%</span>
+          </div>
+          <p class="text-xs mb-1" style="color:#94a3b8;">Meta: 80% das cadeiras</p>
+          <div class="relative h-2 rounded-full overflow-hidden bg-gray-200">
+            <div id="bar-duracao" class="progress-bar h-full rounded-full" style="width:52.63%;background:var(--accent);"></div>
+          </div>
+          <input type="number" id="input-duracao" value="52.63" min="0" max="100"
+            class="border rounded px-1.5 py-0.5 text-xs w-16 mt-1 no-print"
+            oninput="setBar('bar-duracao','pct-duracao',this.value,'indigo')" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEÇÃO 2 — GRÁFICOS
+══════════════════════════════════════════════ -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
+    <span class="text-lg font-bold">Acompanhamento de Performance</span>
+  </div>
+
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-6">
+
+    <!-- Linha: Meta vs Realizado -->
+    <div>
+      <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+        <h3 class="font-semibold text-gray-700">Meta Linear vs Resultado Acumulado</h3>
+        <div class="flex gap-3 items-center text-xs no-print">
+          <label class="text-gray-500">Meta Total (R$):</label>
+          <input type="number" id="chart-meta" value="2100000" step="10000"
+            class="border rounded px-2 py-1 w-28"
+            oninput="rebuildLineChart()" />
+          <label class="text-gray-500">Período:</label>
+          <select id="chart-periodo" class="border rounded px-2 py-1" onchange="rebuildLineChart()">
+            <option value="semanas">Semanas (13)</option>
+            <option value="meses">Meses (3)</option>
+          </select>
+        </div>
+      </div>
+      <div class="relative h-72">
+        <canvas id="chartLinear"></canvas>
+      </div>
+    </div>
+
+    <!-- Bar charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="font-semibold text-gray-700 mb-3">Ciclo de Vendas por Canal (dias)</h3>
+        <div class="relative h-56">
+          <canvas id="chartCiclo"></canvas>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-gray-700">Ticket Médio da Mensalidade por Canal (R$)</h3>
+          <div class="text-right">
+            <span class="text-xs text-gray-400">Ticket médio geral</span>
+            <p id="ticket-medio-geral" class="text-base font-bold text-blue-700">—</p>
+          </div>
+        </div>
+        <div class="relative h-52">
+          <canvas id="chartFunil"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SEÇÃO 3 — TABELA RESULTADOS REVENUE
+══════════════════════════════════════════════ -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
+    <span class="text-lg font-bold">Resultados Revenue</span>
+    <div class="admin-only flex gap-2 no-print">
+      <button onclick="addRow()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+        + Adicionar Linha
+      </button>
+      <button onclick="clearHSRows()" class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition">
+        Limpar HubSpot
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros por canal -->
+  <div class="bg-white border border-t-0 border-gray-200 px-4 py-3 flex flex-wrap items-center gap-2 no-print">
+    <span class="text-xs font-semibold" style="color:var(--text2);">Filtrar:</span>
+    <button onclick="filtrarCanal(null)"  id="rfilt-all"  class="rfilt active-rfilt" style="--rc:#6366f1;--rct:#fff;">Todos</button>
+    <button onclick="filtrarCanal('UP')"  id="rfilt-UP"   class="rfilt" style="--rc:#1e40af;--rct:#fff;">UP</button>
+    <button onclick="filtrarCanal('NTW')" id="rfilt-NTW"  class="rfilt" style="--rc:#065f46;--rct:#fff;">NTW</button>
+    <button onclick="filtrarCanal('REN')" id="rfilt-REN"  class="rfilt" style="--rc:#92400e;--rct:#fff;">REN</button>
+    <button onclick="filtrarCanal('OUT')" id="rfilt-OUT"  class="rfilt" style="--rc:#9d174d;--rct:#fff;">OUT</button>
+    <button onclick="filtrarCanal('INB')" id="rfilt-INB"  class="rfilt" style="--rc:#5b21b6;--rct:#fff;">INB</button>
+    <button onclick="filtrarCanal('MKT')" id="rfilt-MKT"  class="rfilt" style="--rc:#c2410c;--rct:#fff;">MKT</button>
+    <button onclick="filtrarCanal('N/D')" id="rfilt-ND"   class="rfilt" style="--rc:#6b7280;--rct:#fff;">N/D</button>
+    <span id="rfilt-count" class="text-xs ml-1" style="color:var(--muted);"></span>
+  </div>
+
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-x-auto">
+    <table class="w-full text-sm" id="revenue-table">
+      <thead class="bg-blue-50 text-blue-800 text-xs uppercase tracking-wide">
+        <tr>
+          <th class="px-1 py-2 no-print"></th>
+          <th class="px-3 py-2 text-left">Cliente</th>
+          <th class="px-3 py-2 text-left">Serviço</th>
+          <th class="px-3 py-2 text-left">Canal</th>
+          <th class="px-3 py-2 text-right">Valor (R$)</th>
+          <th class="px-3 py-2 text-right">Mensalidade (R$)</th>
+          <th class="px-3 py-2 text-center">Data</th>
+          <th class="px-3 py-2 text-center">Mês</th>
+          <th class="px-3 py-2 text-center">Alocações</th>
+          <th class="px-3 py-2 text-center">Tipo</th>
+          <th class="px-3 py-2 text-center">Semana</th>
+          <th class="px-3 py-2 text-right">Ciclo (dias)</th>
+          <th class="px-3 py-2 text-center no-print">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="revenue-tbody" class="divide-y divide-gray-100">
+        <!-- rows injected by JS -->
+      </tbody>
+    </table>
+
+    <!-- Rodapé totais -->
+    <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-6 text-sm font-semibold text-gray-700">
+      <span>Total: <span id="total-valor" class="text-blue-700">R$ 0,00</span></span>
+      <span>Linhas: <span id="total-linhas" class="text-blue-700">0</span></span>
+      <span>Ciclo médio: <span id="ciclo-medio" class="text-blue-700">— dias</span></span>
+      <span>Ticket médio mensalidade: <span id="ticket-medio" class="text-blue-700">—</span></span>
+    </div>
+  </div>
+</section>
+
+</main>
+</div><!-- /panel-dashboard -->
+
+<!-- ══════════════════════════════════════════════
+     PAINEL CADEIRAS
+══════════════════════════════════════════════ -->
+<div id="panel-cadeiras" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+
+  <section>
+    <!-- Header da seção -->
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
+      <span class="text-lg font-bold">Controle de Cadeiras</span>
+      <div class="admin-only flex gap-2 no-print flex-wrap">
+        <button onclick="addCadeira()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+          + Adicionar Cadeira
+        </button>
+        <button onclick="importarCSVInicial()" class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Importar dados da planilha original">
+          ⬆ Dados da Planilha
+        </button>
+        <label class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition cursor-pointer" title="Carregar arquivo CSV externo">
+          📂 Importar CSV
+          <input type="file" accept=".csv" class="hidden" onchange="carregarCSV(event)" />
+        </label>
+        <button onclick="if(confirm('Limpar todas as cadeiras?')) { cadeirasRows=[]; renderCadeiras(); saveCadeirasState(); }" class="bg-red-700 text-white text-sm px-3 py-1 rounded-lg hover:bg-red-800 transition">
+          🗑 Limpar
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards resumo -->
+    <div class="bg-white border border-t-0 border-gray-200 px-5 py-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+        <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff; border-color:#e0dff7;">
+          <p class="text-xs font-semibold mb-1" style="color:var(--text2);">TOTAL CADEIRAS</p>
+          <p id="cad-total" class="text-3xl font-bold" style="color:var(--black);">0</p>
+          <p class="text-xs mt-1" style="color:var(--muted);">posições no período</p>
+        </div>
+
+        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4; border-color:#bbf7d0;">
+          <p class="text-xs font-semibold mb-1" style="color:#166534;">ATIVAS AGORA</p>
+          <p id="cad-ativas" class="text-3xl font-bold" style="color:#16a34a;">0</p>
+          <p class="text-xs mt-1" style="color:#4ade80;">ativas + saindo em maio</p>
+        </div>
+
+        <div class="rounded-xl p-4 border text-center" style="background:#fffbeb; border-color:#fde68a;">
+          <p class="text-xs font-semibold mb-1" style="color:#92400e;">CADEIRAS 3 MESES</p>
+          <p id="cad-mais3" class="text-3xl font-bold" style="color:#d97706;">0</p>
+          <p class="text-xs mt-1" style="color:#fbbf24;">3–4 meses ativos</p>
+        </div>
+
+        <div class="rounded-xl p-4 border text-center" style="background:#eef2ff; border-color:#c7d2fe;">
+          <p class="text-xs font-semibold mb-1" style="color:#3730a3;">CADEIRAS +5 MESES</p>
+          <p id="cad-mais5" class="text-3xl font-bold" style="color:#4338ca;">0</p>
+          <p class="text-xs mt-1 font-semibold" id="cad-mais5-pct" style="color:#818cf8;">0% do total</p>
+        </div>
+
+      </div>
+
+      <!-- Legenda dos status -->
+      <div class="flex flex-wrap gap-3 mt-4 pt-3 border-t" style="border-color:var(--border);">
+        <span class="text-xs font-medium" style="color:var(--muted);">Legenda:</span>
+        <span style="background:#16a34a;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">ATIVO</span>
+        <span style="background:#d97706;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">SAINDO</span>
+        <span style="background:#94a3b8;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">FORA</span>
+        <span style="background:#f1f5f9;color:#94a3b8;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;border:1px solid #e2e8f0;">· vazio</span>
+        <span class="text-xs ml-2" style="color:var(--muted);">— Clique em qualquer célula para alternar o status</span>
+      </div>
+    </div>
+
+    <!-- Barra de filtro por duração -->
+    <div class="bg-white border border-t-0 border-gray-200 px-5 py-3 flex flex-wrap items-center gap-2">
+      <span class="text-xs font-semibold" style="color:var(--text2);">Filtrar por duração:</span>
+      <button onclick="filtrarDuracao(null)"  id="filt-dur-all" class="filt-dur-btn active-filt">Todos</button>
+      <button onclick="filtrarDuracao(2)"     id="filt-dur-2"   class="filt-dur-btn">2m</button>
+      <button onclick="filtrarDuracao(3)"     id="filt-dur-3"   class="filt-dur-btn">3m</button>
+      <button onclick="filtrarDuracao(4)"     id="filt-dur-4"   class="filt-dur-btn">4m</button>
+      <button onclick="filtrarDuracao(5)"     id="filt-dur-5"   class="filt-dur-btn">5m</button>
+      <button onclick="filtrarDuracao(6)"     id="filt-dur-6"   class="filt-dur-btn">6m</button>
+      <button onclick="filtrarDuracao(12)"    id="filt-dur-12"  class="filt-dur-btn">12m</button>
+      <button onclick="filtrarDuracao('sem')" id="filt-dur-sem" class="filt-dur-btn">Sem duração</button>
+      <span id="filt-dur-count" class="text-xs ml-2" style="color:var(--muted);"></span>
+    </div>
+
+    <!-- Tabela -->
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-x-auto">
+      <table class="text-xs" id="cadeiras-table" style="min-width:1480px; border-collapse:collapse;">
+        <thead style="background:#f3f2ff; color:var(--accent2);" class="text-xs uppercase tracking-wide">
+          <tr>
+            <th class="px-1 py-2 no-print" style="width:28px"></th>
+            <th class="px-2 py-2 text-left" style="width:80px">Serviço</th>
+            <th class="px-2 py-2 text-left" style="width:130px">
+              <button onclick="sortCadeiras('cliente')" class="flex items-center gap-1 hover:text-indigo-600 transition font-semibold uppercase tracking-wide text-xs">
+                Cliente <span id="sort-icon-cliente" style="font-size:11px;">↕</span>
+              </button>
+            </th>
+            <th class="px-2 py-2 text-left" style="width:110px">
+              <button onclick="sortCadeiras('vigencia')" class="flex items-center gap-1 hover:text-indigo-600 transition font-semibold uppercase tracking-wide text-xs">
+                Vigência <span id="sort-icon-vigencia" style="font-size:11px;">↕</span>
+              </button>
+            </th>
+            <th class="px-2 py-2 text-center" style="width:72px">Final</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Jan</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Fev</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Mar</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Abr</th>
+            <th class="px-1 py-2 text-center cad-mes-th-cur" style="width:62px;">Mai ◀</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Jun</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Jul</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Ago</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Set</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Out</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Nov</th>
+            <th class="px-1 py-2 text-center" style="width:62px; background:#e0f2fe;">Dez</th>
+            <th class="px-2 py-2 text-center" style="width:64px">Duração</th>
+            <th class="px-2 py-2 text-center" style="width:52px">+3m</th>
+            <th class="px-2 py-2 text-center" style="width:52px">+5m</th>
+            <th class="px-2 py-2 text-center no-print admin-only" style="width:36px">✕</th>
+          </tr>
+        </thead>
+        <tbody id="cadeiras-tbody" class="divide-y divide-gray-100"></tbody>
+      </table>
+      <!-- Rodapé totais -->
+      <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-6 text-sm font-semibold text-gray-700">
+        <span>Total: <span id="cad-total-footer" class="text-blue-700">0</span></span>
+        <span>Ativas: <span id="cad-ativas-footer" class="text-green-600">0</span></span>
+        <span>+5 meses: <span id="cad-mais5-footer" style="color:var(--accent)">0</span>
+          (<span id="cad-mais5-pct-footer" style="color:var(--accent)">0%</span> da meta: 80%)</span>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /panel-cadeiras -->
+
+<!-- ══════════════════════════════════════════════
+     PAINEL CONTRATOS
+══════════════════════════════════════════════ -->
+<div id="panel-contratos" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
+      <span class="text-lg font-bold">Controle de Contratos</span>
+      <div class="admin-only flex gap-2 no-print">
+        <button onclick="addContrato()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+          + Adicionar Contrato
+        </button>
+        <button onclick="importarContratosDeCADEIRAS()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition" title="Preenche a partir das cadeiras cadastradas">
+          🪑 Importar de Cadeiras
+        </button>
+        <button onclick="exportContratosCSV()" class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition">
+          ⬇ CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards resumo -->
+    <div class="bg-white border border-t-0 border-gray-200 px-5 py-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+          <p class="text-xs font-semibold mb-1" style="color:var(--text2);">CONTRATOS ATIVOS</p>
+          <p id="cont-total" class="text-3xl font-bold" style="color:var(--black);">0</p>
+        </div>
+        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#bbf7d0;">
+          <p class="text-xs font-semibold mb-1" style="color:#166534;">VALOR TOTAL MRR</p>
+          <p id="cont-mrr" class="text-xl font-bold" style="color:#16a34a;">R$ 0</p>
+          <p class="text-xs mt-1" style="color:#4ade80;">soma dos valores/RPO</p>
+        </div>
+        <div class="rounded-xl p-4 border text-center" style="background:#fffbeb;border-color:#fde68a;">
+          <p class="text-xs font-semibold mb-1" style="color:#92400e;">VALOR TOTAL VÍNCULOS</p>
+          <p id="cont-total-valor" class="text-xl font-bold" style="color:#d97706;">R$ 0</p>
+          <p class="text-xs mt-1" style="color:#fbbf24;">soma total dos contratos</p>
+        </div>
+        <div class="rounded-xl p-4 border text-center" style="background:#eef2ff;border-color:#c7d2fe;">
+          <p class="text-xs font-semibold mb-1" style="color:#3730a3;">CADEIRAS CONTRATADAS</p>
+          <p id="cont-cadeiras" class="text-3xl font-bold" style="color:#4338ca;">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-x-auto">
+      <table class="text-sm w-full" id="contratos-table" style="min-width:1200px; border-collapse:collapse;">
+        <thead style="background:#f3f2ff;color:var(--accent2);" class="text-xs uppercase tracking-wide">
+          <tr>
+            <th class="px-2 py-3 text-left" style="width:150px;">Cliente</th>
+            <th class="px-2 py-3 text-left" style="width:110px;">Vigência</th>
+            <th class="px-2 py-3 text-center" style="width:90px;">Início</th>
+            <th class="px-2 py-3 text-center" style="width:90px;">Fim</th>
+            <th class="px-2 py-3 text-center" style="width:70px;">Duração</th>
+            <th class="px-2 py-3 text-center" style="width:70px;">Cadeiras</th>
+            <th class="px-2 py-3 text-right" style="width:130px;">Valor / RPO</th>
+            <th class="px-2 py-3 text-right" style="width:140px;">Valor Total Vínculo</th>
+            <th class="px-2 py-3 text-center" style="width:140px;">Tipo de Contrato</th>
+            <th class="px-2 py-3 text-center" style="width:80px;">Contrato</th>
+            <th class="px-2 py-3 text-center no-print admin-only" style="width:36px;">✕</th>
+          </tr>
+        </thead>
+        <tbody id="contratos-tbody" class="divide-y divide-gray-100"></tbody>
+      </table>
+      <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-6 text-sm font-semibold text-gray-700">
+        <span>Contratos: <span id="cont-total-footer" class="text-blue-700">0</span></span>
+        <span>MRR: <span id="cont-mrr-footer" class="text-green-600">R$ 0</span></span>
+        <span>Total vínculos: <span id="cont-total-valor-footer" style="color:var(--accent)">R$ 0</span></span>
+        <span>Cadeiras: <span id="cont-cadeiras-footer" class="text-blue-700">0</span></span>
+      </div>
+      <div class="px-4 pb-3">
+        <p id="cont-up-legenda" class="text-xs italic" style="color:var(--muted);line-height:1.5;">
+          * Linhas com sufixo "UP" no nome do cliente são excluídas da contagem — upsell do mesmo cliente não conta como novo vínculo.
+        </p>
+      </div>
+    </div>
+  </section>
+</div><!-- /panel-contratos -->
+
+<footer class="text-center text-xs text-gray-400 py-6 no-print">
+  INTERA Dashboard · Gestão à Vista RPO · Dados via HubSpot API v3
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+// ─── VIEWER MODE ────────────────────────────────
+const IS_VIEWER = !['localhost','127.0.0.1'].includes(location.hostname);
+
+// ─── CONSTANTS ──────────────────────────────────
+const META_RECEITA = 2_100_000;
+let PIPELINE_ID  = localStorage.getItem('hs_pipeline') || '873229319';
+// IDs reais do pipeline "RPO - Vendas e Renovação"
+const STAGE_FECHADO  = '1308217885'; // NEGÓCIO FECHADO
+const STAGE_RENOVADO = '1308217892'; // CONTRATO RENOVADO
+const STAGE_APTA_REN = '1308217888'; // APTA PARA RENOVAÇÃO
+const STAGES_WON     = [STAGE_FECHADO, STAGE_RENOVADO];
+const CANAIS_CORES = {
+  'UP':         'tag-upsell',
+  'UPSELL':     'tag-upsell',
+  'NTW':        'tag-ntw',
+  'REN':        'tag-renovacao',
+  'RENOVAÇÃO':  'tag-renovacao',
+  'RENOVACAO':  'tag-renovacao',
+  'OUT':        'tag-out',
+  'INB':        'tag-inb',
+  'MKT':        'tag-mkt',
+};
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+// ─── STATE ──────────────────────────────────────
+let tableRows  = [];
+let funnelData = {};
+let cicloData  = {};
+let charts     = {};
+// Campos editados manualmente em linhas do HubSpot, indexados por deal ID
+let hsOverrides = JSON.parse(localStorage.getItem('hs_overrides') || '{}');
+// Deal IDs excluídos manualmente — nunca voltam ao carregar HubSpot
+let hsDeleted = new Set(JSON.parse(localStorage.getItem('hs_deleted') || '[]'));
+let realizadoLocked = localStorage.getItem('realizado_locked') === 'true';
+
+// ─── INIT ────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (IS_VIEWER) {
+    document.body.classList.add('viewer-mode');
+    fetch('./data.json')
+      .then(r => { if (!r.ok) throw new Error('no data'); return r.json(); })
+      .then(d => {
+        if (Array.isArray(d.table_rows))     tableRows      = d.table_rows;
+        if (Array.isArray(d.cadeiras_rows))  cadeirasRows   = d.cadeiras_rows;
+        if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
+        if (d.hs_overrides)  hsOverrides = d.hs_overrides;
+        if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
+        if (d.realizado_locked !== undefined) realizadoLocked = d.realizado_locked;
+        cadeirasRows.forEach(r => autoCompletarMeses(r));
+        initCharts();
+        renderTable();
+        renderCadeiras();
+        renderContratos();
+        if (d.okr_state) restoreOKRFromState(d.okr_state);
+        updateLockIcon();
+        switchTab(d.active_tab || 'dashboard');
+      })
+      .catch(() => {
+        initCharts(); renderTable(); renderCadeiras(); renderContratos();
+        restoreOKRInputs(); updateLockIcon(); switchTab('dashboard');
+      });
+    return;
+  }
+
+  // ── Admin mode ───────────────────────────────
+  const saved = localStorage.getItem('hs_token');
+  if (saved) document.getElementById('hubspot-token').value = saved;
+  const savedPipeline = localStorage.getItem('hs_pipeline');
+  if (savedPipeline) { document.getElementById('hubspot-pipeline').value = savedPipeline; PIPELINE_ID = savedPipeline; }
+
+  restoreOKRInputs();
+  updateLockIcon();
+  initCharts();
+  renderTable();
+  renderCadeiras();
+  renderContratos();
+
+  // Restaura aba ativa
+  const activeTab = localStorage.getItem('active_tab') || 'dashboard';
+  switchTab(activeTab);
+});
+
+function lockRealizado() {
+  realizadoLocked = true;
+  localStorage.setItem('realizado_locked', 'true');
+  updateLockIcon();
+}
+
+function unlockRealizado() {
+  realizadoLocked = false;
+  localStorage.setItem('realizado_locked', 'false');
+  updateLockIcon();
+  // Recalcula a partir da tabela atual
+  const total = tableRows.filter(r => r.source === 'hs').reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
+  if (total > 0) { document.getElementById('input-realizado').value = Math.round(total); updateOKR('receita', total); }
+}
+
+function updateLockIcon() {
+  const btn = document.getElementById('btn-unlock-realizado');
+  if (!btn) return;
+  btn.textContent = realizadoLocked ? '🔒' : '🔓';
+  btn.title = realizadoLocked ? 'Valor manual — clique para sincronizar com HubSpot' : 'Sincronizado com HubSpot';
+}
+
+// ─── OKR HELPERS ────────────────────────────────
+function updateOKR(type, value) {
+  if (type === 'receita') {
+    const v     = parseFloat(value) || 0;
+    const pct   = Math.min((v / META_RECEITA) * 100, 100);
+    document.getElementById('bar-receita').style.width    = pct + '%';
+    document.getElementById('pct-receita').textContent    = fmt(pct, 2) + '%';
+    document.getElementById('realizado-label').textContent = 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2});
+    calcCAC();
+  }
+  saveOKRInputs();
+}
+
+function setBar(barId, pctId, value, color) {
+  const v = Math.min(Math.max(parseFloat(value) || 0, 0), 100);
+  document.getElementById(barId).style.width = v + '%';
+  document.getElementById(pctId).textContent = fmt(v, 2) + '%';
+  saveOKRInputs();
+}
+
+function updateNPS(type, realId, metaId, barId, pctId) {
+  const real = parseFloat(document.getElementById(realId).value) || 0;
+  const meta = parseFloat(document.getElementById(metaId).value) || 100;
+  const pct  = Math.min((real / meta) * 100, 100);
+  document.getElementById(barId).style.width = pct + '%';
+  document.getElementById(pctId).textContent = real + ' / ' + meta;
+  saveOKRInputs();
+}
+
+let _restoring = false;
+
+function saveOKRInputs() {
+  if (_restoring) return; // não salva durante restauração
+  const ids = ['input-realizado','input-clientes','input-duracao','input-retencao',
+                'nps-meta','nps-real','enps-meta','enps-real','cac-gastos','chart-meta','chart-periodo',
+                'input-meta-novos-clientes'];
+  const state = {};
+  ids.forEach(id => { state[id] = document.getElementById(id)?.value; });
+  localStorage.setItem('okr_state', JSON.stringify(state));
+}
+
+function restoreOKRInputs() {
+  try {
+    const state = JSON.parse(localStorage.getItem('okr_state') || '{}');
+    _restoring = true;
+    // 1ª passagem: preenche todos os valores sem salvar
+    Object.entries(state).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.value = val;
+    });
+    // 2ª passagem: dispara eventos para atualizar barras/gráficos
+    Object.entries(state).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.dispatchEvent(new Event('input'));
+    });
+    _restoring = false;
+    saveOKRInputs(); // salva o estado completo uma única vez
+  } catch(e) { _restoring = false; }
+}
+
+// Igual ao restoreOKRInputs mas recebe state como parâmetro (usado no viewer mode)
+function restoreOKRFromState(state) {
+  try {
+    _restoring = true;
+    Object.entries(state).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.value = val;
+    });
+    Object.entries(state).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.dispatchEvent(new Event('input'));
+    });
+    _restoring = false;
+  } catch(e) { _restoring = false; }
+}
+
+// Gera data.json para publicar no GitHub Pages
+function publicarSnapshot() {
+  const okrIds = ['input-realizado','input-clientes','input-duracao','input-retencao',
+                  'nps-meta','nps-real','enps-meta','enps-real','cac-gastos','chart-meta','chart-periodo',
+                  'input-meta-novos-clientes'];
+  const okrState = {};
+  okrIds.forEach(id => { okrState[id] = document.getElementById(id)?.value; });
+
+  const snapshot = {
+    table_rows:     tableRows,
+    cadeiras_rows:  cadeirasRows,
+    contratos_rows: contratosRows,
+    hs_overrides:   hsOverrides,
+    hs_deleted:     [...hsDeleted],
+    okr_state:      okrState,
+    realizado_locked: realizadoLocked,
+    active_tab:     localStorage.getItem('active_tab') || 'dashboard',
+    snapshot_at:    new Date().toISOString()
+    // hs_token e hs_pipeline NÃO incluídos por segurança
+  };
+
+  const json = JSON.stringify(snapshot, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'data.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  setStatus('✓ data.json gerado — mova para ~/intera-dashboard/ e faça git push', 'green');
+}
+
+function calcCAC() {
+  const gastos = parseFloat(document.getElementById('cac-gastos').value) || 0;
+  const novos  = tableRows.filter(r => !['UP','REN','UPSELL','RENOVAÇÃO','RENOVACAO'].includes(r.canal?.toUpperCase())).length;
+  document.getElementById('cac-novos').textContent = novos;
+  document.getElementById('cac-value').textContent = novos > 0
+    ? 'R$ ' + fmt(gastos / novos, 2)
+    : gastos > 0 ? '∞' : '—';
+}
+
+// ─── CHARTS INIT ────────────────────────────────
+const CHART_DEFAULTS = {
+  color: '#4b4b6a',
+  grid:  'rgba(99,102,241,0.08)',
+  tick:  '#9ca3af',
+};
+
+Chart.defaults.color = CHART_DEFAULTS.color;
+
+function darkScales(extra = {}) {
+  return {
+    y: {
+      grid:  { color: CHART_DEFAULTS.grid },
+      ticks: { color: CHART_DEFAULTS.tick },
+      beginAtZero: true,
+      ...extra.y
+    },
+    x: {
+      grid:  { color: CHART_DEFAULTS.grid },
+      ticks: { color: CHART_DEFAULTS.tick },
+      ...extra.x
+    }
+  };
+}
+
+function initCharts() {
+  const ctxL = document.getElementById('chartLinear').getContext('2d');
+  charts.linear = new Chart(ctxL, {
+    type: 'line',
+    data: buildLinearData(),
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { color: '#a0a0b8', boxWidth: 14 } },
+        tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits:2}) } }
+      },
+      scales: darkScales({
+        y: { ticks: { color: CHART_DEFAULTS.tick, callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
+        x: { grid: { display: false } }
+      })
+    }
+  });
+
+  const ctxC = document.getElementById('chartCiclo').getContext('2d');
+  charts.ciclo = new Chart(ctxC, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: 'Ciclo médio (dias)', data: [], backgroundColor: '#6366f1', borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: darkScales({ x: { grid: { display: false } } })
+    }
+  });
+
+  const ctxF = document.getElementById('chartFunil').getContext('2d');
+  charts.funil = new Chart(ctxF, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: 'Ticket Médio (R$)', data: [], backgroundColor: '#6366f1', borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.x.toLocaleString('pt-BR', {minimumFractionDigits:2}) } }
+      },
+      scales: darkScales({
+        x: { ticks: { color: CHART_DEFAULTS.tick, callback: v => 'R$' + (v/1000).toFixed(0)+'k' } },
+        y: { grid: { display: false } }
+      })
+    }
+  });
+}
+
+function buildLinearData() {
+  const meta   = parseFloat(document.getElementById('chart-meta')?.value) || META_RECEITA;
+  const period = document.getElementById('chart-periodo')?.value || 'semanas';
+  const n      = period === 'semanas' ? 13 : 3;
+  const labels = period === 'semanas'
+    ? Array.from({length: n}, (_, i) => 'Sem ' + (i + 1))
+    : MESES.slice(0, 3);
+
+  // Meta linear: cresce uniformemente a cada período
+  const metaLinear = labels.map((_, i) => parseFloat(((meta / n) * (i + 1)).toFixed(2)));
+
+  // Acumulado real: usa o campo `semana` (1-13) ou `mes` definidos pelo usuário
+  const buckets = Array(n).fill(0);
+  tableRows.forEach(r => {
+    const v = parseFloat(r.valor) || 0;
+    if (!v) return;
+    let idx;
+    if (period === 'semanas') {
+      idx = Math.min(Math.max(normSemana(r.semana) - 1, 0), n - 1);
+    } else {
+      idx = Math.max(MESES.indexOf(r.mes), 0) % n;
+    }
+    buckets[idx] += v;
+  });
+
+  // Acumula progressivamente (semana 3 inclui semanas 1+2+3)
+  const realAcum = buckets.map((_, i) => buckets.slice(0, i + 1).reduce((a, b) => a + b, 0));
+
+  return {
+    labels,
+    datasets: [
+      { label: 'Meta Linear',    data: metaLinear, borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.08)', borderDash: [6,3],
+        tension: 0.1, pointRadius: 3, fill: false },
+      { label: 'Resultado Real', data: realAcum,   borderColor: '#6366f1',
+        backgroundColor: 'rgba(99,102,241,0.15)',
+        tension: 0.3, pointRadius: 4, fill: true }
+    ]
+  };
+}
+
+function rebuildLineChart() {
+  if (!charts.linear) return;
+  const data = buildLinearData();
+  charts.linear.data = data;
+  charts.linear.update();
+  saveOKRInputs();
+}
+
+function updateCicloChart() {
+  const agg = {};
+  tableRows.forEach(r => {
+    const c = (r.canal || 'N/D').toUpperCase();
+    if (!agg[c]) agg[c] = [];
+    if (r.ciclo > 0) agg[c].push(r.ciclo);
+  });
+  const labels = Object.keys(agg);
+  const data   = labels.map(c => agg[c].length ? Math.round(agg[c].reduce((a,b)=>a+b,0)/agg[c].length) : 0);
+  charts.ciclo.data.labels   = labels;
+  charts.ciclo.data.datasets[0].data = data;
+  charts.ciclo.update();
+}
+
+function updateFunilChart() {
+  // Ticket médio da mensalidade agrupado por canal
+  const agg = {};
+  tableRows.forEach(r => {
+    const m = parseFloat(r.mensalidade);
+    if (!m || m <= 0) return;
+    const c = (r.canal || 'N/D').toUpperCase();
+    if (!agg[c]) agg[c] = [];
+    agg[c].push(m);
+  });
+  const labels = Object.keys(agg);
+  const data   = labels.map(c => Math.round(agg[c].reduce((a,b)=>a+b,0)/agg[c].length));
+  charts.funil.data.labels   = labels;
+  charts.funil.data.datasets[0].data = data;
+  charts.funil.data.datasets[0].backgroundColor = labels.map(c => ({
+    'UP':'#bfdbfe','NTW':'#bbf7d0','REN':'#fef08a','OUT':'#fbcfe8',
+    'INB':'#ddd6fe','MKT':'#fed7aa'
+  }[c] || '#e5e7eb'));
+  charts.funil.update();
+}
+
+const CANAIS_CASA = new Set(['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO']);
+
+function updateReceitaCards() {
+  let casa = 0, novos = 0, qtdNovos = 0;
+  tableRows.forEach(r => {
+    const v = parseFloat(r.valor) || 0;
+    const c = (r.canal || '').toUpperCase();
+    if (CANAIS_CASA.has(c)) { casa += v; }
+    else { novos += v; qtdNovos++; }
+  });
+
+  const metaCasa  = 1_500_000;
+  const metaNovos =   600_000;
+  const metaNovosClientes = parseInt(document.getElementById('input-meta-novos-clientes')?.value) || 8;
+
+  const pctCasa  = Math.min((casa  / metaCasa)  * 100, 100);
+  const pctNovos = Math.min((novos / metaNovos) * 100, 100);
+  const pctNC    = Math.min((qtdNovos / metaNovosClientes) * 100, 100);
+
+  document.getElementById('receita-casa-valor').textContent  = fmtBRL(casa);
+  document.getElementById('bar-receita-casa').style.width    = pctCasa + '%';
+  document.getElementById('pct-receita-casa').textContent    = fmt(pctCasa,1) + '% da meta';
+
+  document.getElementById('receita-novos-valor').textContent = fmtBRL(novos);
+  document.getElementById('bar-receita-novos').style.width   = pctNovos + '%';
+  document.getElementById('pct-receita-novos').textContent   = fmt(pctNovos,1) + '% da meta';
+
+  document.getElementById('novos-clientes-valor').textContent = qtdNovos;
+  document.getElementById('bar-novos-clientes').style.width   = pctNC + '%';
+  document.getElementById('pct-novos-clientes').textContent   = qtdNovos + ' de ' + metaNovosClientes;
+}
+
+// ─── HUBSPOT FETCH ───────────────────────────────
+function hsProxy(token, path) {
+  return '/hubspot-proxy/' + encodeURIComponent(token) + '/' + path;
+}
+
+async function testConnection() {
+  const token = document.getElementById('hubspot-token').value.trim();
+  if (!token) { setStatus('Cole o token primeiro.', 'red'); return; }
+  setStatus('Testando token…', 'blue');
+  try {
+    const res  = await fetch(hsProxy(token, 'crm/v3/objects/deals?limit=1'));
+    const json = await res.json();
+    if (!res.ok) {
+      setStatus('Token inválido: ' + (json.message || res.status), 'red');
+    } else {
+      setStatus('✓ Token válido! Total de deals: ' + (json.total ?? '?'), 'green');
+    }
+  } catch (e) {
+    setStatus('Erro: ' + e.message, 'red');
+  }
+}
+
+async function fetchHubSpot() {
+  const token = document.getElementById('hubspot-token').value.trim();
+  if (!token) { alert('Cole o HubSpot Access Token antes de carregar.'); return; }
+  localStorage.setItem('hs_token', token);
+  setStatus('Carregando HubSpot…', 'blue');
+
+  try {
+    const deals = await searchDeals(token);
+    processDeals(deals);
+    setStatus('✓ ' + deals.length + ' deals carregados — ' + new Date().toLocaleTimeString('pt-BR'), 'green');
+  } catch (e) {
+    setStatus('Erro: ' + (e.message || e), 'red');
+    console.error(e);
+  }
+}
+
+async function searchDeals(token) {
+  let after  = undefined;
+  let all    = [];
+  const PAGE = 100;
+
+  do {
+    const filters = PIPELINE_ID
+      ? [{ propertyName: 'pipeline', operator: 'EQ', value: PIPELINE_ID }]
+      : [];
+    const body = {
+      ...(filters.length ? { filterGroups: [{ filters }] } : {}),
+      properties: ['dealname','amount','dealstage','pipeline','createdate','closedate',
+                   'hs_date_entered_' + STAGE_FECHADO,
+                   'hs_date_entered_' + STAGE_APTA_REN,
+                   'hs_date_entered_' + STAGE_RENOVADO],
+      limit: PAGE,
+      ...(after ? { after } : {})
+    };
+
+    const res = await fetch(hsProxy(token, 'crm/v3/objects/deals/search'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(res.status + ': ' + (err.message || res.statusText));
+    }
+
+    const json = await res.json();
+    all = all.concat(json.results || []);
+    after = json.paging?.next?.after;
+  } while (after);
+
+  return all;
+}
+
+// ─── PROCESS DEALS ──────────────────────────────
+function processDeals(deals) {
+  funnelData = {};
+  const wonRows = [];
+
+  deals.forEach(d => {
+    if (hsDeleted.has(String(d.id))) return; // deal excluído manualmente, ignora
+
+    const props    = d.properties || {};
+    const amount   = parseFloat(props.amount) || 0;
+    const name     = props.dealname || '';
+
+    // Funil (todos os deals do pipeline)
+    const stageName = stageLabel(props.dealstage || '');
+    funnelData[stageName] = (funnelData[stageName] || 0) + amount;
+
+    // Canal: último segmento de "Empresa | Lead | Canal"
+    const parts = name.split('|');
+    const canal = parts.length >= 2 ? parts[parts.length - 1].trim() : 'N/D';
+
+    // Apenas deals ganhos alimentam a tabela (compara pelo ID real do estágio)
+    const stageId = props.dealstage || '';
+    const isRen   = stageId === STAGE_RENOVADO;
+    const isWon   = stageId === STAGE_FECHADO || isRen;
+    if (!isWon) return;
+
+    // Ciclo de vendas usando propriedades hs_date_entered_<stageId>
+    let ciclo = 0;
+    if (isRen) {
+      const entradaApta     = props['hs_date_entered_' + STAGE_APTA_REN];
+      const entradaRenovado = props['hs_date_entered_' + STAGE_RENOVADO];
+      ciclo = diffDays(entradaApta, entradaRenovado);
+    } else {
+      const entradaFechado = props['hs_date_entered_' + STAGE_FECHADO] || props.closedate;
+      ciclo = diffDays(props.createdate, entradaFechado);
+    }
+
+    // Data de fechamento
+    const closeRaw = props['hs_date_entered_' + STAGE_FECHADO]
+                  || props['hs_date_entered_' + STAGE_RENOVADO]
+                  || props.closedate || '';
+    const closeDate = closeRaw ? new Date(closeRaw) : new Date();
+    const data = closeDate.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' });
+    const mes  = MESES[closeDate.getMonth()];
+    const semana = getSemana(closeDate);
+
+    // Tipo de empresa (heurística: busca na razão social se quiser, por ora deixa N/D)
+    wonRows.push({
+      id: d.id,
+      cliente: parts[0]?.trim() || name,
+      servico: 'RPO',
+      canal,
+      valor: amount,
+      data,
+      mes,
+      alocacoes: '',
+      tipo: 'N/D',
+      semana,
+      ciclo,
+      source: 'hs'
+    });
+  });
+
+  // Reaplicar edições manuais salvas sobre as linhas recém-carregadas do HubSpot
+  wonRows.forEach(row => {
+    const overrides = hsOverrides[row.id];
+    if (overrides) Object.assign(row, overrides);
+  });
+
+  // Merge: manter linhas manuais, substituir linhas do HS
+  tableRows = [
+    ...tableRows.filter(r => r.source !== 'hs'),
+    ...wonRows
+  ];
+
+  renderTable();
+  updateCicloChart();
+  updateFunilChart();
+  rebuildLineChart();
+
+  // Auto-link: cria cadeira para cada deal ganho (se ainda não existir)
+  wonRows.forEach(row => linkDealToCadeira(row));
+  renderCadeiras();
+
+  // Atualiza realizado apenas se não estiver travado manualmente
+  const totalWon = wonRows.reduce((s, r) => s + r.valor, 0);
+  if (!realizadoLocked) {
+    document.getElementById('input-realizado').value = Math.round(totalWon);
+    updateOKR('receita', totalWon);
+  }
+  calcCAC();
+}
+
+// ─── REVENUE FILTER ──────────────────────────────
+let _revFilter = null;
+
+function filtrarCanal(canal) {
+  _revFilter = canal;
+  document.querySelectorAll('.rfilt').forEach(b => b.classList.remove('active-rfilt'));
+  const id = canal ? 'rfilt-' + canal.replace('/','') : 'rfilt-all';
+  document.getElementById(id)?.classList.add('active-rfilt');
+  renderTable();
+}
+
+// ─── TABLE RENDER ────────────────────────────────
+function renderTable() {
+  const tbody = document.getElementById('revenue-tbody');
+  tbody.innerHTML = '';
+
+  // aplica filtro de canal
+  const visibleRows = _revFilter === null
+    ? tableRows.map((r,i) => ({r,i}))
+    : tableRows.map((r,i) => ({r,i})).filter(({r}) => (r.canal||'N/D').toUpperCase() === _revFilter.toUpperCase());
+
+  const rcEl = document.getElementById('rfilt-count');
+  if (rcEl) rcEl.textContent = _revFilter ? `${visibleRows.length} de ${tableRows.length} negócio(s)` : '';
+
+  visibleRows.forEach(({ r: row, i }) => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-blue-50 transition';
+    tr.dataset.idx = i;
+    tr.addEventListener('dragover',  onDragOver);
+    tr.addEventListener('dragleave', onDragLeave);
+    tr.addEventListener('drop',      onDrop);
+    tr.addEventListener('dragend',   onDragEnd);
+    tr.innerHTML = `
+      <td class="px-1 py-2 no-print admin-only"><span class="drag-handle" title="Arrastar para reordenar" onmousedown="enableDrag(event,${i})" onmouseup="disableDrag(event)">⠿</span></td>
+      <td class="px-3 py-2"><span contenteditable="true" onblur="updateCell(${i},'cliente',this.textContent)">${esc(row.cliente)}</span></td>
+      <td class="px-3 py-2">
+        <select class="select-canal text-xs border-0 bg-transparent" onchange="updateCell(${i},'servico',this.value)">
+          <option ${row.servico==='RPO'?'selected':''}>RPO</option>
+          <option ${row.servico==='Hunting'?'selected':''}>Hunting</option>
+        </select>
+      </td>
+      <td class="px-3 py-2">
+        <select class="tag ${canalClass(row.canal)} border-0 cursor-pointer" onchange="updateCanalTag(${i},this.value)">
+          ${['UP','NTW','REN','OUT','INB','MKT','N/D'].map(c=>`<option ${row.canal===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-3 py-2 text-right font-medium">
+        <span contenteditable="true" onblur="updateCell(${i},'valor',parseMoeda(this.textContent))">${fmtBRL(row.valor)}</span>
+      </td>
+      <td class="px-3 py-2 text-right">
+        <span contenteditable="true" onblur="updateCell(${i},'mensalidade',parseMoeda(this.textContent))">${row.mensalidade > 0 ? fmtBRL(row.mensalidade) : '—'}</span>
+      </td>
+      <td class="px-3 py-2 text-center">
+        <span contenteditable="true" onblur="updateCell(${i},'data',this.textContent)">${esc(row.data)}</span>
+      </td>
+      <td class="px-3 py-2 text-center">
+        <select class="select-canal text-xs border rounded px-1" onchange="updateCell(${i},'mes',this.value)">
+          ${MESES.map(m=>`<option ${row.mes===m?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-3 py-2 text-center">
+        <span contenteditable="true" onblur="updateCell(${i},'alocacoes',this.textContent)">${esc(row.alocacoes||'')}</span>
+      </td>
+      <td class="px-3 py-2 text-center">
+        <select class="tag ${tipoClass(row.tipo)} border-0 cursor-pointer" onchange="updateTipoTag(${i},this.value)">
+          ${['N/D','Enterprise','GG','SMB'].map(t=>`<option ${row.tipo===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-3 py-2 text-center">
+        <select class="select-canal text-xs border rounded px-1" onchange="updateCell(${i},'semana',parseInt(this.value))">
+          ${Array.from({length:13},(_,i)=>i+1).map(s=>`<option value="${s}" ${normSemana(row.semana)==s?'selected':''}>Sem ${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-3 py-2 text-right">
+        <span contenteditable="true" onblur="updateCell(${i},'ciclo',parseInt(this.textContent)||0)">${row.ciclo > 0 ? row.ciclo : '—'}</span>
+      </td>
+      <td class="px-3 py-2 text-center no-print admin-only">
+        <button onclick="removeRow(${i})" class="text-red-400 hover:text-red-600 text-xs font-bold px-2">✕</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  updateTotals();
+}
+
+// ─── DRAG & DROP ─────────────────────────────────
+let dragSrcIdx = null;
+
+function enableDrag(e, idx) {
+  const tr = e.target.closest('tr');
+  if (!tr) return;
+  tr.draggable = true;
+  tr.addEventListener('dragstart', onDragStart, { once: true });
+}
+
+function disableDrag(e) {
+  const tr = e.target.closest('tr');
+  if (tr) tr.draggable = false;
+}
+
+function onDragStart(e) {
+  dragSrcIdx = parseInt(this.dataset.idx);
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragSrcIdx); // necessário para Firefox
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('#revenue-tbody tr').forEach(r => r.classList.remove('drag-over'));
+  this.classList.add('drag-over');
+}
+
+function onDragLeave() {
+  this.classList.remove('drag-over');
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const destIdx = parseInt(this.dataset.idx);
+  if (dragSrcIdx === null || dragSrcIdx === destIdx) return;
+  const moved = tableRows.splice(dragSrcIdx, 1)[0];
+  tableRows.splice(destIdx, 0, moved);
+  saveTableState();
+  renderTable();
+}
+
+function onDragEnd() {
+  document.querySelectorAll('#revenue-tbody tr').forEach(r => {
+    r.classList.remove('dragging', 'drag-over');
+    r.draggable = false;
+  });
+  dragSrcIdx = null;
+}
+
+function updateTotals() {
+  const total  = tableRows.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  const ciclos = tableRows.map(r => parseInt(r.ciclo)).filter(c => c > 0);
+  const mens   = tableRows.map(r => parseFloat(r.mensalidade)).filter(v => v > 0);
+  const tmGeral = mens.length ? mens.reduce((a,b)=>a+b,0)/mens.length : 0;
+
+  document.getElementById('total-valor').textContent  = fmtBRL(total);
+  document.getElementById('total-linhas').textContent = tableRows.length;
+  document.getElementById('ciclo-medio').textContent  = ciclos.length
+    ? Math.round(ciclos.reduce((a,b)=>a+b,0)/ciclos.length) + ' dias' : '—';
+  document.getElementById('ticket-medio').textContent = tmGeral > 0 ? fmtBRL(tmGeral) : '—';
+  document.getElementById('ticket-medio-geral').textContent = tmGeral > 0 ? fmtBRL(tmGeral) : '—';
+  updateReceitaCards();
+}
+
+function updateCell(i, key, val) {
+  if (key === 'semana') val = normSemana(val);
+  tableRows[i][key] = val;
+  saveOverride(i, key, val);
+  if (key === 'valor')       { updateTotals(); rebuildLineChart(); }
+  if (key === 'ciclo')       { updateCicloChart(); }
+  if (key === 'mensalidade') { updateFunilChart(); updateTotals(); }
+  if (key === 'canal')       { updateReceitaCards(); }
+  saveTableState();
+}
+
+function updateCanalTag(i, val) {
+  tableRows[i].canal = val;
+  saveOverride(i, 'canal', val);
+  renderTable();
+  updateCicloChart();
+  updateReceitaCards();
+  saveTableState();
+}
+
+function updateTipoTag(i, val) {
+  tableRows[i].tipo = val;
+  saveOverride(i, 'tipo', val);
+  renderTable();
+  saveTableState();
+}
+
+function saveOverride(i, key, val) {
+  const row = tableRows[i];
+  if (!row || row.source !== 'hs') return; // só persiste overrides de linhas do HubSpot
+  if (!hsOverrides[row.id]) hsOverrides[row.id] = {};
+  hsOverrides[row.id][key] = val;
+  localStorage.setItem('hs_overrides', JSON.stringify(hsOverrides));
+}
+
+function addRow() {
+  tableRows.push({
+    id: 'manual_' + Date.now(),
+    cliente: 'Novo Cliente', servico: 'RPO', canal: 'NTW',
+    valor: 0, mensalidade: 0, data: '', mes: MESES[new Date().getMonth()],
+    alocacoes: '', tipo: 'N/D', semana: 1, ciclo: 0,
+    source: 'manual'
+  });
+  renderTable();
+  saveTableState();
+}
+
+function removeRow(i) {
+  const row = tableRows[i];
+  if (row?.source === 'hs' && row?.id) {
+    hsDeleted.add(String(row.id));
+    localStorage.setItem('hs_deleted', JSON.stringify([...hsDeleted]));
+  }
+  tableRows.splice(i, 1);
+  renderTable();
+  updateCicloChart();
+  rebuildLineChart();
+  saveTableState();
+}
+
+function clearHSRows() {
+  if (!confirm('Remover todas as linhas importadas do HubSpot?')) return;
+  tableRows = tableRows.filter(r => r.source !== 'hs');
+  renderTable();
+  saveTableState();
+}
+
+function saveTableState() {
+  try { localStorage.setItem('table_rows', JSON.stringify(tableRows)); } catch(e) {}
+}
+
+// ─── CSV EXPORT ──────────────────────────────────
+function exportCSV() {
+  const headers = ['Cliente','Serviço','Canal','Valor','Data','Mês','Alocações','Tipo','Semana','Ciclo'];
+  const rows    = tableRows.map(r =>
+    [r.cliente, r.servico, r.canal, r.valor, r.data, r.mes, r.alocacoes, r.tipo, r.semana, r.ciclo]
+    .map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(',')
+  );
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'resultados_revenue_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ─── UTILS ──────────────────────────────────────
+function normSemana(v) { return parseInt(String(v).replace(/\D/g,'')) || 1; }
+function esc(s) { return String(s ?? '').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(n, d) { return parseFloat(n).toFixed(d).replace('.',','); }
+function fmtBRL(v) { return (parseFloat(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function parseMoeda(s) { return parseFloat(String(s).replace(/[R$\s.]/g,'').replace(',','.')) || 0; }
+
+function diffDays(from, to) {
+  if (!from || !to) return 0;
+  const a = new Date(from), b = new Date(to);
+  return Math.max(0, Math.round((b - a) / 86400000));
+}
+
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes('/')) {
+    const [d, m] = str.split('/');
+    return new Date(new Date().getFullYear(), parseInt(m)-1, parseInt(d));
+  }
+  return new Date(str);
+}
+
+function getQuarterStart() {
+  const now = new Date();
+  const q   = Math.floor(now.getMonth() / 3);
+  return new Date(now.getFullYear(), q * 3, 1);
+}
+
+function getSemana(date) {
+  const qs   = getQuarterStart();
+  const diff = Math.ceil((date - qs) / (7 * 86400000));
+  return Math.min(Math.max(diff, 1), 13);
+}
+
+function stageLabel(stageId) {
+  const map = {
+    '1308218183': 'SQL',
+    '1308218184': "OPP's",
+    '1308218185': 'Reunião Realizada',
+    '1308218186': 'Proposta Enviada',
+    '1308218187': 'Follow Up',
+    '1308218188': 'Negociação',
+    '1308218189': 'Homologação/Contrato',
+    '1308217885': 'Negócio Fechado',
+    '1308217886': 'Desqualificada',
+    '1308217887': 'Negócio Perdido',
+    '1308217888': 'Apta p/ Renovação',
+    '1308217889': 'Proposta Renovação',
+    '1308217890': 'Follow Up Renovação',
+    '1308217891': 'Em Negociação',
+    '1308217892': 'Contrato Renovado',
+    '1308217893': 'Churn',
+    '1315418030': 'Prospecção [Resgates]',
+  };
+  return map[stageId] || stageId;
+}
+
+function canalClass(canal) {
+  return CANAIS_CORES[(canal||'').toUpperCase()] || 'bg-gray-100 text-gray-600';
+}
+
+function tipoClass(tipo) {
+  const t = (tipo||'').toLowerCase();
+  if (t === 'enterprise') return 'tag-enterprise';
+  if (t === 'gg')         return 'tag-gg';
+  if (t === 'smb')        return 'tag-smb';
+  return 'bg-gray-100 text-gray-500';
+}
+
+function setStatus(msg, color) {
+  const el = document.getElementById('sync-status');
+  const cls = { blue:'text-blue-500', green:'text-green-600', red:'text-red-500' };
+  el.className = 'text-xs ' + (cls[color] || 'text-gray-400');
+  el.textContent = msg;
+}
+
+// ─── LOAD SAVED TABLE STATE ──────────────────────
+try {
+  const saved = JSON.parse(localStorage.getItem('table_rows') || '[]');
+  if (Array.isArray(saved) && saved.length) { tableRows = saved; }
+} catch(e) {}
+
+// ════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ════════════════════════════════════════════════
+function switchTab(tab) {
+  ['dashboard','cadeiras','contratos'].forEach(t => {
+    document.getElementById('panel-' + t).style.display = tab === t ? '' : 'none';
+    document.getElementById('tab-'   + t).classList.toggle('active', tab === t);
+  });
+  localStorage.setItem('active_tab', tab);
+}
+
+// ════════════════════════════════════════════════
+//  CADEIRAS — STATE
+// ════════════════════════════════════════════════
+let cadeirasRows = [];
+
+function saveCadeirasState() {
+  try { localStorage.setItem('cadeiras_rows', JSON.stringify(cadeirasRows)); } catch(e) {}
+}
+
+// ── Filtro de duração ────────────────────────────
+let _cadFiltDur = null; // null = todos
+
+function filtrarDuracao(val) {
+  _cadFiltDur = val;
+  // atualiza botões
+  const ids = { null:'all', 2:'2', 3:'3', 4:'4', 5:'5', 6:'6', 12:'12', 'sem':'sem' };
+  document.querySelectorAll('.filt-dur-btn').forEach(b => b.classList.remove('active-filt'));
+  const activeId = 'filt-dur-' + (val === null ? 'all' : val);
+  document.getElementById(activeId)?.classList.add('active-filt');
+  renderCadeiras();
+}
+
+// ── Sort ──────────────────────────────────────────
+let _cadSort = { key: null, dir: 1 }; // dir: 1=asc, -1=desc
+
+function vigenciaParaNumero(str) {
+  const vig = parseVigencia(str);
+  if (!vig) return 99999;
+  return vig.year * 100 + vig.month; // ex: 202609 para set/2026
+}
+
+function sortCadeiras(key) {
+  if (_cadSort.key === key) {
+    _cadSort.dir *= -1; // inverte direção
+  } else {
+    _cadSort.key = key;
+    _cadSort.dir = 1;
+  }
+
+  cadeirasRows.sort((a, b) => {
+    let va, vb;
+    if (key === 'vigencia') {
+      va = vigenciaParaNumero(a.vigencia);
+      vb = vigenciaParaNumero(b.vigencia);
+    } else {
+      va = (a[key] || '').toLowerCase();
+      vb = (b[key] || '').toLowerCase();
+    }
+    if (va < vb) return -1 * _cadSort.dir;
+    if (va > vb) return  1 * _cadSort.dir;
+    return 0;
+  });
+
+  // Atualiza ícones
+  ['cliente','vigencia'].forEach(k => {
+    const el = document.getElementById('sort-icon-' + k);
+    if (!el) return;
+    if (k !== _cadSort.key) { el.textContent = '↕'; el.style.color = ''; return; }
+    el.textContent = _cadSort.dir === 1 ? '↑' : '↓';
+    el.style.color = 'var(--accent)';
+  });
+
+  renderCadeiras();
+  saveCadeirasState();
+}
+
+function statusBg(v) {
+  if (v === 'ATIVO')       return '#dcfce7';
+  if (v === 'DESALOCAÇÃO') return '#fef9c3';
+  if (v === 'DESALOCADO')  return '#f3f4f6';
+  return '#ffffff';
+}
+function statusColor(v) {
+  if (v === 'ATIVO')       return '#15803d';
+  if (v === 'DESALOCAÇÃO') return '#854d0e';
+  if (v === 'DESALOCADO')  return '#6b7280';
+  return '#9ca3af';
+}
+
+const ATIVO_OU_SAINDO = v => v === 'ATIVO' || v === 'DESALOCAÇÃO';
+function calcMais3(row) { return row.meses.filter(ATIVO_OU_SAINDO).length >= 3; }
+function calcMais5(row) { return row.meses.filter(ATIVO_OU_SAINDO).length >= 5; }
+
+// Valor efetivo: usa override manual se existir, senão auto-calcula
+function effectiveMais3(row) { return row.mais3 !== null && row.mais3 !== undefined ? row.mais3 : calcMais3(row); }
+function effectiveMais5(row) { return row.mais5 !== null && row.mais5 !== undefined ? row.mais5 : calcMais5(row); }
+
+function toggleMais(i, campo) {
+  const row = cadeirasRows[i];
+  const cur = campo === 'mais3' ? effectiveMais3(row) : effectiveMais5(row);
+  row[campo] = !cur;
+  renderCadeiras();
+  saveCadeirasState();
+}
+
+function resetMais(i, campo, e) {
+  e.stopPropagation();
+  cadeirasRows[i][campo] = null; // volta para auto-cálculo
+  renderCadeiras();
+  saveCadeirasState();
+}
+
+// ── Vigência parsing & auto-complete ─────────────
+function parseVigencia(str) {
+  const map = {
+    'janeiro':0,'fevereiro':1,'março':2,'marco':2,'abril':3,'maio':4,'junho':5,
+    'julho':6,'agosto':7,'setembro':8,'outubro':9,'novembro':10,'dezembro':11
+  };
+  const [nomeMes, ano] = (str || '').toLowerCase().split('/');
+  const m = map[nomeMes?.trim()];
+  if (m === undefined) return null;
+  return { month: m, year: parseInt(ano) || 2026 };
+}
+
+function autoCompletarMeses(row) {
+  const vig = parseVigencia(row.vigencia);
+  if (!vig) return;
+
+  const ANO = 2026;
+  // vigMes: índice do mês de DESALOCAÇÃO (saída). Se o contrato vai além de Dez/2026 → 12 (sem saída este ano)
+  const vigMes = vig.year > ANO ? 12 : (vig.year < ANO ? -1 : vig.month);
+
+  for (let m = 0; m < 12; m++) {
+    if (row.meses[m]) continue; // preserva dados já preenchidos
+    if (vigMes >= 12)        row.meses[m] = 'ATIVO';        // contrato vai além de Dez
+    else if (m < vigMes)     row.meses[m] = 'ATIVO';        // antes do mês de saída
+    else if (m === vigMes)   row.meses[m] = 'DESALOCAÇÃO';  // mês de saída
+    else                     row.meses[m] = 'DESALOCADO';   // depois da saída
+  }
+}
+
+// ── Status badge helper ──────────────────────────
+function cadBadge(v, i, m) {
+  const cycle = ['','ATIVO','DESALOCAÇÃO','DESALOCADO'];
+  const cfg   = {
+    'ATIVO':       { cls:'cb-ativo',  label:'ATIVO'  },
+    'DESALOCAÇÃO': { cls:'cb-saindo', label:'SAINDO' },
+    'DESALOCADO':  { cls:'cb-fora',   label:'FORA'   },
+    '':            { cls:'cb-vazio',  label:'·'      },
+  };
+  const c = cfg[v] || cfg[''];
+  const next = cycle[(cycle.indexOf(v) + 1) % cycle.length];
+  const title = v ? v : 'Clique para definir';
+  return `<span class="cad-badge ${c.cls}" onclick="setCadeiraStatus(${i},${m},'${next}')" title="${title}">${c.label}</span>`;
+}
+
+// ── Render ───────────────────────────────────────
+function renderCadeiras() {
+  const tbody = document.getElementById('cadeiras-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const curMes = new Date().getMonth(); // 4 = Maio
+
+  // aplica filtro de duração
+  const linhasFiltradas = _cadFiltDur === null
+    ? cadeirasRows.map((r, i) => ({ r, i }))
+    : cadeirasRows.map((r, i) => ({ r, i })).filter(({ r }) =>
+        _cadFiltDur === 'sem' ? !r.duracao : String(r.duracao) === String(_cadFiltDur)
+      );
+
+  const countEl = document.getElementById('filt-dur-count');
+  if (countEl) countEl.textContent = _cadFiltDur !== null
+    ? `${linhasFiltradas.length} de ${cadeirasRows.length} cadeira(s)` : '';
+
+  linhasFiltradas.forEach(({ r: row, i }) => {
+    const mais3 = effectiveMais3(row);
+    const mais5 = effectiveMais5(row);
+    const mais3Manual = row.mais3 !== null && row.mais3 !== undefined;
+    const mais5Manual = row.mais5 !== null && row.mais5 !== undefined;
+
+    const tr = document.createElement('tr');
+    tr.dataset.cidx = i;
+    tr.addEventListener('dragover',  onCDragOver);
+    tr.addEventListener('dragleave', onCDragLeave);
+    tr.addEventListener('drop',      onCDrop);
+    tr.addEventListener('dragend',   onCDragEnd);
+
+    // 12 month cells
+    let mesCells = '';
+    row.meses.forEach((v, m) => {
+      const isCur = m === curMes;
+      const bg = isCur && !v ? '#ede9fe' : '';
+      mesCells += `<td class="cad-mes-td" style="${bg?'background:'+bg+';':''}${isCur?'outline:2px solid #6366f1; outline-offset:-2px;':''}">
+        ${cadBadge(v, i, m)}
+      </td>`;
+    });
+
+    // Mais3 / mais5 badges — clicáveis
+    const resetBtn3 = mais3Manual ? `<span onclick="resetMais(${i},'mais3',event)" title="Voltar para auto-cálculo" style="margin-left:3px;font-size:9px;opacity:.6;cursor:pointer;">↺</span>` : '';
+    const resetBtn5 = mais5Manual ? `<span onclick="resetMais(${i},'mais5',event)" title="Voltar para auto-cálculo" style="margin-left:3px;font-size:9px;opacity:.6;cursor:pointer;">↺</span>` : '';
+    const manualStyle3 = mais3Manual ? 'outline:2px dashed #d97706;outline-offset:1px;' : '';
+    const manualStyle5 = mais5Manual ? 'outline:2px dashed #4338ca;outline-offset:1px;' : '';
+
+    const b3 = mais3
+      ? `<span onclick="toggleMais(${i},'mais3')" title="${mais3Manual?'Manual — clique para desmarcar':'Auto — clique para desmarcar'}" style="background:#fef3c7;color:#92400e;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;${manualStyle3}">✓ +3m${resetBtn3}</span>`
+      : `<span onclick="toggleMais(${i},'mais3')" title="${mais3Manual?'Manual — clique para marcar':'Auto — clique para marcar'}" style="background:#f1f5f9;color:#94a3b8;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;${manualStyle3}">— +3m${resetBtn3}</span>`;
+    const b5 = mais5
+      ? `<span onclick="toggleMais(${i},'mais5')" title="${mais5Manual?'Manual — clique para desmarcar':'Auto — clique para desmarcar'}" style="background:#ede9fe;color:#4338ca;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;${manualStyle5}">✓ +5m${resetBtn5}</span>`
+      : `<span onclick="toggleMais(${i},'mais5')" title="${mais5Manual?'Manual — clique para marcar':'Auto — clique para marcar'}" style="background:#f1f5f9;color:#94a3b8;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;${manualStyle5}">— +5m${resetBtn5}</span>`;
+
+    tr.innerHTML = `
+      <td class="px-1 py-2 no-print" style="white-space:nowrap;">
+        <span class="drag-handle" onmousedown="enableCDrag(event,${i})" onmouseup="disableCDrag(event)">⠿</span>
+      </td>
+      <td class="px-2 py-2">
+        <select class="select-canal text-xs border-0 bg-transparent font-medium" onchange="updateCadeiraCell(${i},'servico',this.value)">
+          ${['RPO','Staffing','Hunting'].map(s=>`<option ${row.servico===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-2 py-2 font-medium" style="color:var(--text);">
+        <span contenteditable="true" onblur="updateCadeiraCell(${i},'cliente',this.textContent.trim())"
+          style="display:inline-block;min-width:70px;">${esc(row.cliente)}</span>
+      </td>
+      <td class="px-2 py-2 text-xs" style="color:var(--text2);">
+        <span contenteditable="true" onblur="updateCadeiraCell(${i},'vigencia',this.textContent.trim())"
+          style="display:inline-block;min-width:75px;">${esc(row.vigencia)}</span>
+      </td>
+      <td class="px-2 py-2 text-center text-xs" style="color:var(--text2);">
+        <span contenteditable="true" onblur="updateCadeiraCell(${i},'dataInicio',this.textContent.trim())"
+          style="display:inline-block;min-width:38px;">${esc(row.dataInicio)}</span>
+      </td>
+      ${mesCells}
+      <td class="px-1 py-2 text-center">
+        <select class="dur-sel" onchange="updateCadeiraCell(${i},'duracao', this.value ? parseInt(this.value) : null)"
+          style="color:${row.duracao ? 'var(--accent)' : 'var(--muted)'}; font-weight:${row.duracao ? '700' : '400'};">
+          <option value="">—</option>
+          ${[2,3,4,5,6,12].map(n => `<option value="${n}" ${row.duracao==n?'selected':''}>${n}m</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-2 py-2 text-center">${b3}</td>
+      <td class="px-2 py-2 text-center">${b5}</td>
+      <td class="px-1 py-2 text-center no-print admin-only">
+        <button onclick="removeCadeira(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  updateCadeirasCards();
+}
+
+function updateCadeirasCards() {
+  const total  = cadeirasRows.length;
+  const mesMes = new Date().getMonth(); // current month (0-based); May 2026 = 4
+  const ativas = cadeirasRows.filter(r => r.meses[mesMes] === 'ATIVO' || r.meses[mesMes] === 'DESALOCAÇÃO').length;
+  const mais3  = cadeirasRows.filter(r => effectiveMais3(r) && !effectiveMais5(r)).length;
+  const mais5  = cadeirasRows.filter(r => effectiveMais5(r)).length;
+  const pct5   = total > 0 ? Math.round((mais5 / total) * 100) : 0;
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('cad-total',           total);
+  set('cad-ativas',          ativas);
+  set('cad-mais3',           mais3);
+  set('cad-mais5',           mais5);
+  set('cad-mais5-pct',       pct5 + '% do total');
+  set('cad-total-footer',    total);
+  set('cad-ativas-footer',   ativas);
+  set('cad-mais5-footer',    mais5);
+  set('cad-mais5-pct-footer', pct5 + '%');
+
+  // Atualiza OKR "Duração +5 meses" automaticamente
+  if (total > 0) {
+    const barD   = document.getElementById('bar-duracao');
+    const pctD   = document.getElementById('pct-duracao');
+    const inpD   = document.getElementById('input-duracao');
+    if (barD) barD.style.width = pct5 + '%';
+    if (pctD) pctD.textContent = fmt(pct5, 2) + '%';
+    if (inpD && document.activeElement !== inpD) inpD.value = pct5;
+    saveOKRInputs();
+  }
+}
+
+// ── CRUD ─────────────────────────────────────────
+function updateCadeiraCell(i, key, val) {
+  if (!cadeirasRows[i]) return;
+  cadeirasRows[i][key] = val;
+  if (key === 'vigencia') { autoCompletarMeses(cadeirasRows[i]); renderCadeiras(); }
+  saveCadeirasState();
+}
+
+function setCadeiraStatus(i, mes, val) {
+  if (!cadeirasRows[i]) return;
+  cadeirasRows[i].meses[mes] = val;
+  renderCadeiras();
+  saveCadeirasState();
+}
+// alias para compatibilidade com importações antigas
+function updateCadeiraStatus(i, mes, val) { setCadeiraStatus(i, mes, val); }
+
+function addCadeira() {
+  cadeirasRows.push({
+    id: 'cad_' + Date.now(),
+    servico: 'RPO',
+    cliente: 'Novo Cliente',
+    vigencia: '',
+    dataInicio: '',
+    meses: Array(12).fill(''),
+    source: 'manual'
+  });
+  renderCadeiras();
+  saveCadeirasState();
+}
+
+function removeCadeira(i) {
+  cadeirasRows.splice(i, 1);
+  renderCadeiras();
+  saveCadeirasState();
+}
+
+// Auto-link de deal ganho → cadeira (chamado após processDeals)
+function linkDealToCadeira(row) {
+  if (cadeirasRows.some(c => c.dealId === String(row.id))) return;
+  const mesIdx = MESES.indexOf(row.mes);
+  const meses12 = Array(12).fill('');
+  if (mesIdx >= 0) meses12[mesIdx] = 'ATIVO';
+  cadeirasRows.push({
+    id:        'cad_hs_' + row.id,
+    dealId:    String(row.id),
+    servico:   row.servico || 'RPO',
+    cliente:   row.cliente,
+    vigencia:  '',
+    dataInicio: row.data || '',
+    meses:     meses12,
+    source:    'hs'
+  });
+  saveCadeirasState();
+}
+
+// ── Drag & Drop (cadeiras) ───────────────────────
+let cDragSrcIdx = null;
+
+function enableCDrag(e, idx) {
+  const tr = e.target.closest('tr');
+  if (!tr) return;
+  tr.draggable = true;
+  tr.addEventListener('dragstart', onCDragStart, { once: true });
+}
+function disableCDrag(e) {
+  const tr = e.target.closest('tr');
+  if (tr) tr.draggable = false;
+}
+function onCDragStart(e) {
+  cDragSrcIdx = parseInt(this.dataset.cidx);
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', cDragSrcIdx);
+}
+function onCDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('#cadeiras-tbody tr').forEach(r => r.classList.remove('drag-over'));
+  this.classList.add('drag-over');
+}
+function onCDragLeave() { this.classList.remove('drag-over'); }
+function onCDrop(e) {
+  e.preventDefault();
+  const destIdx = parseInt(this.dataset.cidx);
+  if (cDragSrcIdx === null || cDragSrcIdx === destIdx) return;
+  const moved = cadeirasRows.splice(cDragSrcIdx, 1)[0];
+  cadeirasRows.splice(destIdx, 0, moved);
+  saveCadeirasState();
+  renderCadeiras();
+}
+function onCDragEnd() {
+  document.querySelectorAll('#cadeiras-tbody tr').forEach(r => {
+    r.classList.remove('dragging', 'drag-over');
+    r.draggable = false;
+  });
+  cDragSrcIdx = null;
+}
+
+// ── CSV Import ───────────────────────────────────
+function carregarCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text  = e.target.result;
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      const rows  = [];
+      for (let i = 1; i < lines.length; i++) {
+        // Simple CSV parse (handles quoted fields)
+        const cols = parseCSVLine(lines[i]);
+        if (!cols[0] && !cols[1]) continue;
+        const first = (cols[0] || '').trim();
+        if (['Espaços','Renovações','Novos'].some(s => first.startsWith(s))) continue;
+        if (!['RPO','Staffing','Hunting'].some(s => first === s)) continue;
+        const meses12 = Array(12).fill('');
+        for (let m = 0; m < 8 && (5 + m) < cols.length; m++) {
+          const v = (cols[5 + m] || '').trim();
+          if (['ATIVO','DESALOCAÇÃO','DESALOCADO'].includes(v)) meses12[m] = v;
+        }
+        rows.push({
+          id:        'csv_' + i + '_' + Date.now(),
+          servico:   cols[0]?.trim() || 'RPO',
+          cliente:   cols[1]?.trim() || '',
+          vigencia:  cols[3]?.trim() || '',
+          dataInicio: cols[4]?.trim() || '',
+          meses:     meses12,
+          source:    'csv'
+        });
+      }
+      if (!rows.length) { alert('Nenhuma linha de cadeira encontrada no CSV.'); return; }
+      if (cadeirasRows.length > 0 && !confirm(`Importar ${rows.length} cadeiras? Os dados atuais serão substituídos.`)) return;
+      cadeirasRows = rows;
+      renderCadeiras();
+      saveCadeirasState();
+      setStatus('✓ ' + rows.length + ' cadeiras importadas', 'green');
+    } catch(err) { alert('Erro ao ler CSV: ' + err.message); }
+  };
+  reader.readAsText(file, 'UTF-8');
+  event.target.value = '';
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let c of line) {
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+// ── Dados da planilha original ───────────────────
+function importarCSVInicial() {
+  if (cadeirasRows.length > 0 && !confirm('Isso substituirá os dados atuais de cadeiras. Continuar?')) return;
+  cadeirasRows = [ // dados preenchidos até Ago; o autoCompletarMeses vai completar Set–Dez
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'julho/2026',     dataInicio:'06/07',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'julho/2026',     dataInicio:'06/07',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'CSU',         vigencia:'julho/2026',     dataInicio:'05/07',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Cielo',       vigencia:'maio/2027',      dataInicio:'10/05',meses:['DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Deloitte',    vigencia:'outubro/2026',   dataInicio:'23/10',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Flowa',       vigencia:'maio/2026',      dataInicio:'09/05',meses:['DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Ilegra',      vigencia:'novembro/2026',  dataInicio:'09/11',meses:['DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'dLocal',      vigencia:'julho/2026',     dataInicio:'25/07',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Doctoralia',  vigencia:'novembro/2026',  dataInicio:'11/11',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Ebanx',       vigencia:'agosto/2026',    dataInicio:'09/08',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'CSU',         vigencia:'maio/2026',      dataInicio:'24/05',meses:['ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Facta Promotora',vigencia:'março/2027',  dataInicio:'14/03',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Facta Tech',  vigencia:'setembro/2026',  dataInicio:'02/09',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Frete.com',   vigencia:'maio/2026',      dataInicio:'31/05',meses:['DESALOCADO','DESALOCADO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Ebanx Internacional',vigencia:'junho/2026',dataInicio:'04/06',meses:['DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Renner',      vigencia:'agosto/2026',    dataInicio:'08/08',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Renner',      vigencia:'agosto/2026',    dataInicio:'08/08',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Renner',      vigencia:'agosto/2026',    dataInicio:'08/08',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'junho/2026',     dataInicio:'09/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'junho/2026',     dataInicio:'09/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'junho/2026',     dataInicio:'09/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Caffeine Army',vigencia:'junho/2026',    dataInicio:'12/06',meses:['DESALOCADO','','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Jeitto',      vigencia:'julho/2026',     dataInicio:'15/07',meses:['ATIVO','DESALOCAÇÃO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Localiza',    vigencia:'outubro/2026',   dataInicio:'23/10',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Localiza',    vigencia:'agosto/2026',    dataInicio:'19/08',meses:['','','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'julho/2026',     dataInicio:'06/07',meses:['','','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'RNP',         vigencia:'julho/2026',     dataInicio:'06/07',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Stefanini',   vigencia:'agosto/2026',    dataInicio:'29/08',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Stellantis',  vigencia:'setembro/2026',  dataInicio:'23/09',meses:['DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Venturus',    vigencia:'outubro/2026',   dataInicio:'09/10',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']}
+  ].map((d, i) => ({ id:'cad_init_' + i, ...d, source:'csv' }));
+
+  cadeirasRows.forEach(r => autoCompletarMeses(r));
+  renderCadeiras();
+  saveCadeirasState();
+  setStatus('✓ 34 cadeiras importadas da planilha', 'green');
+}
+
+// ════════════════════════════════════════════════
+//  CONTRATOS
+// ════════════════════════════════════════════════
+let contratosRows = [];
+
+function saveContratosState() {
+  try { localStorage.setItem('contratos_rows', JSON.stringify(contratosRows)); } catch(e) {}
+}
+
+function renderContratos() {
+  const tbody = document.getElementById('contratos-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  contratosRows.forEach((row, i) => {
+    const tr = document.createElement('tr');
+
+    // Tipo — badge clicável (cycle)
+    const TIPO_CYCLE = ['', 'Ordem de Compra', 'Contrato Assinado', 'Sem Contrato'];
+    const tipoCfg = {
+      'Ordem de Compra':   { bg:'#fef3c7', color:'#92400e', label:'Ordem de Compra' },
+      'Contrato Assinado': { bg:'#dcfce7', color:'#15803d', label:'Contrato Assinado' },
+      'Sem Contrato':      { bg:'#fee2e2', color:'#991b1b', label:'Sem Contrato' },
+      '':                  { bg:'#f3f4f6', color:'#9ca3af', label:'— definir tipo —' },
+    };
+    const tc = tipoCfg[row.tipoContrato || ''];
+    const tipoNext = TIPO_CYCLE[(TIPO_CYCLE.indexOf(row.tipoContrato||'') + 1) % TIPO_CYCLE.length];
+
+    // Link
+    const linkCell = row.linkContrato
+      ? `<div class="flex items-center justify-center gap-1">
+           <a href="${esc(row.linkContrato)}" target="_blank" class="link-contrato" title="${esc(row.linkContrato)}">🔗 Abrir</a>
+           <span onclick="editarLink(${i})" title="Editar link" style="cursor:pointer;font-size:11px;color:var(--muted);">✏️</span>
+         </div>`
+      : `<button onclick="editarLink(${i})" class="text-xs" style="color:var(--muted);cursor:pointer;background:none;border:none;">+ Link</button>`;
+
+    tr.innerHTML = `
+      <td class="px-2 py-2 font-semibold" style="color:var(--text);">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'cliente',this.textContent.trim())">${esc(row.cliente||'')}</span>
+      </td>
+      <td class="px-2 py-2 text-xs" style="color:var(--text2);">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'vigencia',this.textContent.trim())">${esc(row.vigencia||'')}</span>
+      </td>
+      <td class="px-2 py-2 text-center text-xs">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'inicio',this.textContent.trim())">${esc(row.inicio||'')}</span>
+      </td>
+      <td class="px-2 py-2 text-center text-xs">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'fim',this.textContent.trim())">${esc(row.fim||'')}</span>
+      </td>
+      <td class="px-2 py-2 text-center">
+        <select class="cont-dur" onchange="updateContratoCell(${i},'duracao',this.value?parseInt(this.value):null)">
+          <option value="">—</option>
+          ${[2,3,4,5,6,12].map(n=>`<option value="${n}" ${row.duracao==n?'selected':''}>${n}m</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-2 py-2 text-center font-semibold" style="color:var(--accent);">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'cadeiras',parseInt(this.textContent)||null)">${row.cadeiras??''}</span>
+      </td>
+      <td class="px-2 py-2 text-right font-medium">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'valorRPO',parseMoeda(this.textContent))">${row.valorRPO>0?fmtBRL(row.valorRPO):''}</span>
+      </td>
+      <td class="px-2 py-2 text-right font-semibold" style="color:var(--accent2);">
+        <span contenteditable="true" class="cont-cell" onblur="updateContratoCell(${i},'valorTotal',parseMoeda(this.textContent))">${row.valorTotal>0?fmtBRL(row.valorTotal):''}</span>
+      </td>
+      <td class="px-2 py-2 text-center">
+        <span onclick="updateContratoCell(${i},'tipoContrato','${tipoNext}')"
+          title="Clique para alterar"
+          style="display:inline-block;background:${tc.bg};color:${tc.color};font-weight:700;
+                 font-size:11px;border-radius:6px;padding:4px 10px;cursor:pointer;
+                 white-space:nowrap;transition:filter .12s;"
+          onmouseover="this.style.filter='brightness(.88)'"
+          onmouseout="this.style.filter=''">${tc.label}</span>
+      </td>
+      <td class="px-2 py-2 text-center">${linkCell}</td>
+      <td class="px-1 py-2 text-center no-print admin-only">
+        <button onclick="removeContrato(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;"
+          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  updateContratosCards();
+}
+
+// Retorna true se o cliente é um upsell do mesmo CNPJ (sufixo "UP" isolado)
+function isUpsellContrato(cliente) {
+  const palavras = (cliente || '').trim().toUpperCase().split(/\s+/);
+  return palavras[palavras.length - 1] === 'UP';
+}
+
+function updateContratosCards() {
+  // Todos os vínculos (MRR e valor total incluem UP — é receita real)
+  const mrr        = contratosRows.reduce((s,r) => s + (parseFloat(r.valorRPO)||0), 0);
+  const totalValor = contratosRows.reduce((s,r) => s + (parseFloat(r.valorTotal)||0), 0);
+  const cadeiras   = contratosRows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0);
+
+  // Contratos únicos: UP não conta (é extensão do mesmo cliente, não um novo contrato)
+  const contratosUnicos = contratosRows.filter(r => !isUpsellContrato(r.cliente));
+  const total           = contratosUnicos.length;
+  const upCount         = contratosRows.length - total;
+
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  set('cont-total',              total);
+  set('cont-mrr',                fmtBRL(mrr));
+  set('cont-total-valor',        fmtBRL(totalValor));
+  set('cont-cadeiras',           cadeiras);
+  set('cont-total-footer',       total);
+  set('cont-mrr-footer',         fmtBRL(mrr));
+  set('cont-total-valor-footer', fmtBRL(totalValor));
+  set('cont-cadeiras-footer',    cadeiras);
+
+  // Legenda dinâmica no rodapé
+  const legendaEl = document.getElementById('cont-up-legenda');
+  if (legendaEl) {
+    legendaEl.textContent = upCount > 0
+      ? `* ${upCount} linha(s) com sufixo "UP" excluída(s) da contagem de contratos — upsell do mesmo cliente não conta como novo vínculo. Nomes com outros sufixos (Tech, Internacional, etc.) contam normalmente.`
+      : '* Linhas com sufixo "UP" no nome do cliente são excluídas da contagem — upsell do mesmo cliente não conta como novo vínculo.';
+  }
+}
+
+function updateContratoCell(i, key, val) {
+  if (!contratosRows[i]) return;
+  contratosRows[i][key] = val;
+  const r = contratosRows[i];
+  // Re-render quando tipo muda (badge precisa atualizar visualmente)
+  if (key === 'tipoContrato') {
+    renderContratos();
+    saveContratosState();
+    updateContratosCards();
+    return;
+  }
+  // Auto-calcula valor total se tiver cadeiras + valorRPO + duracao e o campo estiver vazio
+  if (['cadeiras','valorRPO','duracao'].includes(key) && !r.valorTotal) {
+    if (r.cadeiras && r.valorRPO && r.duracao) {
+      r.valorTotal = r.cadeiras * r.valorRPO * r.duracao;
+      renderContratos(); // re-render para mostrar o valor calculado
+    }
+  }
+  saveContratosState();
+  updateContratosCards();
+}
+
+function editarLink(i) {
+  const url = prompt('URL do contrato:', contratosRows[i]?.linkContrato || '');
+  if (url === null) return; // cancelou
+  contratosRows[i].linkContrato = url.trim();
+  renderContratos();
+  saveContratosState();
+}
+
+function addContrato() {
+  contratosRows.push({
+    id: 'cont_' + Date.now(),
+    cliente: '', vigencia: '', inicio: '', fim: '',
+    duracao: null, cadeiras: null,
+    valorRPO: null, valorTotal: null,
+    tipoContrato: '', linkContrato: '',
+    source: 'manual'
+  });
+  renderContratos();
+  saveContratosState();
+}
+
+function removeContrato(i) {
+  if (!confirm('Remover este contrato?')) return;
+  contratosRows.splice(i, 1);
+  renderContratos();
+  saveContratosState();
+}
+
+function importarContratosDeCADEIRAS() {
+  if (!cadeirasRows.length) { alert('Nenhuma cadeira cadastrada ainda.'); return; }
+
+  // Agrupa por cliente + vigência (cada combinação = um contrato distinto)
+  const grupos = {};
+  cadeirasRows.forEach(r => {
+    const cliente = (r.cliente || '').trim();
+    const vigencia = (r.vigencia || '').trim();
+    if (!cliente) return;
+    const key = cliente + '|||' + vigencia;
+    if (!grupos[key]) {
+      grupos[key] = {
+        cliente,
+        vigencia,
+        servico:    r.servico || 'RPO',
+        fim:        r.dataInicio || '',  // data específica de fim do contrato
+        duracao:    r.duracao ?? null,
+        cadeiras:   0,
+        _duracaoOk: true  // flag para detectar durações mistas
+      };
+    }
+    grupos[key].cadeiras++;
+    // Se as cadeiras do grupo têm durações diferentes, deixa em branco
+    if (grupos[key]._duracaoOk && r.duracao && grupos[key].duracao !== r.duracao) {
+      grupos[key].duracao = null;
+      grupos[key]._duracaoOk = false;
+    }
+    if (!grupos[key].duracao && r.duracao) grupos[key].duracao = r.duracao;
+  });
+
+  // Chaves de contratos já existentes (evita duplicatas)
+  const existentes = new Set(
+    contratosRows.map(c => (c.cliente||'').trim() + '|||' + (c.vigencia||'').trim())
+  );
+
+  let adicionados = 0;
+  Object.values(grupos).forEach((g, i) => {
+    const key = g.cliente + '|||' + g.vigencia;
+    if (existentes.has(key)) return; // já existe, não sobrescreve
+
+    contratosRows.push({
+      id:           'cont_cad_' + Date.now() + '_' + i,
+      cliente:      g.cliente,
+      vigencia:     g.vigencia,
+      inicio:       '',
+      fim:          g.fim,
+      duracao:      g.duracao,
+      cadeiras:     g.cadeiras,
+      valorRPO:     null,
+      valorTotal:   null,
+      tipoContrato: '',
+      linkContrato: '',
+      source:       'cadeiras'
+    });
+    adicionados++;
+  });
+
+  if (!adicionados) {
+    alert('Todos os contratos das cadeiras já estão na lista.');
+    return;
+  }
+
+  // Ordena por cliente
+  contratosRows.sort((a, b) => (a.cliente||'').localeCompare(b.cliente||'', 'pt-BR'));
+
+  renderContratos();
+  saveContratosState();
+  setStatus(`✓ ${adicionados} contrato(s) importado(s) das cadeiras`, 'green');
+}
+
+function exportContratosCSV() {
+  const headers = ['Cliente','Vigência','Início','Fim','Duração','Cadeiras','Valor/RPO','Valor Total','Tipo','Link'];
+  const rows = contratosRows.map(r => [
+    r.cliente, r.vigencia, r.inicio, r.fim,
+    r.duracao ? r.duracao+'m' : '',
+    r.cadeiras ?? '',
+    r.valorRPO  ? fmtBRL(r.valorRPO)  : '',
+    r.valorTotal ? fmtBRL(r.valorTotal) : '',
+    r.tipoContrato, r.linkContrato
+  ].map(v => '"' + String(v??'').replace(/"/g,'""') + '"').join(','));
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'contratos_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// Load saved contratos
+try {
+  const savedC = JSON.parse(localStorage.getItem('contratos_rows') || '[]');
+  if (Array.isArray(savedC)) contratosRows = savedC;
+} catch(e) {}
+
+// ─── LOAD SAVED CADEIRAS STATE ───────────────────
+try {
+  const savedCad = JSON.parse(localStorage.getItem('cadeiras_rows') || '[]');
+  if (Array.isArray(savedCad) && savedCad.length) {
+    cadeirasRows = savedCad;
+  } else {
+    _carregarPlanilhaInicial();
+  }
+  // Auto-completa meses vazios baseado na vigência (seguro: só preenche células vazias)
+  cadeirasRows.forEach(r => autoCompletarMeses(r));
+  saveCadeirasState();
+} catch(e) {}
+
+function _carregarPlanilhaInicial() {
+  cadeirasRows = [ // meses Set–Dez serão preenchidos por autoCompletarMeses
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'julho/2026',     dataInicio:'06/07',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'julho/2026',     dataInicio:'06/07',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'CSU',         vigencia:'julho/2026',     dataInicio:'05/07',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Cielo',       vigencia:'maio/2027',      dataInicio:'10/05',meses:['DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Deloitte',    vigencia:'outubro/2026',   dataInicio:'23/10',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Flowa',       vigencia:'maio/2026',      dataInicio:'09/05',meses:['DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Ilegra',      vigencia:'novembro/2026',  dataInicio:'09/11',meses:['DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'dLocal',      vigencia:'julho/2026',     dataInicio:'25/07',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Doctoralia',  vigencia:'novembro/2026',  dataInicio:'11/11',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Ebanx',       vigencia:'agosto/2026',    dataInicio:'09/08',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'CSU',         vigencia:'maio/2026',      dataInicio:'24/05',meses:['ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Facta Promotora',vigencia:'março/2027',  dataInicio:'14/03',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Facta Tech',  vigencia:'setembro/2026',  dataInicio:'02/09',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Frete.com',   vigencia:'maio/2026',      dataInicio:'31/05',meses:['DESALOCADO','DESALOCADO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Ebanx Internacional',vigencia:'junho/2026',dataInicio:'04/06',meses:['DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Renner',      vigencia:'agosto/2026',    dataInicio:'08/08',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Renner',      vigencia:'agosto/2026',    dataInicio:'08/08',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Renner',      vigencia:'agosto/2026',    dataInicio:'08/08',meses:['DESALOCADO','DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'junho/2026',     dataInicio:'09/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'junho/2026',     dataInicio:'09/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'junho/2026',     dataInicio:'09/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Caffeine Army',vigencia:'junho/2026',    dataInicio:'12/06',meses:['DESALOCADO','','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Jeitto',      vigencia:'julho/2026',     dataInicio:'15/07',meses:['ATIVO','DESALOCAÇÃO','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Localiza',    vigencia:'outubro/2026',   dataInicio:'23/10',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Localiza',    vigencia:'agosto/2026',    dataInicio:'19/08',meses:['','','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'Staffing',cliente:'ABInbev',     vigencia:'junho/2026',     dataInicio:'05/06',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Riachuelo',   vigencia:'julho/2026',     dataInicio:'06/07',meses:['','','DESALOCADO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'RNP',         vigencia:'julho/2026',     dataInicio:'06/07',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','DESALOCADO','','','','']},
+    {servico:'RPO',     cliente:'Stefanini',   vigencia:'agosto/2026',    dataInicio:'29/08',meses:['ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','DESALOCAÇÃO','','','','']},
+    {servico:'RPO',     cliente:'Stellantis',  vigencia:'setembro/2026',  dataInicio:'23/09',meses:['DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']},
+    {servico:'RPO',     cliente:'Venturus',    vigencia:'outubro/2026',   dataInicio:'09/10',meses:['DESALOCADO','DESALOCADO','DESALOCADO','ATIVO','ATIVO','ATIVO','ATIVO','ATIVO','','','','']}
+  ].map((d, i) => ({ id:'cad_init_' + i, ...d, source:'csv' }));
+  cadeirasRows.forEach(r => autoCompletarMeses(r));
+  saveCadeirasState();
+}
+</script>
+
+</body>
+</html>

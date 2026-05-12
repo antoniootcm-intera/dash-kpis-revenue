@@ -1,0 +1,19 @@
+{
+  "table_rows": [],
+  "cadeiras_rows": [],
+  "contratos_rows": [],
+  "hs_overrides": {},
+  "hs_deleted": [],
+  "okr_state": {
+    "input-realizado": "516000",
+    "input-clientes": "0",
+    "input-duracao": "52.63",
+    "cac-gastos": "0",
+    "chart-meta": "2100000",
+    "chart-periodo": "semanas",
+    "input-meta-novos-clientes": "8"
+  },
+  "realizado_locked": false,
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-05-11T00:00:00.000Z"
+}
