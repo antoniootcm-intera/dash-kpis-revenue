@@ -671,6 +671,47 @@
       </div>
     </div>
 
+    <!-- Vendas por Canal 2025 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Novos Clientes 2025</h3>
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
+          <p class="text-xs font-bold mb-1" style="color:#166534;">NTW</p>
+          <p class="text-lg font-bold" style="color:#16a34a;">R$ 681.000</p>
+          <p class="text-xs mt-1" style="color:#94a3b8;">7 vendas</p>
+        </div>
+        <div class="rounded-xl p-4 border text-center" style="background:#fff7ed;border-color:#fdba74;">
+          <p class="text-xs font-bold mb-1" style="color:#c2410c;">MKT</p>
+          <p class="text-lg font-bold" style="color:#ea580c;">R$ 458.500</p>
+          <p class="text-xs mt-1" style="color:#94a3b8;">3 vendas</p>
+        </div>
+        <div class="rounded-xl p-4 border text-center" style="background:#fce7f3;border-color:#f9a8d4;">
+          <p class="text-xs font-bold mb-1" style="color:#9d174d;">OUT</p>
+          <p class="text-lg font-bold" style="color:#db2777;">R$ 406.000</p>
+          <p class="text-xs mt-1" style="color:#94a3b8;">4 vendas</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="hist-table">
+          <thead>
+            <tr><th></th><th>NTW</th><th>MKT</th><th>OUT</th><th>Total Novos</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align:left;font-weight:600;">Q1</td><td>R$ 0</td><td>R$ 74.500</td><td>R$ 0</td><td style="font-weight:600;">R$ 74.500</td></tr>
+            <tr><td style="text-align:left;font-weight:600;">Q2</td><td>R$ 243.000</td><td>R$ 384.000</td><td>R$ 208.000</td><td style="font-weight:600;">R$ 835.000</td></tr>
+            <tr><td style="text-align:left;font-weight:600;">Q3</td><td>R$ 144.000</td><td>R$ 0</td><td>R$ 102.000</td><td style="font-weight:600;">R$ 246.000</td></tr>
+            <tr><td style="text-align:left;font-weight:600;">Q4</td><td>R$ 294.000</td><td>R$ 0</td><td>R$ 96.000</td><td style="font-weight:600;">R$ 390.000</td></tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row"><td style="text-align:left;">TOTAL</td><td>R$ 681.000</td><td>R$ 458.500</td><td>R$ 406.000</td><td style="font-weight:700;color:var(--accent);">R$ 1.545.500</td></tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="relative h-52 mt-4">
+        <canvas id="chart2025canal"></canvas>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1304,6 +1345,24 @@ function initHistoricalCharts() {
       datasets: [
         { label:'Meta', data:triM, backgroundColor:'rgba(148,163,184,0.3)', borderColor:'#94a3b8', borderWidth:2, borderDash:[4,2], borderRadius:4 },
         { label:'Realizado', data:triR, backgroundColor:triR.map((v,i) => v>=triM[i] ? '#16a34a' : '#ef4444'), borderRadius:4 },
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ tooltip:{ callbacks:{ label: c => c.dataset.label+': R$ '+(c.raw||0).toLocaleString('pt-BR') }},
+        legend:{ position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:16 }}},
+      scales: darkScales() }
+  });
+
+  // ── 2025: Vendas por Canal (barras agrupadas) ──
+  const ctxCanal = document.getElementById('chart2025canal');
+  if (ctxCanal) new Chart(ctxCanal, {
+    type: 'bar',
+    data: {
+      labels: ['Q1','Q2','Q3','Q4'],
+      datasets: [
+        { label:'NTW', data:[0, 243000, 144000, 294000], backgroundColor:'#4ade80', borderRadius:4 },
+        { label:'MKT', data:[74500, 384000, 0, 0],       backgroundColor:'#fb923c', borderRadius:4 },
+        { label:'OUT', data:[0, 208000, 102000, 96000],   backgroundColor:'#f472b6', borderRadius:4 },
       ]
     },
     options: { responsive:true, maintainAspectRatio:false,
