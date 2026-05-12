@@ -104,6 +104,21 @@
       "ciclo": 18,
       "source": "hs",
       "mensalidade": 16000
+    },
+    {
+      "id": "60177802569",
+      "cliente": "Global",
+      "servico": "RPO",
+      "canal": "NTW",
+      "valor": 46500,
+      "data": "12/05",
+      "mes": "Mai",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 6,
+      "ciclo": 15,
+      "source": "hs",
+      "mensalidade": 15500
     }
   ],
   "cadeiras_rows": [
@@ -916,6 +931,29 @@
       ],
       "source": "hs",
       "duracao": 6
+    },
+    {
+      "id": "cad_hs_60177802569",
+      "dealId": "60177802569",
+      "servico": "RPO",
+      "cliente": "Global",
+      "vigencia": "",
+      "dataInicio": "12/05",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1292,6 +1330,12 @@
       "semana": 6,
       "data": "11/05",
       "ciclo": 18
+    },
+    "60177802569": {
+      "mensalidade": 15500,
+      "alocacoes": "1",
+      "tipo": "GG",
+      "ciclo": 15
     }
   },
   "hs_deleted": [
@@ -1308,7 +1352,7 @@
   "okr_state": {
     "input-realizado": "708000",
     "input-clientes": "0",
-    "input-duracao": "66",
+    "input-duracao": "64",
     "cac-gastos": "0",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
@@ -1316,5 +1360,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-12T00:38:47.352Z"
+  "snapshot_at": "2026-05-12T13:25:06.300Z"
 }
