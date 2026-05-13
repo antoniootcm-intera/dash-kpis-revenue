@@ -91,6 +91,21 @@
       "source": "manual"
     },
     {
+      "id": "manual_1778679705125",
+      "cliente": "Cielo SP",
+      "servico": "RPO",
+      "canal": "UP",
+      "valor": 102000,
+      "mensalidade": 17000,
+      "data": "13/05",
+      "mes": "Mai",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 6,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
       "id": "59186379620",
       "cliente": "Doctoralia BR",
       "servico": "RPO",
@@ -1351,6 +1366,21 @@
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "https://drive.google.com/file/d/1rW-8fOWD-m6nUTndpvXQtcU2d6_7uCCm/view?usp=sharing",
       "source": "hs"
+    },
+    {
+      "id": "cont_manual_1778679705125",
+      "dealId": "manual_1778679705125",
+      "cliente": "Novo Cliente",
+      "vigencia": "",
+      "inicio": "",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "manual"
     }
   ],
   "hs_overrides": {
@@ -1381,7 +1411,7 @@
     "59419154613"
   ],
   "okr_state": {
-    "input-realizado": "754500",
+    "input-realizado": "856500",
     "input-clientes": "0",
     "input-duracao": "64",
     "cac-gastos": "0",
@@ -1391,5 +1421,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-12T20:59:36.807Z"
+  "snapshot_at": "2026-05-13T13:43:34.278Z"
 }
