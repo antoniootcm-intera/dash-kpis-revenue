@@ -102,7 +102,7 @@
       "alocacoes": "1",
       "tipo": "Enterprise",
       "semana": 6,
-      "ciclo": 0,
+      "ciclo": 14,
       "source": "manual"
     },
     {
@@ -970,6 +970,29 @@
       ],
       "source": "hs",
       "duracao": 3
+    },
+    {
+      "id": "cad_hs_60234055077",
+      "dealId": "60234055077",
+      "servico": "RPO",
+      "cliente": "Cielo - Mariana - UP",
+      "vigencia": "",
+      "dataInicio": "31/05",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1381,6 +1404,21 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "manual"
+    },
+    {
+      "id": "cont_60234055077",
+      "dealId": "60234055077",
+      "cliente": "Cielo - Mariana - UP",
+      "vigencia": "",
+      "inicio": "31/05",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "hs_overrides": {
@@ -1408,12 +1446,13 @@
     "59502615984",
     "60076958763",
     "56706852109",
-    "59419154613"
+    "59419154613",
+    "60234055077"
   ],
   "okr_state": {
     "input-realizado": "856500",
     "input-clientes": "0",
-    "input-duracao": "64",
+    "input-duracao": "62",
     "cac-gastos": "0",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
@@ -1421,5 +1460,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-13T13:43:34.278Z"
+  "snapshot_at": "2026-05-13T18:53:33.188Z"
 }
