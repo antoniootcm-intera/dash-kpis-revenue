@@ -960,7 +960,7 @@
         <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
           <p class="text-xs font-semibold mb-1" style="color:#0369a1;">TICKET MÉDIO / RPO ALOCADO</p>
           <p id="cont-ticket-rpo" class="text-xl font-bold" style="color:#0284c7;">R$ 0</p>
-          <p class="text-xs mt-1" style="color:#7dd3fc;">MRR ÷ cadeiras contratadas</p>
+          <p class="text-xs mt-1" style="color:#7dd3fc;">média dos valores/RPO</p>
         </div>
       </div>
     </div>
@@ -3040,8 +3040,9 @@ function updateContratosCards() {
   const total           = contratosUnicos.length;
   const upCount         = contratosRows.length - total;
 
-  // Ticket médio por RPO alocado = MRR total ÷ cadeiras contratadas
-  const ticketRPO = cadeiras > 0 ? mrr / cadeiras : 0;
+  // Ticket médio por RPO alocado = média dos valores/RPO dos contratos (ignora vazios/zero)
+  const valoresRPO = contratosRows.map(r => parseFloat(r.valorRPO)||0).filter(v => v > 0);
+  const ticketRPO  = valoresRPO.length ? valoresRPO.reduce((s,v) => s+v, 0) / valoresRPO.length : 0;
 
   const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
   set('cont-total',              total);
