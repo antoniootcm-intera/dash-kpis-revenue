@@ -938,7 +938,7 @@
 
     <!-- Cards resumo -->
     <div class="bg-white border border-t-0 border-gray-200 px-5 py-4">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
           <p class="text-xs font-semibold mb-1" style="color:var(--text2);">CONTRATOS ATIVOS</p>
           <p id="cont-total" class="text-3xl font-bold" style="color:var(--black);">0</p>
@@ -956,6 +956,11 @@
         <div class="rounded-xl p-4 border text-center" style="background:#eef2ff;border-color:#c7d2fe;">
           <p class="text-xs font-semibold mb-1" style="color:#3730a3;">CADEIRAS CONTRATADAS</p>
           <p id="cont-cadeiras" class="text-3xl font-bold" style="color:#4338ca;">0</p>
+        </div>
+        <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
+          <p class="text-xs font-semibold mb-1" style="color:#0369a1;">TICKET MÉDIO / RPO ALOCADO</p>
+          <p id="cont-ticket-rpo" class="text-xl font-bold" style="color:#0284c7;">R$ 0</p>
+          <p class="text-xs mt-1" style="color:#7dd3fc;">MRR ÷ cadeiras contratadas</p>
         </div>
       </div>
     </div>
@@ -3035,11 +3040,15 @@ function updateContratosCards() {
   const total           = contratosUnicos.length;
   const upCount         = contratosRows.length - total;
 
+  // Ticket médio por RPO alocado = MRR total ÷ cadeiras contratadas
+  const ticketRPO = cadeiras > 0 ? mrr / cadeiras : 0;
+
   const set = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
   set('cont-total',              total);
   set('cont-mrr',                fmtBRL(mrr));
   set('cont-total-valor',        fmtBRL(totalValor));
   set('cont-cadeiras',           cadeiras);
+  set('cont-ticket-rpo',         ticketRPO > 0 ? fmtBRL(ticketRPO) : 'R$ 0');
   set('cont-total-footer',       total);
   set('cont-mrr-footer',         fmtBRL(mrr));
   set('cont-total-valor-footer', fmtBRL(totalValor));
