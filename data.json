@@ -32,7 +32,7 @@
     },
     {
       "id": "manual_1778359356294",
-      "cliente": "Renner",
+      "cliente": "Renner Corp",
       "servico": "RPO",
       "canal": "REN",
       "valor": 48000,
@@ -77,7 +77,7 @@
     },
     {
       "id": "manual_1778359493145",
-      "cliente": "Renner",
+      "cliente": "Renner Corp",
       "servico": "RPO",
       "canal": "UP",
       "valor": 96000,
@@ -109,7 +109,7 @@
       "id": "59186379620",
       "cliente": "Doctoralia BR",
       "servico": "RPO",
-      "canal": "Out",
+      "canal": "OUT",
       "valor": 96000,
       "data": "11/05",
       "mes": "Mai",
@@ -134,6 +134,36 @@
       "ciclo": 15,
       "source": "hs",
       "mensalidade": 15500
+    },
+    {
+      "id": "60177578299",
+      "cliente": "Renner Varejo",
+      "servico": "RPO",
+      "canal": "Up",
+      "valor": 192000,
+      "data": "21/05",
+      "mes": "Mai",
+      "alocacoes": "2",
+      "tipo": "Enterprise",
+      "semana": 8,
+      "ciclo": 9,
+      "source": "hs",
+      "mensalidade": 16000
+    },
+    {
+      "id": "60524924470",
+      "cliente": "Renner Corp",
+      "servico": "RPO",
+      "canal": "Up",
+      "valor": 48000,
+      "data": "21/05",
+      "mes": "Mai",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 8,
+      "ciclo": 7,
+      "source": "hs",
+      "mensalidade": 16000
     }
   ],
   "cadeiras_rows": [
@@ -672,7 +702,7 @@
     {
       "id": "cad_init_15",
       "servico": "RPO",
-      "cliente": "Renner",
+      "cliente": "Renner Corp",
       "vigencia": "agosto/2026",
       "dataInicio": "08/08",
       "meses": [
@@ -695,7 +725,7 @@
     {
       "id": "cad_init_16",
       "servico": "RPO",
-      "cliente": "Renner",
+      "cliente": "Renner Corp",
       "vigencia": "agosto/2026",
       "dataInicio": "08/08",
       "meses": [
@@ -718,7 +748,7 @@
     {
       "id": "cad_init_17",
       "servico": "RPO",
-      "cliente": "Renner",
+      "cliente": "Renner Corp",
       "vigencia": "agosto/2026",
       "dataInicio": "08/08",
       "meses": [
@@ -994,6 +1024,73 @@
       ],
       "source": "hs",
       "duracao": 6
+    },
+    {
+      "id": "cad_hs_60177578299",
+      "dealId": "60177578299",
+      "servico": "RPO",
+      "cliente": "Renner Varejo",
+      "vigencia": "novembro/2026",
+      "dataInicio": "25/11",
+      "meses": [
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO",
+        "DESALOCADO"
+      ],
+      "source": "hs"
+    },
+    {
+      "id": "cad_1779388285376",
+      "servico": "RPO",
+      "cliente": "Renner Varejo",
+      "vigencia": "novembro/2026",
+      "dataInicio": "25/11",
+      "meses": [
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO",
+        "DESALOCADO"
+      ],
+      "source": "manual"
+    },
+    {
+      "id": "cad_1779388345568",
+      "servico": "RPO",
+      "cliente": "Renner Corp",
+      "vigencia": "agosto/2026",
+      "dataInicio": "22/08",
+      "meses": [
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO"
+      ],
+      "source": "manual"
     }
   ],
   "contratos_rows": [
@@ -1265,7 +1362,7 @@
     },
     {
       "id": "cont_cad_1778536769511_19",
-      "cliente": "Renner",
+      "cliente": "Renner Corp",
       "vigencia": "agosto/2026",
       "inicio": "",
       "fim": "08/08",
@@ -1372,8 +1469,8 @@
       "cadeiras": 1,
       "valorRPO": 16000,
       "valorTotal": 96000,
-      "tipoContrato": "Sem Contrato",
-      "linkContrato": "",
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
       "source": "hs"
     },
     {
@@ -1405,6 +1502,21 @@
       "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "hs"
+    },
+    {
+      "id": "cont_60177578299",
+      "dealId": "60177578299",
+      "cliente": "Renner Varejo",
+      "vigencia": "novembro/2026",
+      "inicio": "25/05",
+      "fim": "25/11",
+      "duracao": 6,
+      "cadeiras": 2,
+      "valorRPO": 16000,
+      "valorTotal": 192000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "hs_overrides": {
@@ -1414,13 +1526,27 @@
       "tipo": "GG",
       "semana": 6,
       "data": "11/05",
-      "ciclo": 18
+      "ciclo": 18,
+      "canal": "OUT"
     },
     "60177802569": {
       "mensalidade": 15500,
       "alocacoes": "1",
       "tipo": "GG",
       "ciclo": 15
+    },
+    "60177578299": {
+      "mensalidade": 16000,
+      "alocacoes": "2",
+      "tipo": "Enterprise",
+      "cliente": "Renner Varejo"
+    },
+    "60524924470": {
+      "cliente": "Renner Corp",
+      "ciclo": 7,
+      "tipo": "Enterprise",
+      "alocacoes": "1",
+      "mensalidade": 16000
     }
   },
   "hs_deleted": [
@@ -1436,7 +1562,7 @@
     "60234055077"
   ],
   "okr_state": {
-    "input-realizado": "856500",
+    "input-realizado": "1048500",
     "input-clientes": "0",
     "input-duracao": "65",
     "cac-gastos": "0",
@@ -1445,6 +1571,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "contratos",
-  "snapshot_at": "2026-05-18T18:30:40.331Z"
+  "active_tab": "cadeiras",
+  "snapshot_at": "2026-05-21T18:36:28.250Z"
 }
