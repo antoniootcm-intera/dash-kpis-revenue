@@ -1562,7 +1562,7 @@
     "60234055077"
   ],
   "okr_state": {
-    "input-realizado": "1048500",
+    "input-realizado": "1096500",
     "input-clientes": "0",
     "input-duracao": "65",
     "cac-gastos": "0",
@@ -1571,6 +1571,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "cadeiras",
-  "snapshot_at": "2026-05-21T18:36:28.250Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-05-21T18:38:50.807Z"
 }
