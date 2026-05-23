@@ -3793,19 +3793,19 @@ function updateChurnCards() {
 
 // Recebe um mês ('Jan', 'Fev'...) e retorna { receitaTotal, receitaMRR }
 function getReceitaPorMes(mes) {
-  // Q1: usa Q1_DEALS (que tem valor mas não mensalidade — assumimos /12 como aproximação MRR)
-  // Q2 (e demais): usa tableRows ao vivo (tem mensalidade explícita)
+  // Q1: usa Q1_DEALS  ·  Q2 em diante: tableRows ao vivo
   const Q1_NOMES = ['Jan','Fev','Mar'];
   if (Q1_NOMES.includes(mes)) {
     const deals = (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).filter(d => d.mes === mes);
     const valor       = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
-    // Usa a mensalidade real preenchida na tabela do Q1 (sem fallback estimado)
     const receitaMRR  = deals.reduce((s,d) => s + getQ1Mens(d), 0);
-    return { receitaTotal: valor, receitaMRR };
+    const cadeiras    = deals.reduce((s,d) => s + (parseInt(d.alocacoes)||0), 0);
+    return { receitaTotal: valor, receitaMRR, cadeiras };
   }
   // Q2 em diante — usa tableRows
   const rows = tableRows.filter(r => r.mes === mes);
   return {
+    cadeiras: rows.reduce((s,r) => s + (parseInt(r.alocacoes)||0), 0),
     receitaTotal: rows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0),
     receitaMRR:   rows.reduce((s,r) => s + (parseFloat(r.mensalidade)||0), 0),
   };
@@ -3866,17 +3866,22 @@ function renderChurnSaldo(byQ) {
 
   cardsEl.innerHTML = cardQs.map(q => {
     // Agregado trimestral
-    let recT=0, recM=0;
+    let recT=0, recM=0, cadAdic=0;
     MESES_POR_Q[q].forEach(m => {
       const r = getReceitaPorMes(m);
-      recT += r.receitaTotal; recM += r.receitaMRR;
+      recT    += r.receitaTotal;
+      recM    += r.receitaMRR;
+      cadAdic += (r.cadeiras||0);
     });
     const churnMRR = byQ[q].mrr;
     const churnT   = byQ[q].contrato;
+    const cadPerd  = byQ[q].cadeiras;
     const saldoTotal = recT - churnT;
     const saldoMRR   = recM - churnMRR;
+    const saldoCad   = cadAdic - cadPerd;
     const positivoTotal = saldoTotal >= 0;
     const positivoMRR   = saldoMRR   >= 0;
+    const positivoCad   = saldoCad   >= 0;
 
     // Breakdown mês a mês
     const mensalHTML = MESES_POR_Q[q].map(m => {
@@ -3884,7 +3889,8 @@ function renderChurnSaldo(byQ) {
       const c = getChurnPorMes(m);
       const sMRR = r.receitaMRR - c.mrr;
       const sT   = r.receitaTotal - c.contrato;
-      const okMRR = sMRR >= 0, okT = sT >= 0;
+      const sCad = (r.cadeiras||0) - (c.cadeiras||0);
+      const okMRR = sMRR >= 0, okT = sT >= 0, okCad = sCad >= 0;
       return `
         <div class="rounded-lg p-2" style="background:#fff;border:1px solid #e5e7eb;">
           <p class="text-xs font-bold text-center mb-2" style="color:var(--text);">${m}</p>
@@ -3897,6 +3903,11 @@ function renderChurnSaldo(byQ) {
             <div class="flex justify-between"><span style="color:#16a34a;">+ Rec Total</span><span class="font-semibold">${fmtBRL(r.receitaTotal)}</span></div>
             <div class="flex justify-between"><span style="color:#dc2626;">− Churn</span><span class="font-semibold">${fmtBRL(c.contrato)}</span></div>
             <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okT?'#16a34a':'#dc2626'};">${okT?'+':''}${fmtBRL(sT)}</span></div>
+          </div>
+          <div class="space-y-1 text-xs mt-3 pt-2 border-t border-gray-200">
+            <div class="flex justify-between"><span style="color:#16a34a;">+ Cad add</span><span class="font-semibold">${r.cadeiras||0}</span></div>
+            <div class="flex justify-between"><span style="color:#dc2626;">− Cad perd</span><span class="font-semibold">${c.cadeiras||0}</span></div>
+            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okCad?'#16a34a':'#dc2626'};">${okCad?'+':''}${sCad}</span></div>
           </div>
         </div>`;
     }).join('');
@@ -3933,6 +3944,14 @@ function renderChurnSaldo(byQ) {
       <!-- Resumo trimestral -->
       <div class="space-y-3 mb-4 p-3 rounded-lg" style="background:rgba(255,255,255,0.5);">
         <div>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO DE CADEIRAS — Adicionadas vs Perdidas</p>
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <div><span style="color:#16a34a;">Adicionadas:</span> <span class="font-bold">${cadAdic}</span></div>
+            <div><span style="color:#dc2626;">Perdidas:</span> <span class="font-bold">${cadPerd}</span></div>
+            <div class="text-right"><span class="font-bold text-base" style="color:${positivoCad?'#16a34a':'#dc2626'};">${positivoCad?'+':''}${saldoCad} cadeiras</span></div>
+          </div>
+        </div>
+        <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
           <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL) — Logo + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recM)}</span></div>
