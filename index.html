@@ -589,18 +589,27 @@
             <th>Cliente</th><th>Serviço</th><th>Canal</th><th>Valor (R$)</th>
             <th>Mensalidade</th>
             <th>Data</th><th>Mês</th><th>Alocações</th><th>Tipo</th><th>Semana</th>
+            <th class="no-print admin-only" style="width:36px;">✕</th>
           </tr>
         </thead>
         <tbody id="q1-deals-tbody"></tbody>
         <tfoot>
           <tr class="total-row">
             <td colspan="3" style="text-align:left;font-weight:700;">TOTAL Q1 2026</td>
-            <td style="font-weight:700;color:var(--accent);">R$ 1.186.500,00</td>
+            <td id="q1-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
             <td id="q1-total-mens" style="font-weight:700;color:#0284c7;">R$ 0,00</td>
             <td colspan="5"></td>
+            <td class="no-print admin-only"></td>
           </tr>
         </tfoot>
       </table>
+    </div>
+    <div class="mt-3 admin-only no-print">
+      <button onclick="addQ1Deal()" class="text-sm font-semibold px-3 py-1.5 rounded-lg border-2 transition"
+        style="border-color:var(--accent);color:var(--accent);background:#fff;"
+        onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='#fff'">
+        + Adicionar deal ao Q1
+      </button>
     </div>
 
     <!-- Gráfico receita mensal Q1 -->
@@ -1113,39 +1122,86 @@ function switchDashSub(key) {
 }
 
 // ─── Q1 2026 DATA ───────────────────────────────
-// Q1_DEALS: mensalidade pode ser editada via UI (persistida em localStorage como q1_mensalidades)
-const Q1_DEALS = [
-  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:204000, data:'19/01', mes:'Jan', alocacoes:'4', tipo:'Enterprise', semana:'Sem 2' },
-  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:102000, data:'30/01', mes:'Jan', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
-  { cliente:'Flowa',           servico:'RPO', canal:'MKT', valor:48000,  data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
-  { cliente:'Cielo',           servico:'RPO', canal:'NTW', valor:51000,  data:'03/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 4' },
-  { cliente:'Ilegra',          servico:'RPO', canal:'NTW', valor:48000,  data:'06/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 5' },
-  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:144000, data:'13/02', mes:'Fev', alocacoes:'3', tipo:'Enterprise', semana:'Sem 5' },
-  { cliente:'Localiza',        servico:'RPO', canal:'OUT', valor:90000,  data:'19/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 5' },
-  { cliente:'Facta Tech',      servico:'RPO', canal:'REN', valor:90000,  data:'02/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
-  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:51000,  data:'04/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
-  { cliente:'Caffeine Army',   servico:'RPO', canal:'MKT', valor:51000,  data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
-  { cliente:'Jeitto',          servico:'RPO', canal:'REN', valor:46500,  data:'16/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
-  { cliente:'Sanar',           servico:'RPO', canal:'REN', valor:15000,  data:'20/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
-  { cliente:'Stellantis',      servico:'RPO', canal:'REN', valor:96000,  data:'23/01', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 11' },
-  { cliente:'dLocal',          servico:'RPO', canal:'NTW', valor:68000,  data:'25/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
-  { cliente:'Frete.com',       servico:'RPO', canal:'NTW', valor:34000,  data:'30/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 13' },
-  { cliente:'Riachuelo',       servico:'RPO', canal:'UP',  valor:48000,  data:'31/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
+// Q1_DEALS defaults — usado só na primeira carga; depois lê de localStorage
+const Q1_DEALS_DEFAULTS = [
+  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:204000, mensalidade:0, data:'19/01', mes:'Jan', alocacoes:'4', tipo:'Enterprise', semana:'Sem 2' },
+  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:102000, mensalidade:0, data:'30/01', mes:'Jan', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Flowa',           servico:'RPO', canal:'MKT', valor:48000,  mensalidade:0, data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Cielo',           servico:'RPO', canal:'NTW', valor:51000,  mensalidade:0, data:'03/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 4' },
+  { cliente:'Ilegra',          servico:'RPO', canal:'NTW', valor:48000,  mensalidade:0, data:'06/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 5' },
+  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:144000, mensalidade:0, data:'13/02', mes:'Fev', alocacoes:'3', tipo:'Enterprise', semana:'Sem 5' },
+  { cliente:'Localiza',        servico:'RPO', canal:'OUT', valor:90000,  mensalidade:0, data:'19/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 5' },
+  { cliente:'Facta Tech',      servico:'RPO', canal:'REN', valor:90000,  mensalidade:0, data:'02/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
+  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:51000,  mensalidade:0, data:'04/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
+  { cliente:'Caffeine Army',   servico:'RPO', canal:'MKT', valor:51000,  mensalidade:0, data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
+  { cliente:'Jeitto',          servico:'RPO', canal:'REN', valor:46500,  mensalidade:0, data:'16/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
+  { cliente:'Sanar',           servico:'RPO', canal:'REN', valor:15000,  mensalidade:0, data:'20/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
+  { cliente:'Stellantis',      servico:'RPO', canal:'REN', valor:96000,  mensalidade:0, data:'23/01', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 11' },
+  { cliente:'dLocal',          servico:'RPO', canal:'NTW', valor:68000,  mensalidade:0, data:'25/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
+  { cliente:'Frete.com',       servico:'RPO', canal:'NTW', valor:34000,  mensalidade:0, data:'30/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 13' },
+  { cliente:'Riachuelo',       servico:'RPO', canal:'UP',  valor:48000,  mensalidade:0, data:'31/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
 ];
 
-// Overlay de mensalidades editadas pelo usuário — chave: cliente|data
-let q1Mensalidades = {};
-try { q1Mensalidades = JSON.parse(localStorage.getItem('q1_mensalidades') || '{}'); } catch(e) {}
+let Q1_DEALS;
+try {
+  const saved = JSON.parse(localStorage.getItem('q1_deals') || 'null');
+  Q1_DEALS = Array.isArray(saved) && saved.length ? saved : JSON.parse(JSON.stringify(Q1_DEALS_DEFAULTS));
+} catch(e) {
+  Q1_DEALS = JSON.parse(JSON.stringify(Q1_DEALS_DEFAULTS));
+}
 
-function q1Key(d) { return (d.cliente||'') + '|' + (d.data||''); }
-function getQ1Mens(d) { return q1Mensalidades[q1Key(d)] || 0; }
-function setQ1Mens(idx, val) {
-  const d = Q1_DEALS[idx];
-  if (!d) return;
-  q1Mensalidades[q1Key(d)] = val;
-  localStorage.setItem('q1_mensalidades', JSON.stringify(q1Mensalidades));
+// Migração: incorpora overlay antigo q1_mensalidades nos próprios deals
+(function _migrateQ1Mens() {
+  try {
+    const oldOverlay = JSON.parse(localStorage.getItem('q1_mensalidades') || '{}');
+    let changed = false;
+    Q1_DEALS.forEach(d => {
+      const key = (d.cliente||'') + '|' + (d.data||'');
+      if (oldOverlay[key] !== undefined && !d.mensalidade) {
+        d.mensalidade = oldOverlay[key];
+        changed = true;
+      }
+      if (d.mensalidade === undefined) d.mensalidade = 0;
+    });
+    if (changed) localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS));
+  } catch(e) {}
+})();
+
+function saveQ1Deals() {
+  try { localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS)); } catch(e) {}
+}
+
+function updateQ1Field(i, field, value) {
+  if (!Q1_DEALS[i]) return;
+  Q1_DEALS[i][field] = value;
+  saveQ1Deals();
+  renderQ1Deals();
+  // Recalcula dependentes (Net New Logos, canal breakdown, chart)
+  renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
+  if (typeof updateChurnCards === 'function') updateChurnCards();
+}
+
+function addQ1Deal() {
+  Q1_DEALS.push({
+    cliente:'Novo cliente', servico:'RPO', canal:'NTW', valor:0, mensalidade:0,
+    data:'', mes:'Jan', alocacoes:'1', tipo:'Enterprise', semana:''
+  });
+  saveQ1Deals();
   renderQ1Deals();
 }
+
+function removeQ1Deal(i) {
+  if (!confirm('Remover este deal do Q1?')) return;
+  Q1_DEALS.splice(i, 1);
+  saveQ1Deals();
+  renderQ1Deals();
+  renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
+  if (typeof updateChurnCards === 'function') updateChurnCards();
+}
+
+// Wrappers legados — mantidos para compatibilidade
+function getQ1Mens(d) { return d.mensalidade || 0; }
+function setQ1Mens(idx, val) { updateQ1Field(idx, 'mensalidade', val); }
 
 // ─── 2025 MONTHLY DATA ─────────────────────────
 const HIST_2025 = [
@@ -1200,32 +1256,71 @@ function renderQ1Deals() {
   const tbody = document.getElementById('q1-deals-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
-  let totalMens = 0;
+  let totalMens = 0, totalValor = 0;
+  const CANAIS_OPTS = ['UP','NTW','MKT','OUT','INB','REN'];
+  const SERVICO_OPTS = ['RPO','Staffing','Hunting'];
+  const TIPO_OPTS = ['Enterprise','GG','SMB'];
+  const MESES_OPTS = ['Jan','Fev','Mar'];
+
   Q1_DEALS.forEach((d, i) => {
     const canalCls = CANAIS_CORES[d.canal?.toUpperCase()] || '';
     const tipoCls  = { 'Enterprise':'tag-enterprise', 'GG':'tag-gg', 'SMB':'tag-smb' }[d.tipo] || '';
-    const mens     = getQ1Mens(d);
+    const mens     = parseFloat(d.mensalidade)||0;
+    const val      = parseFloat(d.valor)||0;
     totalMens     += mens;
+    totalValor    += val;
     const mensCor  = mens > 0 ? '#0284c7' : '#9ca3af';
+
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="text-align:left;font-weight:600;">${d.cliente}</td>
-      <td style="text-align:center;">${d.servico}</td>
-      <td style="text-align:center;"><span class="tag ${canalCls}">${d.canal}</span></td>
-      <td style="font-weight:600;color:var(--accent);">${fmtBRL(d.valor)}</td>
-      <td style="font-weight:600;color:${mensCor};text-align:right;">
-        <span contenteditable="true" class="churn-cell" onblur="setQ1Mens(${i}, parseMoeda(this.textContent))"
-          title="Clique para editar a mensalidade">${mens > 0 ? fmtBRL(mens) : 'R$ 0,00'}</span>
+      <td style="text-align:left;font-weight:600;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'cliente',this.textContent.trim())">${esc(d.cliente||'')}</span>
       </td>
-      <td style="text-align:center;">${d.data}</td>
-      <td style="text-align:center;">${d.mes}</td>
-      <td style="text-align:center;">${d.alocacoes}</td>
-      <td style="text-align:center;"><span class="tag ${tipoCls}">${d.tipo}</span></td>
-      <td style="text-align:center;">${d.semana}</td>`;
+      <td style="text-align:center;">
+        <select onchange="updateQ1Field(${i},'servico',this.value)" class="churn-mes-sel">
+          ${SERVICO_OPTS.map(o => `<option ${d.servico===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ1Field(${i},'canal',this.value)" class="churn-mes-sel">
+          ${CANAIS_OPTS.map(o => `<option ${(d.canal||'').toUpperCase()===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="font-weight:600;color:var(--accent);text-align:right;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'valor',parseMoeda(this.textContent))">${fmtBRL(val)}</span>
+      </td>
+      <td style="font-weight:600;color:${mensCor};text-align:right;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'mensalidade',parseMoeda(this.textContent))">${mens > 0 ? fmtBRL(mens) : 'R$ 0,00'}</span>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'data',this.textContent.trim())">${esc(d.data||'')}</span>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ1Field(${i},'mes',this.value)" class="churn-mes-sel">
+          ${MESES_OPTS.map(o => `<option ${d.mes===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'alocacoes',this.textContent.trim())">${esc(d.alocacoes||'')}</span>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ1Field(${i},'tipo',this.value)" class="churn-mes-sel">
+          ${TIPO_OPTS.map(o => `<option ${d.tipo===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'semana',this.textContent.trim())">${esc(d.semana||'')}</span>
+      </td>
+      <td class="no-print admin-only" style="text-align:center;">
+        <button onclick="removeQ1Deal(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;background:none;border:none;cursor:pointer;"
+          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
     tbody.appendChild(tr);
   });
-  const totalEl = document.getElementById('q1-total-mens');
-  if (totalEl) totalEl.textContent = fmtBRL(totalMens);
+  const elMens  = document.getElementById('q1-total-mens');
+  const elValor = document.getElementById('q1-total-valor');
+  if (elMens)  elMens.textContent  = fmtBRL(totalMens);
+  if (elValor) elValor.textContent = fmtBRL(totalValor);
 }
 
 function renderHist2025Table() {
@@ -1615,7 +1710,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.cadeiras_rows))  cadeirasRows   = d.cadeiras_rows;
         if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
         if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
-        if (d.q1_mensalidades && typeof d.q1_mensalidades === 'object') q1Mensalidades = d.q1_mensalidades;
+        if (Array.isArray(d.q1_deals) && d.q1_deals.length) Q1_DEALS = d.q1_deals;
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
         if (d.realizado_locked !== undefined) realizadoLocked = d.realizado_locked;
@@ -1811,7 +1906,7 @@ async function publicarSnapshot() {
       cadeiras_rows:    cadeirasRows,
       contratos_rows:   contratosRows,
       churn_rows:       churnRows,
-      q1_mensalidades:  q1Mensalidades,
+      q1_deals:         Q1_DEALS,
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
       okr_state:        okrState,
@@ -3727,19 +3822,19 @@ function getChurnPorMes(mes) {
   };
 }
 
-// Conta novos clientes (logos novos) por quarter — canal não-Casa
+// Conta novos contratos (logos) por quarter — todo nome exato único conta
+// Ex: "Ebanx" e "Ebanx Internacional" contam como 2 logos distintos
 function getNovosClientesPorQuarter(q) {
   const MESES_POR_Q = { Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'], Q3:['Jul','Ago','Set'], Q4:['Out','Nov','Dez'] };
-  const NOVOS_CANAIS = ['NTW','OUT','INB','MKT'];
   const clientes = new Set();
 
   if (q === 'Q1') {
     (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : [])
-      .filter(d => MESES_POR_Q.Q1.includes(d.mes) && NOVOS_CANAIS.includes((d.canal||'').toUpperCase()))
+      .filter(d => MESES_POR_Q.Q1.includes(d.mes))
       .forEach(d => clientes.add((d.cliente||'').trim().toLowerCase()));
   } else {
     tableRows
-      .filter(r => MESES_POR_Q[q].includes(r.mes) && NOVOS_CANAIS.includes((r.canal||'').toUpperCase()))
+      .filter(r => MESES_POR_Q[q].includes(r.mes))
       .forEach(r => clientes.add((r.cliente||'').trim().toLowerCase()));
   }
   clientes.delete('');
