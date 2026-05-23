@@ -3703,10 +3703,9 @@ function getReceitaPorMes(mes) {
   const Q1_NOMES = ['Jan','Fev','Mar'];
   if (Q1_NOMES.includes(mes)) {
     const deals = (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).filter(d => d.mes === mes);
-    const valor = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
-    // Soma as mensalidades editadas pelo usuário; fallback para valor/12 se não houver nenhuma
-    const mensSomada = deals.reduce((s,d) => s + getQ1Mens(d), 0);
-    const receitaMRR = mensSomada > 0 ? mensSomada : valor / 12;
+    const valor       = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
+    // Usa a mensalidade real preenchida na tabela do Q1 (sem fallback estimado)
+    const receitaMRR  = deals.reduce((s,d) => s + getQ1Mens(d), 0);
     return { receitaTotal: valor, receitaMRR };
   }
   // Q2 em diante — usa tableRows
@@ -3846,7 +3845,6 @@ function renderChurnSaldo(byQ) {
       <div class="grid grid-cols-3 gap-2">
         ${mensalHTML}
       </div>
-      ${q==='Q1' ? '<p class="text-xs italic mt-3" style="color:var(--muted);">* MRR de Q1 estimado como Valor ÷ 12 (premissa de contrato anual).</p>' : ''}
     </div>`;
   }).join('');
 }
