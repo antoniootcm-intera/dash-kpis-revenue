@@ -3376,6 +3376,28 @@ const TIPO_CHURN_CFG = {
   downgrade: { label:'Downgrade',  bg:'#fef3c7', color:'#92400e' },
 };
 
+const MOTIVOS_CHURN = [
+  'Internalização',
+  'Sem volume',
+  'Performance ruim',
+  'Trocou de fornecedor',
+];
+
+function changeMotivo(i, val) {
+  if (val === '__outro__') {
+    const atual = churnRows[i]?.motivo;
+    const isCustom = atual && !MOTIVOS_CHURN.includes(atual);
+    const custom = prompt('Digite o motivo:', isCustom ? atual : '');
+    if (custom !== null && custom.trim()) {
+      updateChurnCell(i, 'motivo', custom.trim());
+    } else {
+      renderChurn(); // restaura select se cancelar
+    }
+  } else {
+    updateChurnCell(i, 'motivo', val);
+  }
+}
+
 function renderChurn() {
   const container = document.getElementById('churn-records-container');
   if (!container) return;
@@ -3443,14 +3465,23 @@ function renderChurn() {
         <td class="px-2 py-2 text-right">
           <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cadeiras',parseInt(this.textContent)||0)">${row.cadeiras||0}</span>
         </td>
-        <td class="px-2 py-2 text-right font-semibold" style="color:#dc2626;">
-          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'mrrPerdido',parseMoeda(this.textContent))">${row.mrrPerdido>0?fmtBRL(row.mrrPerdido):''}</span>
+        <td class="px-2 py-2 text-right font-semibold" style="color:${(row.mrrPerdido||0)>0?'#dc2626':'#9ca3af'};">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'mrrPerdido',parseMoeda(this.textContent))">${(row.mrrPerdido!==undefined && row.mrrPerdido!==null) ? fmtBRL(row.mrrPerdido) : ''}</span>
         </td>
-        <td class="px-2 py-2 text-right font-semibold" style="color:#991b1b;">
-          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'contratoTotal',parseMoeda(this.textContent))">${row.contratoTotal>0?fmtBRL(row.contratoTotal):''}</span>
+        <td class="px-2 py-2 text-right font-semibold" style="color:${(row.contratoTotal||0)>0?'#991b1b':'#9ca3af'};">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'contratoTotal',parseMoeda(this.textContent))">${(row.contratoTotal!==undefined && row.contratoTotal!==null) ? fmtBRL(row.contratoTotal) : ''}</span>
         </td>
         <td class="px-3 py-2 text-xs" style="color:var(--text2);">
-          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'motivo',this.textContent.trim())">${esc(row.motivo||'')}</span>
+          ${(() => {
+            const m = row.motivo || '';
+            const isPreset = MOTIVOS_CHURN.includes(m);
+            const isCustom = m && !isPreset;
+            return `<select onchange="changeMotivo(${i},this.value)" class="churn-mes-sel" style="width:100%;text-align:left;color:${m?'var(--text)':'var(--muted)'};">
+              <option value="">— selecione —</option>
+              ${MOTIVOS_CHURN.map(opt => `<option value="${esc(opt)}" ${m===opt?'selected':''}>${opt}</option>`).join('')}
+              <option value="__outro__" ${isCustom?'selected':''}>${isCustom ? '✏️ ' + esc(m) : 'Outro…'}</option>
+            </select>`;
+          })()}
         </td>
         <td class="px-1 py-2 text-center no-print admin-only">
           <button onclick="removeChurn(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;"
