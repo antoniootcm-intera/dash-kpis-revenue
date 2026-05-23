@@ -463,6 +463,20 @@
       </div>
     </div>
 
+    <!-- Ciclo por Tipo de Empresa × Canal -->
+    <div>
+      <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+        <h3 class="font-semibold text-gray-700">Ciclo de Vendas por Tipo de Empresa × Canal (dias)</h3>
+        <span class="text-xs" style="color:var(--muted);">Média de dias agrupada por tipo (Enterprise · GG · SMB) e segmentada por canal de aquisição</span>
+      </div>
+      <div class="relative h-64">
+        <canvas id="chartCicloTipoCanal"></canvas>
+      </div>
+      <p id="ciclo-tipo-canal-vazio" class="text-xs italic mt-2" style="color:var(--muted);display:none;">
+        Nenhum deal com ciclo preenchido — adicione valores no campo Ciclo (dias) da tabela Resultados Revenue.
+      </p>
+    </div>
+
   </div>
 </section>
 
@@ -2105,6 +2119,34 @@ function initCharts() {
       })
     }
   });
+
+  // Ciclo por Tipo de Empresa × Canal (barras agrupadas)
+  const ctxCT = document.getElementById('chartCicloTipoCanal');
+  if (ctxCT) {
+    charts.cicloTipoCanal = new Chart(ctxCT.getContext('2d'), {
+      type: 'bar',
+      data: { labels: [], datasets: [] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: c => {
+                const meta = c.dataset.meta && c.dataset.meta[c.dataIndex];
+                if (!meta || !meta.n) return c.dataset.label + ': sem dados';
+                return `${c.dataset.label}: ${c.raw} dias (média de ${meta.n} deal${meta.n>1?'s':''})`;
+              }
+            }
+          }
+        },
+        scales: darkScales({
+          y: { title: { display: true, text: 'Ciclo médio (dias)', color: CHART_DEFAULTS.tick, font: { size: 11 } } },
+          x: { grid: { display: false } }
+        })
+      }
+    });
+  }
 }
 
 function buildLinearData() {
@@ -2168,6 +2210,65 @@ function updateCicloChart() {
   charts.ciclo.data.labels   = labels;
   charts.ciclo.data.datasets[0].data = data;
   charts.ciclo.update();
+  updateCicloTipoCanalChart();
+}
+
+function updateCicloTipoCanalChart() {
+  if (!charts.cicloTipoCanal) return;
+
+  // Coleta tipos e canais existentes nos dados (com ciclo preenchido)
+  const TIPO_ORDEM  = ['Enterprise', 'GG', 'SMB'];
+  const CANAL_CORES_CHART = {
+    'UP':'#60a5fa', 'NTW':'#4ade80', 'MKT':'#fb923c',
+    'OUT':'#f472b6', 'INB':'#a78bfa', 'REN':'#fbbf24', 'N/D':'#9ca3af'
+  };
+
+  // Agrupa: agg[tipo][canal] = [ciclos]
+  const agg = {};
+  tableRows.forEach(r => {
+    if (!r.ciclo || r.ciclo <= 0) return;
+    const tipo  = r.tipo  || 'N/D';
+    const canal = (r.canal||'N/D').toUpperCase();
+    if (!agg[tipo])         agg[tipo] = {};
+    if (!agg[tipo][canal])  agg[tipo][canal] = [];
+    agg[tipo][canal].push(parseInt(r.ciclo)||0);
+  });
+
+  // Tipos com dados (preserva ordem)
+  const tiposCom = TIPO_ORDEM.filter(t => agg[t]);
+  // Inclui qualquer tipo "extra" presente nos dados (ex: digitou 'Outro' à mão)
+  Object.keys(agg).forEach(t => { if (!tiposCom.includes(t)) tiposCom.push(t); });
+
+  // Canais distintos (em todos os tipos)
+  const canaisSet = new Set();
+  tiposCom.forEach(t => Object.keys(agg[t]).forEach(c => canaisSet.add(c)));
+  const canais = ['UP','NTW','MKT','OUT','INB','REN','N/D'].filter(c => canaisSet.has(c));
+  Array.from(canaisSet).forEach(c => { if (!canais.includes(c)) canais.push(c); });
+
+  // Vazio?
+  const vazioEl = document.getElementById('ciclo-tipo-canal-vazio');
+  const semDados = tiposCom.length === 0 || canais.length === 0;
+  if (vazioEl) vazioEl.style.display = semDados ? '' : 'none';
+
+  // Cria datasets (um por canal)
+  const datasets = canais.map(c => {
+    const data = tiposCom.map(t => {
+      const arr = (agg[t] && agg[t][c]) || [];
+      return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0;
+    });
+    const meta = tiposCom.map(t => ({ n: ((agg[t]||{})[c]||[]).length }));
+    return {
+      label: c,
+      data,
+      meta,
+      backgroundColor: CANAL_CORES_CHART[c] || '#6366f1',
+      borderRadius: 4,
+    };
+  });
+
+  charts.cicloTipoCanal.data.labels   = tiposCom;
+  charts.cicloTipoCanal.data.datasets = datasets;
+  charts.cicloTipoCanal.update();
 }
 
 function updateFunilChart() {
