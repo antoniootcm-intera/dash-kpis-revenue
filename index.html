@@ -3459,9 +3459,6 @@ function renderChurn() {
             ${MESES_CHURN.map(m => `<option ${row.mes===m?'selected':''}>${m}</option>`).join('')}
           </select>
         </td>
-        <td class="px-2 py-2 text-center text-xs" style="color:var(--text2);">
-          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'dataChurn',this.textContent.trim())">${esc(row.dataChurn||'')}</span>
-        </td>
         <td class="px-2 py-2 text-right">
           <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cadeiras',parseInt(this.textContent)||0)">${row.cadeiras||0}</span>
         </td>
@@ -3489,7 +3486,7 @@ function renderChurn() {
         </td>
       </tr>`;
     }).join('') : `
-      <tr><td colspan="9" class="px-3 py-4 text-center text-xs" style="color:var(--muted);font-style:italic;">
+      <tr><td colspan="8" class="px-3 py-4 text-center text-xs" style="color:var(--muted);font-style:italic;">
         ${filter==='all' ? `Nenhum churn registrado em ${q}. Use o botão abaixo para adicionar.` : `Nenhum churn ${filter==='logo'?'Logo':'Downgrade'} em ${q}.`}
       </td></tr>`;
 
@@ -3528,7 +3525,6 @@ function renderChurn() {
                 <th class="px-3 py-2 text-left">Cliente</th>
                 <th class="px-2 py-2 text-center" style="width:110px;">Tipo</th>
                 <th class="px-2 py-2 text-center" style="width:90px;">Mês</th>
-                <th class="px-2 py-2 text-center" style="width:80px;">Data</th>
                 <th class="px-2 py-2 text-right"  style="width:80px;">Cadeiras</th>
                 <th class="px-2 py-2 text-right"  style="width:120px;">MRR Perdido</th>
                 <th class="px-2 py-2 text-right"  style="width:130px;">Contrato Total</th>
