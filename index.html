@@ -4122,8 +4122,21 @@ function renderChurnSaldo(byQ) {
     Q4: ['Out','Nov','Dez'],
   };
 
-  // Só mostramos cards para Q1 e Q2 (períodos com receita real de 2026)
-  const cardQs = ['Q1','Q2'];
+  // Quarters visíveis: o trimestre atual (e anteriores) + qualquer trimestre com dado lançado.
+  // Assim Q3/Q4 aparecem automaticamente quando chegarem ou quando você registrar dados antecipados.
+  const TODOS_QS = ['Q1','Q2','Q3','Q4'];
+  const qAtualNum = Math.floor(new Date().getMonth() / 3) + 1; // 1..4
+  const cardQs = TODOS_QS.filter((q, idx) => {
+    const qNum = idx + 1;
+    if (qNum <= qAtualNum) return true; // já chegamos neste quarter
+    // Senão, mostra apenas se há dado registrado (receita OU churn)
+    const temReceita = MESES_POR_Q[q].some(m => {
+      const r = getReceitaPorMes(m);
+      return (r.receitaTotal||0) > 0 || (r.receitaMRR||0) > 0 || (r.cadeiras||0) > 0;
+    });
+    const temChurn = (byQ[q].contratos||0) > 0;
+    return temReceita || temChurn;
+  });
 
   const cardsEl = document.getElementById('churn-saldo-cards');
   if (!cardsEl) return;
