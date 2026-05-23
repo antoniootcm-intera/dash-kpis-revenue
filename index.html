@@ -1056,16 +1056,6 @@
 ══════════════════════════════════════════════ -->
 <div id="panel-churn" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
 
-  <!-- ── Resumo Trimestral ── -->
-  <section>
-    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
-      <span class="text-lg font-bold">📉 Churn — Resumo Trimestral 2026</span>
-    </div>
-    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="churn-quarter-cards"></div>
-    </div>
-  </section>
-
   <!-- ── Saldo Líquido (Receita vs Churn) ── -->
   <section>
     <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
@@ -1076,6 +1066,16 @@
         Compara o que entrou (receita nova do trimestre) com o que saiu (churn). Se ficar verde, o trimestre foi lucrativo em termos de retenção.
       </p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="churn-saldo-cards"></div>
+    </div>
+  </section>
+
+  <!-- ── Resumo Trimestral ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
+      <span class="text-lg font-bold">📉 Churn — Resumo Trimestral 2026</span>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="churn-quarter-cards"></div>
     </div>
   </section>
 
@@ -1104,6 +1104,65 @@
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
       <div class="relative h-64">
         <canvas id="chartChurnTri"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Análise de motivos de churn ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+      <span class="text-lg font-bold">🥧 Motivos de Churn — Análise</span>
+      <div class="flex gap-2 items-center no-print">
+        <span class="text-xs text-blue-200">Período:</span>
+        <select id="motivos-periodo" onchange="renderMotivosCharts()"
+          class="text-xs px-2 py-1 rounded" style="color:#1e1e2e;background:#fff;">
+          <option value="all">Todo 2026</option>
+          <option value="Q1">Q1 2026</option>
+          <option value="Q2">Q2 2026</option>
+          <option value="Q3">Q3 2026</option>
+          <option value="Q4">Q4 2026</option>
+        </select>
+      </div>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+      <!-- 3 pies lado a lado: por contratos, por cadeiras, por MRR -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-widest mb-2 text-center" style="color:var(--text2);">Por nº de contratos</h3>
+          <div class="relative h-56"><canvas id="chartMotivosContratos"></canvas></div>
+          <p id="motivos-total-contratos" class="text-center text-xs mt-2" style="color:var(--muted);"></p>
+        </div>
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-widest mb-2 text-center" style="color:var(--text2);">Por nº de cadeiras</h3>
+          <div class="relative h-56"><canvas id="chartMotivosCadeiras"></canvas></div>
+          <p id="motivos-total-cadeiras" class="text-center text-xs mt-2" style="color:var(--muted);"></p>
+        </div>
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-widest mb-2 text-center" style="color:var(--text2);">Por MRR perdido</h3>
+          <div class="relative h-56"><canvas id="chartMotivosMRR"></canvas></div>
+          <p id="motivos-total-mrr" class="text-center text-xs mt-2" style="color:var(--muted);"></p>
+        </div>
+      </div>
+
+      <!-- Tabela detalhada por motivo -->
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Detalhamento por motivo</h3>
+        <div class="overflow-x-auto">
+          <table class="hist-table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Motivo</th>
+                <th>Contratos</th>
+                <th>Cadeiras</th>
+                <th>MRR Perdido</th>
+                <th>Contrato Total</th>
+                <th>% do MRR</th>
+              </tr>
+            </thead>
+            <tbody id="motivos-detalhe-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -2671,7 +2730,7 @@ function switchTab(tab) {
   // Lazy render do chart de churn quando o painel fica visível
   if (tab === 'churn' && !_churnChartReady) {
     _churnChartReady = true;
-    setTimeout(renderChurnChart, 50);
+    setTimeout(() => { renderChurnChart(); renderMotivosCharts(); }, 50);
   }
 }
 
@@ -3778,6 +3837,8 @@ function renderChurn() {
 
   updateChurnCards();
   if (_churnChart) renderChurnChart();
+  // Re-render motivos charts se já estiverem criados
+  if (_motivosCharts && _motivosCharts.contratos) renderMotivosCharts();
 }
 
 function _emptyChurnBucket() {
@@ -4115,6 +4176,116 @@ function renderChurnChart() {
       }
     }
   });
+}
+
+// ─── ANÁLISE DE MOTIVOS DE CHURN ────────────────
+let _motivosCharts = { contratos:null, cadeiras:null, mrr:null };
+
+// Paleta de cores fixa por motivo (consistência visual entre pies)
+const _MOTIVO_COLORS = {
+  'Internalização':         '#dc2626',
+  'Sem volume':             '#f59e0b',
+  'Performance ruim':       '#a855f7',
+  'Trocou de fornecedor':   '#3b82f6',
+  'Mudança de estratégia':  '#14b8a6',
+  'Projeto com data final': '#ec4899',
+  '— Sem motivo —':         '#9ca3af',
+  'Outros':                 '#fb923c',
+};
+function _corMotivo(m) { return _MOTIVO_COLORS[m] || '#6366f1'; }
+
+function renderMotivosCharts() {
+  const periodo = document.getElementById('motivos-periodo')?.value || 'all';
+
+  // Filtra rows por período
+  let rows = churnRows.slice();
+  if (periodo !== 'all') {
+    rows = rows.filter(r => mesParaQuarter(r.mes) === periodo);
+  }
+
+  // Agrega por motivo
+  const agg = {}; // motivo → { contratos, cadeiras, mrr, contratoTotal }
+  rows.forEach(r => {
+    const m = (r.motivo && r.motivo.trim()) ? r.motivo.trim() : '— Sem motivo —';
+    if (!agg[m]) agg[m] = { contratos:0, cadeiras:0, mrr:0, contratoTotal:0 };
+    agg[m].contratos     += 1;
+    agg[m].cadeiras      += parseInt(r.cadeiras)||0;
+    agg[m].mrr           += parseFloat(r.mrrPerdido)||0;
+    agg[m].contratoTotal += parseFloat(r.contratoTotal)||0;
+  });
+
+  // Ordena por MRR desc, mantém '— Sem motivo —' no final se existir
+  const labels = Object.keys(agg).sort((a,b) => {
+    if (a === '— Sem motivo —') return  1;
+    if (b === '— Sem motivo —') return -1;
+    return agg[b].mrr - agg[a].mrr;
+  });
+  const colors = labels.map(_corMotivo);
+
+  // Totais
+  const totalContratos = labels.reduce((s,m) => s+agg[m].contratos, 0);
+  const totalCadeiras  = labels.reduce((s,m) => s+agg[m].cadeiras,  0);
+  const totalMRR       = labels.reduce((s,m) => s+agg[m].mrr,       0);
+
+  // Funções de cleanup + criação dos pies
+  function makePie(canvasId, key, totalLabelId, isMoney) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return null;
+    if (_motivosCharts[key]) { _motivosCharts[key].destroy(); _motivosCharts[key] = null; }
+
+    const data = labels.map(m => agg[m][key==='mrr'?'mrr':key]);
+    const hasData = data.some(v => v > 0);
+
+    _motivosCharts[key] = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels, datasets:[{ data, backgroundColor: colors, borderWidth:2, borderColor:'#fff' }] },
+      options: {
+        responsive:true, maintainAspectRatio:false, cutout:'55%',
+        plugins:{
+          legend:{ position:'bottom', labels:{ usePointStyle:true, pointStyle:'circle', padding:8, font:{size:10}, boxWidth:8 }},
+          tooltip:{ callbacks:{ label: c => {
+            const total = data.reduce((s,v)=>s+v,0);
+            const pct = total ? ((c.raw/total)*100).toFixed(1) : 0;
+            const val = isMoney ? 'R$ '+(c.raw||0).toLocaleString('pt-BR') : c.raw;
+            return c.label + ': ' + val + ' (' + pct + '%)';
+          }}}
+        }
+      }
+    });
+
+    const totalEl = document.getElementById(totalLabelId);
+    if (totalEl) totalEl.textContent = hasData
+      ? (isMoney ? 'Total: ' + fmtBRL(data.reduce((s,v)=>s+v,0)) : 'Total: ' + data.reduce((s,v)=>s+v,0))
+      : 'Sem dados no período';
+  }
+
+  makePie('chartMotivosContratos', 'contratos', 'motivos-total-contratos', false);
+  makePie('chartMotivosCadeiras',  'cadeiras',  'motivos-total-cadeiras',  false);
+  makePie('chartMotivosMRR',       'mrr',       'motivos-total-mrr',       true);
+
+  // Tabela de detalhamento
+  const tbody = document.getElementById('motivos-detalhe-tbody');
+  if (tbody) {
+    if (!labels.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum churn registrado no período.</td></tr>`;
+    } else {
+      tbody.innerHTML = labels.map(m => {
+        const d = agg[m];
+        const pct = totalMRR ? ((d.mrr / totalMRR) * 100).toFixed(1) : '0,0';
+        return `<tr>
+          <td style="text-align:left;font-weight:600;">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${_corMotivo(m)};margin-right:6px;"></span>
+            ${esc(m)}
+          </td>
+          <td>${d.contratos}</td>
+          <td>${d.cadeiras}</td>
+          <td style="color:#dc2626;font-weight:600;">${fmtBRL(d.mrr)}</td>
+          <td style="color:#991b1b;font-weight:600;">${fmtBRL(d.contratoTotal)}</td>
+          <td><span class="q-badge qb-red">${pct}%</span></td>
+        </tr>`;
+      }).join('');
+    }
+  }
 }
 
 // Load saved churn
