@@ -890,6 +890,15 @@
       <span id="filt-dur-count" class="text-xs ml-2" style="color:var(--muted);"></span>
     </div>
 
+    <!-- Filtro por vencimento -->
+    <div class="bg-white border border-t-0 border-gray-200 px-5 py-3 flex flex-wrap items-center gap-2">
+      <span class="text-xs font-semibold" style="color:var(--text2);">⏰ Próximas a vencer:</span>
+      <button onclick="filtrarVencimentoCadeiras(null)" id="filt-vence-cad-all" class="filt-dur-btn active-filt">Todas</button>
+      <button onclick="filtrarVencimentoCadeiras(30)"   id="filt-vence-cad-30"  class="filt-dur-btn">≤ 30 dias</button>
+      <button onclick="filtrarVencimentoCadeiras(60)"   id="filt-vence-cad-60"  class="filt-dur-btn">≤ 60 dias</button>
+      <button onclick="filtrarVencimentoCadeiras(90)"   id="filt-vence-cad-90"  class="filt-dur-btn">≤ 90 dias</button>
+    </div>
+
     <!-- Tabela -->
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-x-auto">
       <table class="text-xs" id="cadeiras-table" style="min-width:1480px; border-collapse:collapse;">
@@ -989,13 +998,31 @@
       </div>
     </div>
 
+    <!-- Filtro vencimento + ordenação -->
+    <div class="bg-white border border-t-0 border-gray-200 px-5 py-3 flex flex-wrap items-center gap-2">
+      <span class="text-xs font-semibold" style="color:var(--text2);">⏰ Próximos a vencer:</span>
+      <button onclick="filtrarVencimentoContratos(null)" id="filt-vence-cont-all" class="filt-dur-btn active-filt">Todos</button>
+      <button onclick="filtrarVencimentoContratos(30)"   id="filt-vence-cont-30"  class="filt-dur-btn">≤ 30 dias</button>
+      <button onclick="filtrarVencimentoContratos(60)"   id="filt-vence-cont-60"  class="filt-dur-btn">≤ 60 dias</button>
+      <button onclick="filtrarVencimentoContratos(90)"   id="filt-vence-cont-90"  class="filt-dur-btn">≤ 90 dias</button>
+      <span id="filt-vence-cont-count" class="text-xs ml-2" style="color:var(--muted);"></span>
+    </div>
+
     <!-- Tabela -->
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-x-auto">
       <table class="text-sm w-full" id="contratos-table" style="min-width:1200px; border-collapse:collapse;">
         <thead style="background:#f3f2ff;color:var(--accent2);" class="text-xs uppercase tracking-wide">
           <tr>
-            <th class="px-2 py-3 text-left" style="width:150px;">Cliente</th>
-            <th class="px-2 py-3 text-left" style="width:110px;">Vigência</th>
+            <th class="px-2 py-3 text-left" style="width:150px;">
+              <button onclick="sortContratos('cliente')" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;padding:0;display:flex;align-items:center;gap:4px;">
+                Cliente <span id="sort-cont-cliente">↕</span>
+              </button>
+            </th>
+            <th class="px-2 py-3 text-left" style="width:110px;">
+              <button onclick="sortContratos('vigencia')" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;padding:0;display:flex;align-items:center;gap:4px;">
+                Vigência <span id="sort-cont-vigencia">↕</span>
+              </button>
+            </th>
             <th class="px-2 py-3 text-center" style="width:90px;">Início</th>
             <th class="px-2 py-3 text-center" style="width:90px;">Fim</th>
             <th class="px-2 py-3 text-center" style="width:70px;">Duração</th>
@@ -2659,6 +2686,27 @@ function saveCadeirasState() {
 
 // ── Filtro de duração ────────────────────────────
 let _cadFiltDur = null; // null = todos
+let _cadFiltVence = null; // null = todos · número = vencer em até N dias
+
+// Retorna quantos dias faltam para a vigência (último dia do mês). Negativo = já venceu.
+function vigenciaDiasParaVencer(str) {
+  const vig = parseVigencia(str);
+  if (!vig) return Infinity;
+  // Último dia do mês de vigência
+  const exp = new Date(vig.year, vig.month + 1, 0);
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  return Math.round((exp - hoje) / (1000 * 60 * 60 * 24));
+}
+
+function filtrarVencimentoCadeiras(dias) {
+  _cadFiltVence = dias;
+  ['all','30','60','90'].forEach(k => {
+    const el = document.getElementById('filt-vence-cad-' + k);
+    if (el) el.classList.toggle('active-filt', String(dias) === k || (dias === null && k === 'all'));
+  });
+  renderCadeiras();
+}
 
 function filtrarDuracao(val) {
   _cadFiltDur = val;
@@ -2802,12 +2850,16 @@ function renderCadeiras() {
 
   const curMes = new Date().getMonth(); // 4 = Maio
 
-  // aplica filtro de duração
-  const linhasFiltradas = _cadFiltDur === null
-    ? cadeirasRows.map((r, i) => ({ r, i }))
-    : cadeirasRows.map((r, i) => ({ r, i })).filter(({ r }) =>
-        _cadFiltDur === 'sem' ? !r.duracao : String(r.duracao) === String(_cadFiltDur)
-      );
+  // aplica filtros (duração + vencimento)
+  let linhasFiltradas = cadeirasRows.map((r, i) => ({ r, i }));
+  if (_cadFiltDur !== null) {
+    linhasFiltradas = linhasFiltradas.filter(({ r }) =>
+      _cadFiltDur === 'sem' ? !r.duracao : String(r.duracao) === String(_cadFiltDur)
+    );
+  }
+  if (_cadFiltVence !== null) {
+    linhasFiltradas = linhasFiltradas.filter(({ r }) => vigenciaDiasParaVencer(r.vigencia) <= _cadFiltVence);
+  }
 
   const countEl = document.getElementById('filt-dur-count');
   if (countEl) countEl.textContent = _cadFiltDur !== null
@@ -3153,12 +3205,62 @@ function saveContratosState() {
   try { localStorage.setItem('contratos_rows', JSON.stringify(contratosRows)); } catch(e) {}
 }
 
+let _contFiltVence = null; // null = todos
+let _contSort = { key:null, dir:1 };
+
+function filtrarVencimentoContratos(dias) {
+  _contFiltVence = dias;
+  ['all','30','60','90'].forEach(k => {
+    const el = document.getElementById('filt-vence-cont-' + k);
+    if (el) el.classList.toggle('active-filt', String(dias) === k || (dias === null && k === 'all'));
+  });
+  renderContratos();
+}
+
+function sortContratos(key) {
+  if (_contSort.key === key) { _contSort.dir *= -1; }
+  else { _contSort.key = key; _contSort.dir = 1; }
+  contratosRows.sort((a, b) => {
+    let va, vb;
+    if (key === 'vigencia') {
+      // Ordena por dias para vencer (menor → primeiro)
+      va = vigenciaDiasParaVencer(a.vigencia);
+      vb = vigenciaDiasParaVencer(b.vigencia);
+    } else {
+      va = (a[key] || '').toLowerCase();
+      vb = (b[key] || '').toLowerCase();
+    }
+    if (va < vb) return -1 * _contSort.dir;
+    if (va > vb) return  1 * _contSort.dir;
+    return 0;
+  });
+  ['cliente','vigencia'].forEach(k => {
+    const el = document.getElementById('sort-cont-' + k);
+    if (!el) return;
+    if (k !== _contSort.key) { el.textContent = '↕'; el.style.color = ''; return; }
+    el.textContent = _contSort.dir === 1 ? '↑' : '↓';
+    el.style.color = 'var(--accent)';
+  });
+  renderContratos();
+  saveContratosState();
+}
+
 function renderContratos() {
   const tbody = document.getElementById('contratos-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
 
-  contratosRows.forEach((row, i) => {
+  // Aplica filtro de vencimento, mantendo o índice original
+  const indexed = contratosRows.map((r, i) => ({ r, i }));
+  const visible = _contFiltVence === null
+    ? indexed
+    : indexed.filter(({ r }) => vigenciaDiasParaVencer(r.vigencia) <= _contFiltVence);
+
+  const countEl = document.getElementById('filt-vence-cont-count');
+  if (countEl) countEl.textContent = _contFiltVence !== null
+    ? `${visible.length} de ${contratosRows.length} contrato(s)` : '';
+
+  visible.forEach(({ r: row, i }) => {
     const tr = document.createElement('tr');
 
     // Tipo — badge clicável (cycle)
