@@ -3822,19 +3822,28 @@ function getChurnPorMes(mes) {
   };
 }
 
-// Conta novos contratos (logos) por quarter — todo nome exato único conta
-// Ex: "Ebanx" e "Ebanx Internacional" contam como 2 logos distintos
+// Determina se um deal conta como "novo logo":
+// 1) Nova aquisição: canal != UP e != REN
+// 2) Upsell para nova vertente: canal UP/REN COM '*' no nome do cliente
+const _HOUSE_CANAIS = ['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO'];
+function isNovoLogo(d) {
+  const canal = (d.canal||'').toUpperCase();
+  if (!_HOUSE_CANAIS.includes(canal)) return true; // nova aquisição
+  if ((d.cliente||'').includes('*'))   return true; // upsell de nova vertente
+  return false;
+}
+
 function getNovosClientesPorQuarter(q) {
   const MESES_POR_Q = { Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'], Q3:['Jul','Ago','Set'], Q4:['Out','Nov','Dez'] };
   const clientes = new Set();
 
   if (q === 'Q1') {
     (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : [])
-      .filter(d => MESES_POR_Q.Q1.includes(d.mes))
+      .filter(d => MESES_POR_Q.Q1.includes(d.mes) && isNovoLogo(d))
       .forEach(d => clientes.add((d.cliente||'').trim().toLowerCase()));
   } else {
     tableRows
-      .filter(r => MESES_POR_Q[q].includes(r.mes))
+      .filter(r => MESES_POR_Q[q].includes(r.mes) && isNovoLogo(r))
       .forEach(r => clientes.add((r.cliente||'').trim().toLowerCase()));
   }
   clientes.delete('');
@@ -3912,7 +3921,9 @@ function renderChurnSaldo(byQ) {
           <div><span style="color:#dc2626;">Perdidos:</span> <span class="font-bold">${logosPerdidos}</span></div>
           <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#16a34a':'#dc2626'};">${positivoLogos?'+':''}${netNewLogos} logos</span></div>
         </div>
-        <p class="text-xs italic mt-1" style="color:var(--muted);">Downgrade não conta aqui — só saída completa de cliente.</p>
+        <p class="text-xs italic mt-1" style="color:var(--muted);">
+          <strong>Novo logo:</strong> nova aquisição (NTW/OUT/INB/MKT) ou upsell com <strong>*</strong> no nome (nova vertente, ex: "Ebanx Internacional*"). Downgrade não conta — só saída completa.
+        </p>
       </div>
 
       <!-- Resumo trimestral -->
