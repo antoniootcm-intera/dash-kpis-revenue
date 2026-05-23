@@ -110,6 +110,8 @@
   body.viewer-mode input { pointer-events: none !important; }
   body.viewer-mode .cont-cell:hover { background: transparent !important; }
   body.viewer-mode .cont-cell:focus { outline: none !important; background: transparent !important; }
+  body.viewer-mode .churn-cell:hover { background: transparent !important; }
+  body.viewer-mode .churn-cell:focus { outline: none !important; background: transparent !important; }
   body.viewer-mode .filt-dur-btn, body.viewer-mode .rfilt { pointer-events: auto !important; } /* filters still clickable */
 
   /* viewer banner */
@@ -200,6 +202,16 @@
   .qb-red   { background:#fee2e2; color:#991b1b; }
   .qb-blue  { background:#dbeafe; color:#1e40af; }
   .qb-yellow{ background:#fef3c7; color:#92400e; }
+
+  /* ── Churn table ──────────────────────────── */
+  #churn-table td, #churn-table th { border-bottom:1px solid #ede9fe; }
+  #churn-table tbody tr:hover td { background:#fef2f2 !important; }
+  #churn-table tbody tr:nth-child(even) td { background:#fffafa; }
+  .churn-cell { display:inline-block; min-width:60px; padding:2px 4px; border-radius:4px; transition:background .1s; }
+  .churn-cell:hover { background:#fee2e2; }
+  .churn-cell:focus { background:#fee2e2; outline:2px solid #dc2626; }
+  .churn-mes-sel { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
+    font-weight:600; text-align:center; outline:none; }
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans text-gray-800">
@@ -254,6 +266,7 @@
     <button id="tab-dashboard"  class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
     <button id="tab-cadeiras"  class="tab-btn" onclick="switchTab('cadeiras')">🪑 Controle de Cadeiras</button>
     <button id="tab-contratos" class="tab-btn" onclick="switchTab('contratos')">📋 Controle de Contratos</button>
+    <button id="tab-churn"     class="tab-btn" onclick="switchTab('churn')">📉 Churn</button>
   </div>
 </div>
 
@@ -1000,6 +1013,87 @@
   </section>
 </div><!-- /panel-contratos -->
 
+<!-- ══════════════════════════════════════════════
+     PAINEL CHURN
+══════════════════════════════════════════════ -->
+<div id="panel-churn" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+
+  <!-- ── Resumo Trimestral ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
+      <span class="text-lg font-bold">📉 Churn — Resumo Trimestral 2026</span>
+      <div class="admin-only flex gap-2 no-print">
+        <button onclick="addChurn()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+          + Registrar Churn
+        </button>
+      </div>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="churn-quarter-cards"></div>
+    </div>
+  </section>
+
+  <!-- ── Saldo Líquido (Receita vs Churn) ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
+      <span class="text-lg font-bold">💰 Saldo Líquido — Receita Nova vs Churn</span>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <p class="text-xs mb-4" style="color:var(--muted);">
+        Compara o que entrou (receita nova do trimestre) com o que saiu (churn). Se ficar verde, o trimestre foi lucrativo em termos de retenção.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="churn-saldo-cards"></div>
+    </div>
+  </section>
+
+  <!-- ── Tabela editável de Churn ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
+      <span class="text-lg font-bold">Registros de Churn</span>
+      <span class="text-blue-200 text-xs">Edite qualquer célula clicando nela</span>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table id="churn-table" class="min-w-full text-sm">
+          <thead>
+            <tr style="background:#fef2f2;color:#991b1b;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;">
+              <th class="px-3 py-3 text-left">Cliente</th>
+              <th class="px-2 py-3 text-center" style="width:90px;">Mês</th>
+              <th class="px-2 py-3 text-center" style="width:60px;">Tri</th>
+              <th class="px-2 py-3 text-center" style="width:80px;">Data Churn</th>
+              <th class="px-2 py-3 text-right"  style="width:80px;">Cadeiras</th>
+              <th class="px-2 py-3 text-right"  style="width:120px;">MRR Perdido</th>
+              <th class="px-2 py-3 text-right"  style="width:130px;">Contrato Total</th>
+              <th class="px-3 py-3 text-left">Motivo</th>
+              <th class="px-2 py-3 text-center no-print admin-only" style="width:36px;">✕</th>
+            </tr>
+          </thead>
+          <tbody id="churn-tbody" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+      <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-6 text-sm font-semibold text-gray-700">
+        <span>Total registros: <span id="churn-total-count" style="color:#dc2626;">0</span></span>
+        <span>Cadeiras churnadas: <span id="churn-total-cad" style="color:#dc2626;">0</span></span>
+        <span>MRR perdido total: <span id="churn-total-mrr" style="color:#dc2626;">R$ 0</span></span>
+        <span>Contrato total perdido: <span id="churn-total-contrato" style="color:#dc2626;">R$ 0</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Gráfico evolução trimestral ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
+      <span class="text-lg font-bold">📊 Evolução do Churn por Trimestre</span>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <div class="relative h-64">
+        <canvas id="chartChurnTri"></canvas>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /panel-churn -->
+
 <footer class="text-center text-xs text-gray-400 py-6 no-print">
   INTERA Dashboard · Gestão à Vista RPO · Dados via HubSpot API v3
 </footer>
@@ -1515,6 +1609,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.table_rows))     tableRows      = d.table_rows;
         if (Array.isArray(d.cadeiras_rows))  cadeirasRows   = d.cadeiras_rows;
         if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
+        if (Array.isArray(d.churn_rows))     churnRows      = d.churn_rows;
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
         if (d.realizado_locked !== undefined) realizadoLocked = d.realizado_locked;
@@ -1532,6 +1627,7 @@ window.addEventListener('DOMContentLoaded', () => {
         renderQ1Deals();
         renderHist2025Table();
         renderCompTriTable();
+        renderChurn();
         // Q2 canal cards (Q2 é o painel padrão visível)
         if (tableRows.length > 0) { _q2CanalReady = true; renderQ2CanalCards(); }
         switchTab(d.active_tab || 'dashboard');
@@ -1562,6 +1658,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderQ1Deals();
   renderHist2025Table();
   renderCompTriTable();
+  renderChurn();
 
   // Render Q2 canal cards (Q2 é a sub-tab padrão — canvas visível)
   if (tableRows.length > 0) {
@@ -1707,6 +1804,7 @@ async function publicarSnapshot() {
       table_rows:       tableRows,
       cadeiras_rows:    cadeirasRows,
       contratos_rows:   contratosRows,
+      churn_rows:       churnRows,
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
       okr_state:        okrState,
@@ -2436,11 +2534,16 @@ try {
 //  TAB NAVIGATION
 // ════════════════════════════════════════════════
 function switchTab(tab) {
-  ['dashboard','cadeiras','contratos'].forEach(t => {
+  ['dashboard','cadeiras','contratos','churn'].forEach(t => {
     document.getElementById('panel-' + t).style.display = tab === t ? '' : 'none';
     document.getElementById('tab-'   + t).classList.toggle('active', tab === t);
   });
   localStorage.setItem('active_tab', tab);
+  // Lazy render do chart de churn quando o painel fica visível
+  if (tab === 'churn' && !_churnChartReady) {
+    _churnChartReady = true;
+    setTimeout(renderChurnChart, 50);
+  }
 }
 
 // ════════════════════════════════════════════════
@@ -3206,6 +3309,291 @@ function exportContratosCSV() {
 try {
   const savedC = JSON.parse(localStorage.getItem('contratos_rows') || '[]');
   if (Array.isArray(savedC)) contratosRows = savedC;
+} catch(e) {}
+
+// ════════════════════════════════════════════════
+//  CHURN — STATE & RENDER
+// ════════════════════════════════════════════════
+let churnRows = [];
+let _churnChartReady = false;
+let _churnChart = null;
+
+const MESES_CHURN = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function mesParaQuarter(mes) {
+  const idx = MESES_CHURN.indexOf(mes);
+  if (idx < 0) return '';
+  return 'Q' + (Math.floor(idx / 3) + 1);
+}
+
+function saveChurnState() {
+  try { localStorage.setItem('churn_rows', JSON.stringify(churnRows)); } catch(e) {}
+}
+
+function addChurn() {
+  const hoje = new Date();
+  const mesIdx = hoje.getMonth();
+  churnRows.push({
+    id:        'churn_' + Date.now(),
+    cliente:   '',
+    mes:       MESES_CHURN[mesIdx],
+    dataChurn: String(hoje.getDate()).padStart(2,'0') + '/' + String(mesIdx+1).padStart(2,'0'),
+    cadeiras:  1,
+    mrrPerdido:    0,
+    contratoTotal: 0,
+    motivo:    ''
+  });
+  renderChurn();
+  saveChurnState();
+}
+
+function removeChurn(i) {
+  if (!confirm('Remover este registro de churn?')) return;
+  churnRows.splice(i, 1);
+  renderChurn();
+  saveChurnState();
+}
+
+function updateChurnCell(i, key, val) {
+  if (!churnRows[i]) return;
+  churnRows[i][key] = val;
+  renderChurn();
+  saveChurnState();
+}
+
+function renderChurn() {
+  const tbody = document.getElementById('churn-tbody');
+  if (!tbody) return;
+
+  // Ordena por data (mês asc, cliente asc)
+  const sorted = churnRows.map((r,i) => ({r,i}))
+    .sort((a,b) => {
+      const ma = MESES_CHURN.indexOf(a.r.mes), mb = MESES_CHURN.indexOf(b.r.mes);
+      if (ma !== mb) return ma - mb;
+      return (a.r.cliente||'').localeCompare(b.r.cliente||'','pt-BR');
+    });
+
+  tbody.innerHTML = '';
+  sorted.forEach(({r:row, i}) => {
+    const q = mesParaQuarter(row.mes);
+    const qcls = {'Q1':'qb-blue','Q2':'qb-yellow','Q3':'qb-green','Q4':'qb-red'}[q] || 'qb-blue';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="px-3 py-2 font-semibold" style="color:var(--text);">
+        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cliente',this.textContent.trim())">${esc(row.cliente||'')}</span>
+      </td>
+      <td class="px-2 py-2 text-center">
+        <select class="churn-mes-sel" onchange="updateChurnCell(${i},'mes',this.value)">
+          ${MESES_CHURN.map(m => `<option ${row.mes===m?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </td>
+      <td class="px-2 py-2 text-center"><span class="q-badge ${qcls}">${q}</span></td>
+      <td class="px-2 py-2 text-center text-xs" style="color:var(--text2);">
+        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'dataChurn',this.textContent.trim())">${esc(row.dataChurn||'')}</span>
+      </td>
+      <td class="px-2 py-2 text-right">
+        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cadeiras',parseInt(this.textContent)||0)">${row.cadeiras||0}</span>
+      </td>
+      <td class="px-2 py-2 text-right font-semibold" style="color:#dc2626;">
+        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'mrrPerdido',parseMoeda(this.textContent))">${row.mrrPerdido>0?fmtBRL(row.mrrPerdido):''}</span>
+      </td>
+      <td class="px-2 py-2 text-right font-semibold" style="color:#991b1b;">
+        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'contratoTotal',parseMoeda(this.textContent))">${row.contratoTotal>0?fmtBRL(row.contratoTotal):''}</span>
+      </td>
+      <td class="px-3 py-2 text-xs" style="color:var(--text2);">
+        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'motivo',this.textContent.trim())">${esc(row.motivo||'')}</span>
+      </td>
+      <td class="px-1 py-2 text-center no-print admin-only">
+        <button onclick="removeChurn(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;"
+          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  updateChurnCards();
+  // Atualiza o chart se já estiver criado
+  if (_churnChart) renderChurnChart();
+}
+
+function getChurnByQuarter() {
+  // Agrupa o churn por trimestre (apenas dados de 2026)
+  const result = {
+    Q1: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+    Q2: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+    Q3: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+    Q4: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+  };
+  churnRows.forEach(r => {
+    const q = mesParaQuarter(r.mes);
+    if (!result[q]) return;
+    result[q].cadeiras += parseInt(r.cadeiras)||0;
+    if (r.cliente) result[q].clientes.add((r.cliente||'').trim().toLowerCase());
+    result[q].mrr      += parseFloat(r.mrrPerdido)||0;
+    result[q].contrato += parseFloat(r.contratoTotal)||0;
+  });
+  return result;
+}
+
+function updateChurnCards() {
+  const byQ = getChurnByQuarter();
+  const quarters = ['Q1','Q2','Q3','Q4'];
+  const trimMeses = { Q1:'Jan/Fev/Mar', Q2:'Abr/Mai/Jun', Q3:'Jul/Ago/Set', Q4:'Out/Nov/Dez' };
+  const colors = {
+    Q1: { bg:'#fef2f2', bc:'#fca5a5', tc:'#991b1b', muted:'#dc2626' },
+    Q2: { bg:'#fff7ed', bc:'#fdba74', tc:'#9a3412', muted:'#ea580c' },
+    Q3: { bg:'#fefce8', bc:'#fde047', tc:'#854d0e', muted:'#ca8a04' },
+    Q4: { bg:'#fdf2f8', bc:'#f9a8d4', tc:'#9d174d', muted:'#db2777' },
+  };
+
+  const cardsEl = document.getElementById('churn-quarter-cards');
+  if (cardsEl) {
+    cardsEl.innerHTML = quarters.map(q => {
+      const d = byQ[q];
+      const c = colors[q];
+      return `<div class="rounded-xl p-4 border" style="background:${c.bg};border-color:${c.bc};">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-widest" style="color:${c.tc};">${q} 2026</span>
+          <span class="text-xs" style="color:${c.muted};">${trimMeses[q]}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-center">
+          <div>
+            <p class="text-xs" style="color:var(--text2);">Cadeiras</p>
+            <p class="text-lg font-bold" style="color:${c.tc};">${d.cadeiras}</p>
+          </div>
+          <div>
+            <p class="text-xs" style="color:var(--text2);">Clientes</p>
+            <p class="text-lg font-bold" style="color:${c.tc};">${d.clientes.size}</p>
+          </div>
+          <div class="col-span-2 pt-2 border-t" style="border-color:${c.bc};">
+            <p class="text-xs" style="color:var(--text2);">MRR perdido</p>
+            <p class="text-base font-bold" style="color:${c.muted};">${fmtBRL(d.mrr)}</p>
+          </div>
+          <div class="col-span-2">
+            <p class="text-xs" style="color:var(--text2);">Contrato total perdido</p>
+            <p class="text-base font-bold" style="color:${c.muted};">${fmtBRL(d.contrato)}</p>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Saldo Líquido: receita nova trimestre vs churn
+  renderChurnSaldo(byQ);
+
+  // Totais no footer
+  const totalCad      = churnRows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0);
+  const totalMRR      = churnRows.reduce((s,r) => s + (parseFloat(r.mrrPerdido)||0), 0);
+  const totalContrato = churnRows.reduce((s,r) => s + (parseFloat(r.contratoTotal)||0), 0);
+  const el = id => document.getElementById(id);
+  if (el('churn-total-count'))    el('churn-total-count').textContent    = churnRows.length;
+  if (el('churn-total-cad'))      el('churn-total-cad').textContent      = totalCad;
+  if (el('churn-total-mrr'))      el('churn-total-mrr').textContent      = fmtBRL(totalMRR);
+  if (el('churn-total-contrato')) el('churn-total-contrato').textContent = fmtBRL(totalContrato);
+}
+
+function renderChurnSaldo(byQ) {
+  // Q1 2026 receita = COMP_TRI.casa[0] + novos[0] (já consolidado)
+  // Q2 2026 receita = soma ao vivo de tableRows
+  const Q1_RECEITA       = (COMP_TRI[2026].total[0] || 0);
+  const Q2_RECEITA_LIVE  = tableRows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
+  const Q2_MRR_LIVE      = tableRows.reduce((s,r) => s + (parseFloat(r.mensalidade)||0), 0);
+
+  // Para Q1, MRR estimado = ~1/12 do total (deals tipicamente são contratos de 12m)
+  // Mas isso é uma aproximação. Melhor: deixar só "Contrato Total" pra Q1.
+
+  const saldos = [
+    {
+      q:'Q1 2026',
+      receitaTotal: Q1_RECEITA,
+      receitaMRR:   0, // não temos MRR fechado de Q1 separado
+      churnMRR:     byQ.Q1.mrr,
+      churnTotal:   byQ.Q1.contrato,
+    },
+    {
+      q:'Q2 2026',
+      receitaTotal: Q2_RECEITA_LIVE,
+      receitaMRR:   Q2_MRR_LIVE,
+      churnMRR:     byQ.Q2.mrr,
+      churnTotal:   byQ.Q2.contrato,
+    }
+  ];
+
+  const cardsEl = document.getElementById('churn-saldo-cards');
+  if (!cardsEl) return;
+
+  cardsEl.innerHTML = saldos.map(s => {
+    const saldoTotal = s.receitaTotal - s.churnTotal;
+    const saldoMRR   = s.receitaMRR - s.churnMRR;
+    const positivoTotal = saldoTotal >= 0;
+    const positivoMRR   = saldoMRR   >= 0;
+    return `<div class="rounded-xl p-4 border" style="background:${positivoTotal?'#f0fdf4':'#fef2f2'};border-color:${positivoTotal?'#86efac':'#fca5a5'};">
+      <p class="text-sm font-bold mb-3" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${s.q}</p>
+
+      <div class="space-y-3">
+        <!-- MRR -->
+        <div>
+          <p class="text-xs font-semibold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL)</p>
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(s.receitaMRR)}</span></div>
+            <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(s.churnMRR)}</span></div>
+            <div class="text-right"><span class="font-bold" style="color:${positivoMRR?'#16a34a':'#dc2626'};">${positivoMRR?'+':''}${fmtBRL(saldoMRR)}</span></div>
+          </div>
+        </div>
+        <!-- Total -->
+        <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
+          <p class="text-xs font-semibold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL</p>
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(s.receitaTotal)}</span></div>
+            <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(s.churnTotal)}</span></div>
+            <div class="text-right"><span class="font-bold text-base" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${positivoTotal?'+':''}${fmtBRL(saldoTotal)}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderChurnChart() {
+  const ctx = document.getElementById('chartChurnTri');
+  if (!ctx) return;
+  const byQ = getChurnByQuarter();
+  const labels = ['Q1','Q2','Q3','Q4'];
+
+  // Destruir chart anterior se existir
+  if (_churnChart) { _churnChart.destroy(); _churnChart = null; }
+
+  _churnChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label:'MRR Perdido',     data: labels.map(q => byQ[q].mrr),      backgroundColor:'#dc2626', borderRadius:5, yAxisID:'y' },
+        { label:'Contrato Total',  data: labels.map(q => byQ[q].contrato), backgroundColor:'#fca5a5', borderRadius:5, yAxisID:'y' },
+        { label:'Cadeiras',        data: labels.map(q => byQ[q].cadeiras), backgroundColor:'#fbbf24', borderRadius:5, yAxisID:'y2', type:'line', borderColor:'#f59e0b', borderWidth:3, pointRadius:5 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        tooltip: { callbacks: { label: c => {
+          if (c.dataset.label === 'Cadeiras') return 'Cadeiras: ' + c.raw;
+          return c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR');
+        }}},
+        legend: { position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:16 }}
+      },
+      scales: {
+        ...darkScales(),
+        y:  { ...darkScales().y, position:'left',  title:{ display:true, text:'R$' } },
+        y2: { position:'right', grid:{display:false}, beginAtZero:true, title:{ display:true, text:'Cadeiras' }}
+      }
+    }
+  });
+}
+
+// Load saved churn
+try {
+  const savedCh = JSON.parse(localStorage.getItem('churn_rows') || '[]');
+  if (Array.isArray(savedCh)) churnRows = savedCh;
 } catch(e) {}
 
 // ─── LOAD SAVED CADEIRAS STATE ───────────────────
