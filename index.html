@@ -3505,9 +3505,9 @@ function renderChurn() {
             <span class="text-xs">${trimMeses[q]}</span>
           </div>
           <div class="flex gap-3 text-xs">
-            <span><strong>Logo:</strong> ${logoRows.length} eventos · ${fmtBRL(sumLogo.mrr)} MRR</span>
-            <span><strong>Downgrade:</strong> ${dgRows.length} eventos · ${fmtBRL(sumDg.mrr)} MRR</span>
-            <span><strong>Total:</strong> ${allRowsQ.length} eventos · ${sumAll.cad} cadeiras · ${fmtBRL(sumAll.mrr)} MRR</span>
+            <span><strong>Logo:</strong> ${logoRows.length} contratos · ${fmtBRL(sumLogo.mrr)} MRR</span>
+            <span><strong>Downgrade:</strong> ${dgRows.length} contratos · ${fmtBRL(sumDg.mrr)} MRR</span>
+            <span><strong>Total:</strong> ${allRowsQ.length} contratos · ${sumAll.cad} cadeiras · ${fmtBRL(sumAll.mrr)} MRR</span>
           </div>
         </div>
         <!-- Filtros -->
@@ -3554,9 +3554,9 @@ function renderChurn() {
 
 function _emptyChurnBucket() {
   return {
-    eventos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0,
-    logo:      { eventos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
-    downgrade: { eventos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+    contratos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0,
+    logo:      { contratos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+    downgrade: { contratos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
   };
 }
 
@@ -3572,13 +3572,13 @@ function getChurnByQuarter() {
     const ct   = parseFloat(r.contratoTotal)||0;
 
     // Total
-    result[q].eventos  += 1;
-    result[q].cadeiras += cad;
+    result[q].contratos += 1;
+    result[q].cadeiras  += cad;
     if (cli) result[q].clientes.add(cli);
     result[q].mrr      += mrr;
     result[q].contrato += ct;
     // Por tipo
-    result[q][tipo].eventos  += 1;
+    result[q][tipo].contratos += 1;
     result[q][tipo].cadeiras += cad;
     if (cli) result[q][tipo].clientes.add(cli);
     result[q][tipo].mrr      += mrr;
@@ -3613,7 +3613,7 @@ function updateChurnCards() {
         <div class="rounded-lg p-2 mb-2" style="background:rgba(220,38,38,0.08);">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-bold" style="color:#991b1b;">🔴 Logo Churn</span>
-            <span class="text-xs" style="color:var(--text2);">${d.logo.eventos} eventos · ${d.logo.clientes.size} clientes</span>
+            <span class="text-xs" style="color:var(--text2);">${d.logo.contratos} contratos · ${d.logo.clientes.size} ${d.logo.clientes.size===1?'cliente':'clientes'}</span>
           </div>
           <div class="grid grid-cols-3 gap-1 text-xs">
             <div><span style="color:var(--text2);">Cad:</span> <strong>${d.logo.cadeiras}</strong></div>
@@ -3626,7 +3626,7 @@ function updateChurnCards() {
         <div class="rounded-lg p-2 mb-2" style="background:rgba(217,119,6,0.08);">
           <div class="flex items-center justify-between mb-1">
             <span class="text-xs font-bold" style="color:#92400e;">🟡 Downgrade</span>
-            <span class="text-xs" style="color:var(--text2);">${d.downgrade.eventos} eventos · ${d.downgrade.clientes.size} clientes</span>
+            <span class="text-xs" style="color:var(--text2);">${d.downgrade.contratos} contratos · ${d.downgrade.clientes.size} ${d.downgrade.clientes.size===1?'cliente':'clientes'}</span>
           </div>
           <div class="grid grid-cols-3 gap-1 text-xs">
             <div><span style="color:var(--text2);">Cad:</span> <strong>${d.downgrade.cadeiras}</strong></div>
@@ -3639,7 +3639,7 @@ function updateChurnCards() {
         <div class="pt-2 border-t" style="border-color:${c.bc};">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase" style="color:${c.tc};">Total</span>
-            <span class="text-xs" style="color:var(--text2);">${d.eventos} eventos · ${d.clientes.size} clientes únicos</span>
+            <span class="text-xs" style="color:var(--text2);">${d.contratos} contratos · ${d.clientes.size} ${d.clientes.size===1?'cliente único':'clientes únicos'}</span>
           </div>
           <div class="grid grid-cols-3 gap-1 text-xs mt-1">
             <div><span style="color:var(--text2);">Cad:</span> <strong>${d.cadeiras}</strong></div>
