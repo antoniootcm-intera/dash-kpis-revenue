@@ -3922,7 +3922,11 @@ function renderChurnSaldo(byQ) {
           <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#16a34a':'#dc2626'};">${positivoLogos?'+':''}${netNewLogos} logos</span></div>
         </div>
         <p class="text-xs italic mt-1" style="color:var(--muted);">
-          <strong>Novo logo:</strong> nova aquisição (NTW/OUT/INB/MKT) ou upsell com <strong>*</strong> no nome (nova vertente, ex: "Ebanx Internacional*"). Downgrade não conta — só saída completa.
+          <strong>Novo logo:</strong>
+          <br>• Nova aquisição (NTW/OUT/INB/MKT)
+          <br>• Upsell <strong>UP*</strong> = nova vertente (ex: "Ebanx Internacional*")
+          <br>• Renovação <strong>REN*</strong> = reativação de cliente recente
+          <br>Downgrade não conta — só saída completa do cliente.
         </p>
       </div>
 
