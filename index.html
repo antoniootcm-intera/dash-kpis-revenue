@@ -1587,7 +1587,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.table_rows))     tableRows      = d.table_rows;
         if (Array.isArray(d.cadeiras_rows))  cadeirasRows   = d.cadeiras_rows;
         if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
-        if (Array.isArray(d.churn_rows))     churnRows      = d.churn_rows;
+        if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
         if (d.realizado_locked !== undefined) realizadoLocked = d.realizado_locked;
@@ -3308,9 +3308,16 @@ function saveChurnState() {
   try { localStorage.setItem('churn_rows', JSON.stringify(churnRows)); } catch(e) {}
 }
 
+// Filtros por quarter (estado de UI)
+let _churnFilter = { Q1:'all', Q2:'all', Q3:'all', Q4:'all' };
+
+function setChurnFilter(q, val) {
+  _churnFilter[q] = val;
+  renderChurn();
+}
+
 function addChurn(quarter) {
   const hoje = new Date();
-  // Se quarter foi passado, usa o 1º mês daquele quarter; senão, mês atual
   let mesIdx;
   if (quarter) {
     const qIdx = parseInt(String(quarter).replace('Q','')) - 1;
@@ -3321,6 +3328,7 @@ function addChurn(quarter) {
   churnRows.push({
     id:        'churn_' + Date.now(),
     cliente:   '',
+    tipo:      'logo',  // padrão: Logo Churn
     mes:       MESES_CHURN[mesIdx],
     dataChurn: String(hoje.getDate()).padStart(2,'0') + '/' + String(mesIdx+1).padStart(2,'0'),
     cadeiras:  1,
@@ -3330,6 +3338,15 @@ function addChurn(quarter) {
   });
   renderChurn();
   saveChurnState();
+}
+
+// Migração: registros antigos sem 'tipo' viram 'logo'
+function _migrateChurnTipo() {
+  let migrated = false;
+  churnRows.forEach(r => {
+    if (!r.tipo) { r.tipo = 'logo'; migrated = true; }
+  });
+  if (migrated) saveChurnState();
 }
 
 function removeChurn(i) {
@@ -3346,6 +3363,19 @@ function updateChurnCell(i, key, val) {
   saveChurnState();
 }
 
+// Cycle de tipo: clica no badge para alternar
+function cycleChurnTipo(i) {
+  if (!churnRows[i]) return;
+  churnRows[i].tipo = churnRows[i].tipo === 'logo' ? 'downgrade' : 'logo';
+  renderChurn();
+  saveChurnState();
+}
+
+const TIPO_CHURN_CFG = {
+  logo:      { label:'Logo Churn', bg:'#fee2e2', color:'#991b1b' },
+  downgrade: { label:'Downgrade',  bg:'#fef3c7', color:'#92400e' },
+};
+
 function renderChurn() {
   const container = document.getElementById('churn-records-container');
   if (!container) return;
@@ -3359,11 +3389,10 @@ function renderChurn() {
     Q4: { hdr:'#fce7f3', txt:'#9d174d' },
   };
 
-  // Index original (i no array global) preservado para update/remove
   const indexed = churnRows.map((r,i) => ({r,i}));
 
   container.innerHTML = quarters.map(q => {
-    const rowsQ = indexed
+    const allRowsQ = indexed
       .filter(({r}) => mesParaQuarter(r.mes) === q)
       .sort((a,b) => {
         const ma = MESES_CHURN.indexOf(a.r.mes), mb = MESES_CHURN.indexOf(b.r.mes);
@@ -3371,15 +3400,37 @@ function renderChurn() {
         return (a.r.cliente||'').localeCompare(b.r.cliente||'','pt-BR');
       });
 
-    const sumCad = rowsQ.reduce((s,{r}) => s + (parseInt(r.cadeiras)||0), 0);
-    const sumMRR = rowsQ.reduce((s,{r}) => s + (parseFloat(r.mrrPerdido)||0), 0);
-    const sumCT  = rowsQ.reduce((s,{r}) => s + (parseFloat(r.contratoTotal)||0), 0);
-    const c      = qColors[q];
+    // Totais por tipo (sempre baseado em todos, não no filtro)
+    const logoRows = allRowsQ.filter(({r}) => (r.tipo||'logo') === 'logo');
+    const dgRows   = allRowsQ.filter(({r}) => r.tipo === 'downgrade');
+    const sumBy = arr => ({
+      cad:  arr.reduce((s,{r}) => s + (parseInt(r.cadeiras)||0), 0),
+      mrr:  arr.reduce((s,{r}) => s + (parseFloat(r.mrrPerdido)||0), 0),
+      ct:   arr.reduce((s,{r}) => s + (parseFloat(r.contratoTotal)||0), 0),
+    });
+    const sumLogo = sumBy(logoRows);
+    const sumDg   = sumBy(dgRows);
+    const sumAll  = sumBy(allRowsQ);
 
-    const rowsHTML = rowsQ.length ? rowsQ.map(({r:row, i}) => `
+    // Aplica filtro de tipo na exibição da tabela
+    const filter = _churnFilter[q] || 'all';
+    const rowsQ  = filter === 'logo' ? logoRows : filter === 'downgrade' ? dgRows : allRowsQ;
+
+    const c = qColors[q];
+
+    const rowsHTML = rowsQ.length ? rowsQ.map(({r:row, i}) => {
+      const tipo  = row.tipo || 'logo';
+      const tcfg  = TIPO_CHURN_CFG[tipo];
+      return `
       <tr>
         <td class="px-3 py-2 font-semibold" style="color:var(--text);">
           <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cliente',this.textContent.trim())">${esc(row.cliente||'')}</span>
+        </td>
+        <td class="px-2 py-2 text-center">
+          <span onclick="cycleChurnTipo(${i})" title="Clique para alternar Logo/Downgrade"
+            style="display:inline-block;background:${tcfg.bg};color:${tcfg.color};font-weight:700;font-size:10px;border-radius:5px;padding:3px 8px;cursor:pointer;white-space:nowrap;">
+            ${tcfg.label}
+          </span>
         </td>
         <td class="px-2 py-2 text-center">
           <select class="churn-mes-sel" onchange="updateChurnCell(${i},'mes',this.value)">
@@ -3405,25 +3456,38 @@ function renderChurn() {
           <button onclick="removeChurn(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;"
             onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
         </td>
-      </tr>`).join('') : `
-      <tr><td colspan="8" class="px-3 py-4 text-center text-xs" style="color:var(--muted);font-style:italic;">
-        Nenhum churn registrado em ${q}. Use o botão abaixo para adicionar.
+      </tr>`;
+    }).join('') : `
+      <tr><td colspan="9" class="px-3 py-4 text-center text-xs" style="color:var(--muted);font-style:italic;">
+        ${filter==='all' ? `Nenhum churn registrado em ${q}. Use o botão abaixo para adicionar.` : `Nenhum churn ${filter==='logo'?'Logo':'Downgrade'} em ${q}.`}
       </td></tr>`;
+
+    // Chips de filtro
+    const chipBase = 'padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s;';
+    const chipActive = (active, base, activeBg) => active
+      ? `${chipBase}background:${activeBg};color:#fff;border-color:${activeBg};`
+      : `${chipBase}background:#fff;color:${base};border-color:#e5e7eb;`;
 
     return `
       <div class="rounded-xl border overflow-hidden" style="border-color:${c.hdr};">
         <!-- Header do quarter -->
-        <div class="px-4 py-2 flex items-center justify-between flex-wrap gap-2" style="background:${c.hdr};color:${c.txt};">
+        <div class="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style="background:${c.hdr};color:${c.txt};">
           <div class="flex items-center gap-3">
             <span class="font-bold text-sm">📋 Registros ${q} 2026</span>
             <span class="text-xs">${trimMeses[q]}</span>
           </div>
-          <div class="flex gap-4 text-xs font-semibold">
-            <span>${rowsQ.length} reg.</span>
-            <span>${sumCad} cad.</span>
-            <span>MRR ${fmtBRL(sumMRR)}</span>
-            <span>Total ${fmtBRL(sumCT)}</span>
+          <div class="flex gap-3 text-xs">
+            <span><strong>Logo:</strong> ${logoRows.length} ev · ${fmtBRL(sumLogo.mrr)} MRR</span>
+            <span><strong>Downgrade:</strong> ${dgRows.length} ev · ${fmtBRL(sumDg.mrr)} MRR</span>
+            <span><strong>Total:</strong> ${allRowsQ.length} ev · ${sumAll.cad} cad · ${fmtBRL(sumAll.mrr)} MRR</span>
           </div>
+        </div>
+        <!-- Filtros -->
+        <div class="px-4 py-2 flex gap-2 items-center no-print" style="background:#fafafa;border-bottom:1px solid #ede9fe;">
+          <span class="text-xs font-semibold" style="color:var(--text2);">Filtrar:</span>
+          <button onclick="setChurnFilter('${q}','all')"       style="${chipActive(filter==='all','#6366f1','#6366f1')}">Todos (${allRowsQ.length})</button>
+          <button onclick="setChurnFilter('${q}','logo')"      style="${chipActive(filter==='logo','#991b1b','#dc2626')}">🔴 Logo (${logoRows.length})</button>
+          <button onclick="setChurnFilter('${q}','downgrade')" style="${chipActive(filter==='downgrade','#92400e','#d97706')}">🟡 Downgrade (${dgRows.length})</button>
         </div>
         <!-- Tabela -->
         <div class="overflow-x-auto">
@@ -3431,6 +3495,7 @@ function renderChurn() {
             <thead>
               <tr style="background:#fef2f2;color:#991b1b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;">
                 <th class="px-3 py-2 text-left">Cliente</th>
+                <th class="px-2 py-2 text-center" style="width:110px;">Tipo</th>
                 <th class="px-2 py-2 text-center" style="width:90px;">Mês</th>
                 <th class="px-2 py-2 text-center" style="width:80px;">Data</th>
                 <th class="px-2 py-2 text-right"  style="width:80px;">Cadeiras</th>
@@ -3460,21 +3525,37 @@ function renderChurn() {
   if (_churnChart) renderChurnChart();
 }
 
-function getChurnByQuarter() {
-  // Agrupa o churn por trimestre (apenas dados de 2026)
-  const result = {
-    Q1: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
-    Q2: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
-    Q3: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
-    Q4: { cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+function _emptyChurnBucket() {
+  return {
+    eventos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0,
+    logo:      { eventos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
+    downgrade: { eventos:0, cadeiras:0, clientes:new Set(), mrr:0, contrato:0 },
   };
+}
+
+function getChurnByQuarter() {
+  const result = { Q1:_emptyChurnBucket(), Q2:_emptyChurnBucket(), Q3:_emptyChurnBucket(), Q4:_emptyChurnBucket() };
   churnRows.forEach(r => {
     const q = mesParaQuarter(r.mes);
     if (!result[q]) return;
-    result[q].cadeiras += parseInt(r.cadeiras)||0;
-    if (r.cliente) result[q].clientes.add((r.cliente||'').trim().toLowerCase());
-    result[q].mrr      += parseFloat(r.mrrPerdido)||0;
-    result[q].contrato += parseFloat(r.contratoTotal)||0;
+    const tipo = r.tipo === 'downgrade' ? 'downgrade' : 'logo';
+    const cli  = (r.cliente||'').trim().toLowerCase();
+    const cad  = parseInt(r.cadeiras)||0;
+    const mrr  = parseFloat(r.mrrPerdido)||0;
+    const ct   = parseFloat(r.contratoTotal)||0;
+
+    // Total
+    result[q].eventos  += 1;
+    result[q].cadeiras += cad;
+    if (cli) result[q].clientes.add(cli);
+    result[q].mrr      += mrr;
+    result[q].contrato += ct;
+    // Por tipo
+    result[q][tipo].eventos  += 1;
+    result[q][tipo].cadeiras += cad;
+    if (cli) result[q][tipo].clientes.add(cli);
+    result[q][tipo].mrr      += mrr;
+    result[q][tipo].contrato += ct;
   });
   return result;
 }
@@ -3496,26 +3577,47 @@ function updateChurnCards() {
       const d = byQ[q];
       const c = colors[q];
       return `<div class="rounded-xl p-4 border" style="background:${c.bg};border-color:${c.bc};">
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-bold uppercase tracking-widest" style="color:${c.tc};">${q} 2026</span>
           <span class="text-xs" style="color:${c.muted};">${trimMeses[q]}</span>
         </div>
-        <div class="grid grid-cols-2 gap-2 text-center">
-          <div>
-            <p class="text-xs" style="color:var(--text2);">Cadeiras</p>
-            <p class="text-lg font-bold" style="color:${c.tc};">${d.cadeiras}</p>
+
+        <!-- Logo Churn -->
+        <div class="rounded-lg p-2 mb-2" style="background:rgba(220,38,38,0.08);">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold" style="color:#991b1b;">🔴 Logo Churn</span>
+            <span class="text-xs" style="color:var(--text2);">${d.logo.eventos} ev · ${d.logo.clientes.size} cli</span>
           </div>
-          <div>
-            <p class="text-xs" style="color:var(--text2);">Clientes</p>
-            <p class="text-lg font-bold" style="color:${c.tc};">${d.clientes.size}</p>
+          <div class="grid grid-cols-3 gap-1 text-xs">
+            <div><span style="color:var(--text2);">Cad:</span> <strong>${d.logo.cadeiras}</strong></div>
+            <div><span style="color:var(--text2);">MRR:</span> <strong style="color:#dc2626;">${fmtBRL(d.logo.mrr)}</strong></div>
+            <div><span style="color:var(--text2);">Total:</span> <strong style="color:#991b1b;">${fmtBRL(d.logo.contrato)}</strong></div>
           </div>
-          <div class="col-span-2 pt-2 border-t" style="border-color:${c.bc};">
-            <p class="text-xs" style="color:var(--text2);">MRR perdido</p>
-            <p class="text-base font-bold" style="color:${c.muted};">${fmtBRL(d.mrr)}</p>
+        </div>
+
+        <!-- Downgrade -->
+        <div class="rounded-lg p-2 mb-2" style="background:rgba(217,119,6,0.08);">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold" style="color:#92400e;">🟡 Downgrade</span>
+            <span class="text-xs" style="color:var(--text2);">${d.downgrade.eventos} ev · ${d.downgrade.clientes.size} cli</span>
           </div>
-          <div class="col-span-2">
-            <p class="text-xs" style="color:var(--text2);">Contrato total perdido</p>
-            <p class="text-base font-bold" style="color:${c.muted};">${fmtBRL(d.contrato)}</p>
+          <div class="grid grid-cols-3 gap-1 text-xs">
+            <div><span style="color:var(--text2);">Cad:</span> <strong>${d.downgrade.cadeiras}</strong></div>
+            <div><span style="color:var(--text2);">MRR:</span> <strong style="color:#d97706;">${fmtBRL(d.downgrade.mrr)}</strong></div>
+            <div><span style="color:var(--text2);">Total:</span> <strong style="color:#92400e;">${fmtBRL(d.downgrade.contrato)}</strong></div>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="pt-2 border-t" style="border-color:${c.bc};">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase" style="color:${c.tc};">Total</span>
+            <span class="text-xs" style="color:var(--text2);">${d.eventos} ev · ${d.clientes.size} cli únicos</span>
+          </div>
+          <div class="grid grid-cols-3 gap-1 text-xs mt-1">
+            <div><span style="color:var(--text2);">Cad:</span> <strong>${d.cadeiras}</strong></div>
+            <div><span style="color:var(--text2);">MRR:</span> <strong style="color:${c.muted};">${fmtBRL(d.mrr)}</strong></div>
+            <div><span style="color:var(--text2);">Total:</span> <strong style="color:${c.tc};">${fmtBRL(d.contrato)}</strong></div>
           </div>
         </div>
       </div>`;
@@ -3556,12 +3658,33 @@ function getReceitaPorMes(mes) {
 }
 
 function getChurnPorMes(mes) {
-  const rows = churnRows.filter(r => r.mes === mes);
+  const rows  = churnRows.filter(r => r.mes === mes);
+  const logo  = rows.filter(r => (r.tipo||'logo') === 'logo');
   return {
-    mrr:      rows.reduce((s,r) => s + (parseFloat(r.mrrPerdido)||0), 0),
-    contrato: rows.reduce((s,r) => s + (parseFloat(r.contratoTotal)||0), 0),
-    cadeiras: rows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0),
+    mrr:        rows.reduce((s,r) => s + (parseFloat(r.mrrPerdido)||0), 0),
+    contrato:   rows.reduce((s,r) => s + (parseFloat(r.contratoTotal)||0), 0),
+    cadeiras:   rows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0),
+    logoClientes: new Set(logo.map(r => (r.cliente||'').trim().toLowerCase()).filter(c => c)).size,
   };
+}
+
+// Conta novos clientes (logos novos) por quarter — canal não-Casa
+function getNovosClientesPorQuarter(q) {
+  const MESES_POR_Q = { Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'], Q3:['Jul','Ago','Set'], Q4:['Out','Nov','Dez'] };
+  const NOVOS_CANAIS = ['NTW','OUT','INB','MKT'];
+  const clientes = new Set();
+
+  if (q === 'Q1') {
+    (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : [])
+      .filter(d => MESES_POR_Q.Q1.includes(d.mes) && NOVOS_CANAIS.includes((d.canal||'').toUpperCase()))
+      .forEach(d => clientes.add((d.cliente||'').trim().toLowerCase()));
+  } else {
+    tableRows
+      .filter(r => MESES_POR_Q[q].includes(r.mes) && NOVOS_CANAIS.includes((r.canal||'').toUpperCase()))
+      .forEach(r => clientes.add((r.cliente||'').trim().toLowerCase()));
+  }
+  clientes.delete('');
+  return clientes.size;
 }
 
 function renderChurnSaldo(byQ) {
@@ -3615,16 +3738,33 @@ function renderChurnSaldo(byQ) {
         </div>`;
     }).join('');
 
+    // Net New Logos: somente Logo Churn (downgrade não conta na ótica de logos)
+    const novosLogos     = getNovosClientesPorQuarter(q);
+    const logosPerdidos  = byQ[q].logo.clientes.size;
+    const netNewLogos    = novosLogos - logosPerdidos;
+    const positivoLogos  = netNewLogos >= 0;
+
     return `<div class="rounded-xl p-4 border" style="background:${positivoTotal?'#f0fdf4':'#fef2f2'};border-color:${positivoTotal?'#86efac':'#fca5a5'};">
       <div class="flex items-center justify-between mb-3">
         <p class="text-sm font-bold" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${q} 2026</p>
         <p class="text-xs" style="color:var(--muted);">${MESES_POR_Q[q].join(' · ')}</p>
       </div>
 
+      <!-- Net New Logos -->
+      <div class="rounded-lg p-3 mb-3" style="background:${positivoLogos?'rgba(22,163,74,0.1)':'rgba(220,38,38,0.1)'};border:1.5px dashed ${positivoLogos?'#86efac':'#fca5a5'};">
+        <p class="text-xs font-bold mb-1" style="color:var(--text2);">📊 NET NEW LOGOS (LOGO CHURN APENAS)</p>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <div><span style="color:#16a34a;">Novos:</span> <span class="font-bold">${novosLogos}</span></div>
+          <div><span style="color:#dc2626;">Perdidos:</span> <span class="font-bold">${logosPerdidos}</span></div>
+          <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#16a34a':'#dc2626'};">${positivoLogos?'+':''}${netNewLogos} logos</span></div>
+        </div>
+        <p class="text-xs italic mt-1" style="color:var(--muted);">Downgrade não conta aqui — só saída completa de cliente.</p>
+      </div>
+
       <!-- Resumo trimestral -->
       <div class="space-y-3 mb-4 p-3 rounded-lg" style="background:rgba(255,255,255,0.5);">
         <div>
-          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL)</p>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL) — Logo + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recM)}</span></div>
             <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnMRR)}</span></div>
@@ -3632,7 +3772,7 @@ function renderChurnSaldo(byQ) {
           </div>
         </div>
         <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
-          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL</p>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL — Logo + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recT)}</span></div>
             <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnT)}</span></div>
@@ -3665,23 +3805,23 @@ function renderChurnChart() {
     data: {
       labels,
       datasets: [
-        { label:'MRR Perdido',     data: labels.map(q => byQ[q].mrr),      backgroundColor:'#dc2626', borderRadius:5, yAxisID:'y' },
-        { label:'Contrato Total',  data: labels.map(q => byQ[q].contrato), backgroundColor:'#fca5a5', borderRadius:5, yAxisID:'y' },
-        { label:'Cadeiras',        data: labels.map(q => byQ[q].cadeiras), backgroundColor:'#fbbf24', borderRadius:5, yAxisID:'y2', type:'line', borderColor:'#f59e0b', borderWidth:3, pointRadius:5 },
+        { label:'MRR Logo',       data: labels.map(q => byQ[q].logo.mrr),       backgroundColor:'#dc2626', stack:'mrr', borderRadius:3, yAxisID:'y' },
+        { label:'MRR Downgrade',  data: labels.map(q => byQ[q].downgrade.mrr), backgroundColor:'#fbbf24', stack:'mrr', borderRadius:3, yAxisID:'y' },
+        { label:'Cadeiras (total)', data: labels.map(q => byQ[q].cadeiras),    backgroundColor:'#a78bfa', borderColor:'#7c3aed', borderWidth:3, pointRadius:5, type:'line', yAxisID:'y2' },
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
         tooltip: { callbacks: { label: c => {
-          if (c.dataset.label === 'Cadeiras') return 'Cadeiras: ' + c.raw;
+          if (c.dataset.label.startsWith('Cadeiras')) return 'Cadeiras: ' + c.raw;
           return c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR');
         }}},
         legend: { position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:16 }}
       },
       scales: {
-        ...darkScales(),
-        y:  { ...darkScales().y, position:'left',  title:{ display:true, text:'R$' } },
+        x:  { ...darkScales().x, stacked:true },
+        y:  { ...darkScales().y, position:'left',  stacked:true, title:{ display:true, text:'MRR perdido (R$)' } },
         y2: { position:'right', grid:{display:false}, beginAtZero:true, title:{ display:true, text:'Cadeiras' }}
       }
     }
@@ -3692,6 +3832,7 @@ function renderChurnChart() {
 try {
   const savedCh = JSON.parse(localStorage.getItem('churn_rows') || '[]');
   if (Array.isArray(savedCh)) churnRows = savedCh;
+  _migrateChurnTipo();
 } catch(e) {}
 
 // ─── LOAD SAVED CADEIRAS STATE ───────────────────
