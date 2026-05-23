@@ -1020,13 +1020,8 @@
 
   <!-- ── Resumo Trimestral ── -->
   <section>
-    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
       <span class="text-lg font-bold">📉 Churn — Resumo Trimestral 2026</span>
-      <div class="admin-only flex gap-2 no-print">
-        <button onclick="addChurn()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
-          + Registrar Churn
-        </button>
-      </div>
     </div>
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="churn-quarter-cards"></div>
@@ -1046,32 +1041,15 @@
     </div>
   </section>
 
-  <!-- ── Tabela editável de Churn ── -->
+  <!-- ── Registros de Churn agrupados por trimestre ── -->
   <section>
     <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between">
       <span class="text-lg font-bold">Registros de Churn</span>
       <span class="text-blue-200 text-xs">Edite qualquer célula clicando nela</span>
     </div>
-    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl overflow-hidden">
-      <div class="overflow-x-auto">
-        <table id="churn-table" class="min-w-full text-sm">
-          <thead>
-            <tr style="background:#fef2f2;color:#991b1b;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;">
-              <th class="px-3 py-3 text-left">Cliente</th>
-              <th class="px-2 py-3 text-center" style="width:90px;">Mês</th>
-              <th class="px-2 py-3 text-center" style="width:60px;">Tri</th>
-              <th class="px-2 py-3 text-center" style="width:80px;">Data Churn</th>
-              <th class="px-2 py-3 text-right"  style="width:80px;">Cadeiras</th>
-              <th class="px-2 py-3 text-right"  style="width:120px;">MRR Perdido</th>
-              <th class="px-2 py-3 text-right"  style="width:130px;">Contrato Total</th>
-              <th class="px-3 py-3 text-left">Motivo</th>
-              <th class="px-2 py-3 text-center no-print admin-only" style="width:36px;">✕</th>
-            </tr>
-          </thead>
-          <tbody id="churn-tbody" class="divide-y divide-gray-100"></tbody>
-        </table>
-      </div>
-      <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex flex-wrap gap-6 text-sm font-semibold text-gray-700">
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <div id="churn-records-container" class="space-y-5"></div>
+      <div class="mt-4 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg flex flex-wrap gap-6 text-sm font-semibold text-gray-700">
         <span>Total registros: <span id="churn-total-count" style="color:#dc2626;">0</span></span>
         <span>Cadeiras churnadas: <span id="churn-total-cad" style="color:#dc2626;">0</span></span>
         <span>MRR perdido total: <span id="churn-total-mrr" style="color:#dc2626;">R$ 0</span></span>
@@ -3330,9 +3308,16 @@ function saveChurnState() {
   try { localStorage.setItem('churn_rows', JSON.stringify(churnRows)); } catch(e) {}
 }
 
-function addChurn() {
+function addChurn(quarter) {
   const hoje = new Date();
-  const mesIdx = hoje.getMonth();
+  // Se quarter foi passado, usa o 1º mês daquele quarter; senão, mês atual
+  let mesIdx;
+  if (quarter) {
+    const qIdx = parseInt(String(quarter).replace('Q','')) - 1;
+    mesIdx = qIdx * 3;
+  } else {
+    mesIdx = hoje.getMonth();
+  }
   churnRows.push({
     id:        'churn_' + Date.now(),
     cliente:   '',
@@ -3362,56 +3347,116 @@ function updateChurnCell(i, key, val) {
 }
 
 function renderChurn() {
-  const tbody = document.getElementById('churn-tbody');
-  if (!tbody) return;
+  const container = document.getElementById('churn-records-container');
+  if (!container) return;
 
-  // Ordena por data (mês asc, cliente asc)
-  const sorted = churnRows.map((r,i) => ({r,i}))
-    .sort((a,b) => {
-      const ma = MESES_CHURN.indexOf(a.r.mes), mb = MESES_CHURN.indexOf(b.r.mes);
-      if (ma !== mb) return ma - mb;
-      return (a.r.cliente||'').localeCompare(b.r.cliente||'','pt-BR');
-    });
+  const quarters = ['Q1','Q2','Q3','Q4'];
+  const trimMeses = { Q1:'Jan/Fev/Mar', Q2:'Abr/Mai/Jun', Q3:'Jul/Ago/Set', Q4:'Out/Nov/Dez' };
+  const qColors = {
+    Q1: { hdr:'#dbeafe', txt:'#1e40af' },
+    Q2: { hdr:'#fef3c7', txt:'#92400e' },
+    Q3: { hdr:'#dcfce7', txt:'#15803d' },
+    Q4: { hdr:'#fce7f3', txt:'#9d174d' },
+  };
 
-  tbody.innerHTML = '';
-  sorted.forEach(({r:row, i}) => {
-    const q = mesParaQuarter(row.mes);
-    const qcls = {'Q1':'qb-blue','Q2':'qb-yellow','Q3':'qb-green','Q4':'qb-red'}[q] || 'qb-blue';
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="px-3 py-2 font-semibold" style="color:var(--text);">
-        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cliente',this.textContent.trim())">${esc(row.cliente||'')}</span>
-      </td>
-      <td class="px-2 py-2 text-center">
-        <select class="churn-mes-sel" onchange="updateChurnCell(${i},'mes',this.value)">
-          ${MESES_CHURN.map(m => `<option ${row.mes===m?'selected':''}>${m}</option>`).join('')}
-        </select>
-      </td>
-      <td class="px-2 py-2 text-center"><span class="q-badge ${qcls}">${q}</span></td>
-      <td class="px-2 py-2 text-center text-xs" style="color:var(--text2);">
-        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'dataChurn',this.textContent.trim())">${esc(row.dataChurn||'')}</span>
-      </td>
-      <td class="px-2 py-2 text-right">
-        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cadeiras',parseInt(this.textContent)||0)">${row.cadeiras||0}</span>
-      </td>
-      <td class="px-2 py-2 text-right font-semibold" style="color:#dc2626;">
-        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'mrrPerdido',parseMoeda(this.textContent))">${row.mrrPerdido>0?fmtBRL(row.mrrPerdido):''}</span>
-      </td>
-      <td class="px-2 py-2 text-right font-semibold" style="color:#991b1b;">
-        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'contratoTotal',parseMoeda(this.textContent))">${row.contratoTotal>0?fmtBRL(row.contratoTotal):''}</span>
-      </td>
-      <td class="px-3 py-2 text-xs" style="color:var(--text2);">
-        <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'motivo',this.textContent.trim())">${esc(row.motivo||'')}</span>
-      </td>
-      <td class="px-1 py-2 text-center no-print admin-only">
-        <button onclick="removeChurn(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;"
-          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
-      </td>`;
-    tbody.appendChild(tr);
-  });
+  // Index original (i no array global) preservado para update/remove
+  const indexed = churnRows.map((r,i) => ({r,i}));
+
+  container.innerHTML = quarters.map(q => {
+    const rowsQ = indexed
+      .filter(({r}) => mesParaQuarter(r.mes) === q)
+      .sort((a,b) => {
+        const ma = MESES_CHURN.indexOf(a.r.mes), mb = MESES_CHURN.indexOf(b.r.mes);
+        if (ma !== mb) return ma - mb;
+        return (a.r.cliente||'').localeCompare(b.r.cliente||'','pt-BR');
+      });
+
+    const sumCad = rowsQ.reduce((s,{r}) => s + (parseInt(r.cadeiras)||0), 0);
+    const sumMRR = rowsQ.reduce((s,{r}) => s + (parseFloat(r.mrrPerdido)||0), 0);
+    const sumCT  = rowsQ.reduce((s,{r}) => s + (parseFloat(r.contratoTotal)||0), 0);
+    const c      = qColors[q];
+
+    const rowsHTML = rowsQ.length ? rowsQ.map(({r:row, i}) => `
+      <tr>
+        <td class="px-3 py-2 font-semibold" style="color:var(--text);">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cliente',this.textContent.trim())">${esc(row.cliente||'')}</span>
+        </td>
+        <td class="px-2 py-2 text-center">
+          <select class="churn-mes-sel" onchange="updateChurnCell(${i},'mes',this.value)">
+            ${MESES_CHURN.map(m => `<option ${row.mes===m?'selected':''}>${m}</option>`).join('')}
+          </select>
+        </td>
+        <td class="px-2 py-2 text-center text-xs" style="color:var(--text2);">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'dataChurn',this.textContent.trim())">${esc(row.dataChurn||'')}</span>
+        </td>
+        <td class="px-2 py-2 text-right">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cadeiras',parseInt(this.textContent)||0)">${row.cadeiras||0}</span>
+        </td>
+        <td class="px-2 py-2 text-right font-semibold" style="color:#dc2626;">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'mrrPerdido',parseMoeda(this.textContent))">${row.mrrPerdido>0?fmtBRL(row.mrrPerdido):''}</span>
+        </td>
+        <td class="px-2 py-2 text-right font-semibold" style="color:#991b1b;">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'contratoTotal',parseMoeda(this.textContent))">${row.contratoTotal>0?fmtBRL(row.contratoTotal):''}</span>
+        </td>
+        <td class="px-3 py-2 text-xs" style="color:var(--text2);">
+          <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'motivo',this.textContent.trim())">${esc(row.motivo||'')}</span>
+        </td>
+        <td class="px-1 py-2 text-center no-print admin-only">
+          <button onclick="removeChurn(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;"
+            onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+        </td>
+      </tr>`).join('') : `
+      <tr><td colspan="8" class="px-3 py-4 text-center text-xs" style="color:var(--muted);font-style:italic;">
+        Nenhum churn registrado em ${q}. Use o botão abaixo para adicionar.
+      </td></tr>`;
+
+    return `
+      <div class="rounded-xl border overflow-hidden" style="border-color:${c.hdr};">
+        <!-- Header do quarter -->
+        <div class="px-4 py-2 flex items-center justify-between flex-wrap gap-2" style="background:${c.hdr};color:${c.txt};">
+          <div class="flex items-center gap-3">
+            <span class="font-bold text-sm">📋 Registros ${q} 2026</span>
+            <span class="text-xs">${trimMeses[q]}</span>
+          </div>
+          <div class="flex gap-4 text-xs font-semibold">
+            <span>${rowsQ.length} reg.</span>
+            <span>${sumCad} cad.</span>
+            <span>MRR ${fmtBRL(sumMRR)}</span>
+            <span>Total ${fmtBRL(sumCT)}</span>
+          </div>
+        </div>
+        <!-- Tabela -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr style="background:#fef2f2;color:#991b1b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;">
+                <th class="px-3 py-2 text-left">Cliente</th>
+                <th class="px-2 py-2 text-center" style="width:90px;">Mês</th>
+                <th class="px-2 py-2 text-center" style="width:80px;">Data</th>
+                <th class="px-2 py-2 text-right"  style="width:80px;">Cadeiras</th>
+                <th class="px-2 py-2 text-right"  style="width:120px;">MRR Perdido</th>
+                <th class="px-2 py-2 text-right"  style="width:130px;">Contrato Total</th>
+                <th class="px-3 py-2 text-left">Motivo</th>
+                <th class="px-2 py-2 text-center no-print admin-only" style="width:36px;">✕</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">${rowsHTML}</tbody>
+          </table>
+        </div>
+        <!-- Botão de adicionar no footer -->
+        <div class="px-4 py-3 admin-only no-print" style="background:#fafafa;border-top:1px solid #ede9fe;">
+          <button onclick="addChurn('${q}')"
+            class="text-sm font-semibold px-3 py-1.5 rounded-lg transition border-2"
+            style="border-color:${c.txt};color:${c.txt};background:#fff;"
+            onmouseover="this.style.background='${c.hdr}'"
+            onmouseout="this.style.background='#fff'">
+            + Registrar churn em ${q}
+          </button>
+        </div>
+      </div>`;
+  }).join('');
 
   updateChurnCards();
-  // Atualiza o chart se já estiver criado
   if (_churnChart) renderChurnChart();
 }
 
@@ -3491,64 +3536,117 @@ function updateChurnCards() {
   if (el('churn-total-contrato')) el('churn-total-contrato').textContent = fmtBRL(totalContrato);
 }
 
+// Recebe um mês ('Jan', 'Fev'...) e retorna { receitaTotal, receitaMRR }
+function getReceitaPorMes(mes) {
+  // Q1: usa Q1_DEALS (que tem valor mas não mensalidade — assumimos /12 como aproximação MRR)
+  // Q2 (e demais): usa tableRows ao vivo (tem mensalidade explícita)
+  const Q1_NOMES = ['Jan','Fev','Mar'];
+  if (Q1_NOMES.includes(mes)) {
+    const deals = (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).filter(d => d.mes === mes);
+    const valor = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
+    // MRR estimado para Q1: como não temos mensalidade nos deals, dividimos por 12 (premissa de contrato anual)
+    return { receitaTotal: valor, receitaMRR: valor / 12 };
+  }
+  // Q2 em diante — usa tableRows
+  const rows = tableRows.filter(r => r.mes === mes);
+  return {
+    receitaTotal: rows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0),
+    receitaMRR:   rows.reduce((s,r) => s + (parseFloat(r.mensalidade)||0), 0),
+  };
+}
+
+function getChurnPorMes(mes) {
+  const rows = churnRows.filter(r => r.mes === mes);
+  return {
+    mrr:      rows.reduce((s,r) => s + (parseFloat(r.mrrPerdido)||0), 0),
+    contrato: rows.reduce((s,r) => s + (parseFloat(r.contratoTotal)||0), 0),
+    cadeiras: rows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0),
+  };
+}
+
 function renderChurnSaldo(byQ) {
-  // Q1 2026 receita = COMP_TRI.casa[0] + novos[0] (já consolidado)
-  // Q2 2026 receita = soma ao vivo de tableRows
-  const Q1_RECEITA       = (COMP_TRI[2026].total[0] || 0);
-  const Q2_RECEITA_LIVE  = tableRows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
-  const Q2_MRR_LIVE      = tableRows.reduce((s,r) => s + (parseFloat(r.mensalidade)||0), 0);
+  const MESES_POR_Q = {
+    Q1: ['Jan','Fev','Mar'],
+    Q2: ['Abr','Mai','Jun'],
+    Q3: ['Jul','Ago','Set'],
+    Q4: ['Out','Nov','Dez'],
+  };
 
-  // Para Q1, MRR estimado = ~1/12 do total (deals tipicamente são contratos de 12m)
-  // Mas isso é uma aproximação. Melhor: deixar só "Contrato Total" pra Q1.
-
-  const saldos = [
-    {
-      q:'Q1 2026',
-      receitaTotal: Q1_RECEITA,
-      receitaMRR:   0, // não temos MRR fechado de Q1 separado
-      churnMRR:     byQ.Q1.mrr,
-      churnTotal:   byQ.Q1.contrato,
-    },
-    {
-      q:'Q2 2026',
-      receitaTotal: Q2_RECEITA_LIVE,
-      receitaMRR:   Q2_MRR_LIVE,
-      churnMRR:     byQ.Q2.mrr,
-      churnTotal:   byQ.Q2.contrato,
-    }
-  ];
+  // Só mostramos cards para Q1 e Q2 (períodos com receita real de 2026)
+  const cardQs = ['Q1','Q2'];
 
   const cardsEl = document.getElementById('churn-saldo-cards');
   if (!cardsEl) return;
 
-  cardsEl.innerHTML = saldos.map(s => {
-    const saldoTotal = s.receitaTotal - s.churnTotal;
-    const saldoMRR   = s.receitaMRR - s.churnMRR;
+  cardsEl.innerHTML = cardQs.map(q => {
+    // Agregado trimestral
+    let recT=0, recM=0;
+    MESES_POR_Q[q].forEach(m => {
+      const r = getReceitaPorMes(m);
+      recT += r.receitaTotal; recM += r.receitaMRR;
+    });
+    const churnMRR = byQ[q].mrr;
+    const churnT   = byQ[q].contrato;
+    const saldoTotal = recT - churnT;
+    const saldoMRR   = recM - churnMRR;
     const positivoTotal = saldoTotal >= 0;
     const positivoMRR   = saldoMRR   >= 0;
-    return `<div class="rounded-xl p-4 border" style="background:${positivoTotal?'#f0fdf4':'#fef2f2'};border-color:${positivoTotal?'#86efac':'#fca5a5'};">
-      <p class="text-sm font-bold mb-3" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${s.q}</p>
 
-      <div class="space-y-3">
-        <!-- MRR -->
+    // Breakdown mês a mês
+    const mensalHTML = MESES_POR_Q[q].map(m => {
+      const r = getReceitaPorMes(m);
+      const c = getChurnPorMes(m);
+      const sMRR = r.receitaMRR - c.mrr;
+      const sT   = r.receitaTotal - c.contrato;
+      const okMRR = sMRR >= 0, okT = sT >= 0;
+      return `
+        <div class="rounded-lg p-2" style="background:#fff;border:1px solid #e5e7eb;">
+          <p class="text-xs font-bold text-center mb-2" style="color:var(--text);">${m}</p>
+          <div class="space-y-1 text-xs">
+            <div class="flex justify-between"><span style="color:#16a34a;">+ Rec MRR</span><span class="font-semibold">${fmtBRL(r.receitaMRR)}</span></div>
+            <div class="flex justify-between"><span style="color:#dc2626;">− Churn</span><span class="font-semibold">${fmtBRL(c.mrr)}</span></div>
+            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo MRR</span><span class="font-bold" style="color:${okMRR?'#16a34a':'#dc2626'};">${okMRR?'+':''}${fmtBRL(sMRR)}</span></div>
+          </div>
+          <div class="space-y-1 text-xs mt-3 pt-2 border-t border-gray-200">
+            <div class="flex justify-between"><span style="color:#16a34a;">+ Rec Total</span><span class="font-semibold">${fmtBRL(r.receitaTotal)}</span></div>
+            <div class="flex justify-between"><span style="color:#dc2626;">− Churn</span><span class="font-semibold">${fmtBRL(c.contrato)}</span></div>
+            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okT?'#16a34a':'#dc2626'};">${okT?'+':''}${fmtBRL(sT)}</span></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    return `<div class="rounded-xl p-4 border" style="background:${positivoTotal?'#f0fdf4':'#fef2f2'};border-color:${positivoTotal?'#86efac':'#fca5a5'};">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm font-bold" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${q} 2026</p>
+        <p class="text-xs" style="color:var(--muted);">${MESES_POR_Q[q].join(' · ')}</p>
+      </div>
+
+      <!-- Resumo trimestral -->
+      <div class="space-y-3 mb-4 p-3 rounded-lg" style="background:rgba(255,255,255,0.5);">
         <div>
-          <p class="text-xs font-semibold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL)</p>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL)</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
-            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(s.receitaMRR)}</span></div>
-            <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(s.churnMRR)}</span></div>
+            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recM)}</span></div>
+            <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnMRR)}</span></div>
             <div class="text-right"><span class="font-bold" style="color:${positivoMRR?'#16a34a':'#dc2626'};">${positivoMRR?'+':''}${fmtBRL(saldoMRR)}</span></div>
           </div>
         </div>
-        <!-- Total -->
         <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
-          <p class="text-xs font-semibold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL</p>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
-            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(s.receitaTotal)}</span></div>
-            <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(s.churnTotal)}</span></div>
+            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recT)}</span></div>
+            <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnT)}</span></div>
             <div class="text-right"><span class="font-bold text-base" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${positivoTotal?'+':''}${fmtBRL(saldoTotal)}</span></div>
           </div>
         </div>
       </div>
+
+      <!-- Detalhe mês a mês -->
+      <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Detalhe mensal</p>
+      <div class="grid grid-cols-3 gap-2">
+        ${mensalHTML}
+      </div>
+      ${q==='Q1' ? '<p class="text-xs italic mt-3" style="color:var(--muted);">* MRR de Q1 estimado como Valor ÷ 12 (premissa de contrato anual).</p>' : ''}
     </div>`;
   }).join('');
 }
