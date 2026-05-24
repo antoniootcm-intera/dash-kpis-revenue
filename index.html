@@ -2149,7 +2149,10 @@ const _voceEstaAquiPlugin = {
     const ctx = chart.ctx;
     const xScale = chart.scales.x;
     if (!xScale) return;
-    const xPos = xScale.getPixelForValue(idx);
+    // Usa getPixelForTick (mais confiável que getPixelForValue p/ scale categórica)
+    const xPos = (typeof xScale.getPixelForTick === 'function')
+      ? xScale.getPixelForTick(idx)
+      : xScale.getPixelForValue(idx);
     const yTop = chart.chartArea.top;
     const yBot = chart.chartArea.bottom;
 
@@ -2163,9 +2166,11 @@ const _voceEstaAquiPlugin = {
     ctx.lineTo(xPos, yBot);
     ctx.stroke();
 
-    // Etiqueta
+    // Etiqueta com a label exata do eixo X
     ctx.setLineDash([]);
-    const label = '📍 Você está aqui';
+    const labels = chart.data.labels || [];
+    const lblPeriodo = labels[idx] || '';
+    const label = '📍 Você está aqui' + (lblPeriodo ? ' (' + lblPeriodo + ')' : '');
     ctx.font = 'bold 11px sans-serif';
     const tw = ctx.measureText(label).width + 12;
     const bx = Math.min(Math.max(xPos - tw/2, chart.chartArea.left), chart.chartArea.right - tw);
