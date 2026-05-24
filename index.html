@@ -7,40 +7,127 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  /* ── INTERA Light Theme — Roxo + Preto ─────────── */
+  /* ────────────────────────────────────────────────
+     INTERA Dashboard · design system Emil Kowalski
+     ──────────────────────────────────────────────── */
   :root {
-    --accent:  #6366f1;
-    --accent2: #4f46e5;
-    --accent-light: #ede9fe;
-    --black:   #111118;
-    --text:    #1a1a2e;
-    --text2:   #4b4b6a;
-    --muted:   #9ca3af;
-    --border:  #e5e4f0;
-    --surface: #ffffff;
-    --bg:      #f8f7ff;
+    /* Neutral foundation (zinc scale) */
+    --bg:       #fafafa;
+    --surface:  #ffffff;
+    --surface-2:#f4f4f5;
+    --border:   #e4e4e7;
+    --border-2: #d4d4d8;
+    --text:     #18181b;
+    --text2:    #52525b;
+    --muted:    #a1a1aa;
+    --muted-2:  #d4d4d8;
+
+    /* Primary action: refined dark (taste differentiator, not loud) */
+    --accent:   #18181b;
+    --accent2:  #27272a;
+    --accent-light: #f4f4f5;
+    --black:    #09090b;
+
+    /* Status (used sparingly, never as decoration) */
+    --green:    #16a34a;
+    --green-bg: #f0fdf4;
+    --green-2:  #166534;
+    --red:      #dc2626;
+    --red-bg:   #fef2f2;
+    --red-2:    #991b1b;
+    --amber:    #d97706;
+    --amber-bg: #fffbeb;
+    --amber-2:  #92400e;
+    --blue:     #2563eb;
+    --blue-bg:  #eff6ff;
+    --blue-2:   #1e40af;
+
+    /* Brand purple — used only for INTERA logo & 1-2 highlights */
+    --brand:    #6366f1;
+
+    /* Easing curves (Emil) */
+    --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+    /* Shadows in layers — never heavy */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow:    0 1px 2px rgba(0,0,0,0.04), 0 1px 1px rgba(0,0,0,0.02);
+    --shadow-md: 0 2px 4px rgba(0,0,0,0.04), 0 4px 8px rgba(0,0,0,0.04);
   }
 
-  body { background: var(--bg) !important; color: var(--text) !important; }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-  /* Header */
-  header { background: #fff !important; border-bottom: 1px solid var(--border) !important; box-shadow: 0 1px 3px rgba(99,102,241,0.08) !important; }
-  header .text-blue-700, .text-blue-700 { color: var(--accent) !important; }
+  body {
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    font-feature-settings: "cv11","ss01","ss03";
+    letter-spacing: -0.005em;
+  }
+
+  /* Numbers everywhere use tabular figures */
+  .text-xl, .text-2xl, .text-3xl,
+  [class*="font-bold"], [id*="total"], [id*="receita"], [id*="cont-"],
+  th, td.text-right, .hist-table td { font-variant-numeric: tabular-nums; }
+
+  /* Typography refinements */
+  h1, h2, h3, .text-2xl, .text-3xl { letter-spacing: -0.02em; }
+  .uppercase, [class*="uppercase"] { letter-spacing: 0.06em; }
+
+  /* Press feedback on every clickable button */
+  button { transition: transform 160ms var(--ease-out), background-color 150ms var(--ease-out), border-color 150ms var(--ease-out), color 150ms var(--ease-out); }
+  button:active:not(:disabled) { transform: scale(0.97); }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    button:active:not(:disabled) { transform: none; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* Header — refined, less heavy */
+  header { background: #fff !important; border-bottom: 1px solid var(--border) !important; box-shadow: none !important; }
+  header .text-blue-700, .text-blue-700 { color: var(--brand) !important; }
   header .text-gray-400 { color: var(--muted) !important; }
 
-  /* Barras de seção — roxo sólido */
-  .bg-blue-700  { background: var(--black) !important; }
-  .bg-blue-800  { background: #1e1e2e !important; }
-  .bg-blue-600  { background: var(--accent) !important; }
+  /* ── Section banners (foram roxo sólido) — agora cabeçalhos refinados ── */
+  .bg-blue-700  {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border-bottom: 1px solid var(--border) !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  .bg-blue-700 .text-blue-200 { color: var(--muted) !important; }
+  .bg-blue-700 > span:first-child,
+  .bg-blue-700 span.text-lg,
+  .bg-blue-700 span.text-base { color: var(--text) !important; letter-spacing: -0.015em; }
+  /* Botões dentro de section header (bg-white text-blue-700) */
+  .bg-blue-700 button.bg-white,
+  .bg-blue-700 label.bg-white,
+  .bg-blue-700 .bg-white {
+    background: var(--surface) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    transition: all 150ms var(--ease-out);
+  }
+  .bg-blue-700 button.bg-white:hover,
+  .bg-blue-700 label.bg-white:hover,
+  .bg-blue-700 .bg-white:hover {
+    background: var(--surface-2) !important;
+    border-color: var(--border-2) !important;
+  }
+  .bg-blue-800  { background: var(--text) !important; color: #fff !important; border-radius: 8px !important; }
+  .bg-blue-800:hover { background: var(--text2) !important; }
+  .bg-blue-600  { background: var(--accent) !important; color: #fff !important; }
 
-  /* Superfícies */
-  .bg-white   { background: #ffffff !important; }
-  .bg-gray-50 { background: var(--bg) !important; }
-  .bg-gray-100{ background: #f0effe !important; }
-  .bg-blue-50 { background: #f3f2ff !important; }
+  /* Surfaces */
+  .bg-white    { background: var(--surface) !important; }
+  .bg-gray-50  { background: var(--surface-2) !important; }
+  .bg-gray-100 { background: var(--surface-2) !important; }
+  .bg-blue-50  { background: var(--surface-2) !important; }
 
-  /* Bordas */
+  /* Borders */
   .border-gray-200, .border-gray-100 { border-color: var(--border) !important; }
+  /* Containers de seção: borda mais discreta + cantos consistentes */
+  section > .border.border-t-0 { border-color: var(--border) !important; border-radius: 0 0 12px 12px !important; }
 
   /* Textos */
   .text-gray-800 { color: var(--text)  !important; }
@@ -48,41 +135,62 @@
   .text-gray-600 { color: var(--text2) !important; }
   .text-gray-500 { color: var(--text2) !important; }
   .text-gray-400 { color: var(--muted) !important; }
-  .text-blue-800 { color: var(--accent2) !important; }
+  .text-blue-800 { color: var(--text) !important; }
 
   /* Inputs */
-  input:not([type=range]), select { border-color: var(--border) !important; color: var(--text) !important; background: #fff !important; }
+  input:not([type=range]), select {
+    border-color: var(--border) !important;
+    color: var(--text) !important;
+    background: #fff !important;
+    border-radius: 6px !important;
+    transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+  }
+  input:not([type=range]):focus, select:focus {
+    outline: none !important;
+    border-color: var(--text) !important;
+    box-shadow: 0 0 0 3px rgba(24,24,27,0.08) !important;
+  }
   input::placeholder { color: var(--muted) !important; }
-  [contenteditable]:focus { outline: 2px solid var(--accent); border-radius: 2px; }
-  input[type=range] { accent-color: var(--accent); }
+  [contenteditable]:focus { outline: 2px solid var(--text); outline-offset: 1px; border-radius: 3px; }
+  input[type=range] { accent-color: var(--text); }
 
-  /* Botões header */
-  .bg-gray-200 { background: #f0effe !important; color: var(--text) !important; }
-  .hover\:bg-gray-300:hover { background: var(--accent-light) !important; }
+  /* Botões header (legacy classes) */
+  .bg-gray-200 { background: var(--surface-2) !important; color: var(--text) !important; border: 1px solid var(--border) !important; }
+  .hover\:bg-gray-300:hover { background: var(--border) !important; }
   .hover\:bg-blue-700:hover { background: var(--accent2) !important; }
+  /* Botão de ação primário no header (Carregar HubSpot) */
+  header .bg-blue-600 { border-radius: 8px !important; }
 
-  /* Tabela */
-  thead.bg-blue-50 th { background: #f3f2ff !important; color: var(--accent2) !important; }
-  tbody tr:hover { background: #f3f2ff !important; }
-  tr.drag-over   { border-top: 2px solid var(--accent); background: var(--accent-light) !important; }
+  /* Tabela genérica */
+  thead.bg-blue-50 th { background: var(--surface-2) !important; color: var(--text2) !important; font-weight: 600; letter-spacing: 0.04em; font-size: 11px; }
+  tbody tr { transition: background-color 120ms var(--ease-out); }
+  tbody tr:hover { background: var(--surface-2) !important; }
+  tr.drag-over   { border-top: 2px solid var(--text); background: var(--surface-2) !important; }
   tr.dragging    { opacity: 0.4; }
   .divide-y > * + * { border-color: var(--border) !important; }
 
   /* Barras de progresso */
-  .progress-bar { transition: width 0.6s ease; }
-  .bg-blue-500  { background: var(--accent) !important; }
+  .progress-bar { transition: width 600ms var(--ease-out); }
+  .bg-blue-500  { background: var(--text) !important; }
 
-  /* Tags — ajustadas para light */
-  .tag { display:inline-block; padding:2px 8px; border-radius:9999px; font-size:11px; font-weight:600; }
-  .tag-upsell    { background:#dbeafe; color:#1e40af; }
-  .tag-ntw       { background:#d1fae5; color:#065f46; }
-  .tag-renovacao { background:#fef3c7; color:#92400e; }
-  .tag-out       { background:#fce7f3; color:#9d174d; }
-  .tag-inb       { background:#ede9fe; color:#5b21b6; }
-  .tag-mkt       { background:#ffedd5; color:#c2410c; }
-  .tag-enterprise{ background:#ede9fe; color:#4338ca; }
-  .tag-gg        { background:#d1fae5; color:#065f46; }
-  .tag-smb       { background:#fef9c3; color:#854d0e; }
+  /* ── Tags — paleta refinada (Emil: subtle, low-contrast) ── */
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+  }
+  .tag-upsell    { background:#f0f9ff; color:#0c4a6e; border-color:#e0f2fe; }
+  .tag-ntw       { background:#f0fdf4; color:#14532d; border-color:#dcfce7; }
+  .tag-renovacao { background:#fffbeb; color:#78350f; border-color:#fef3c7; }
+  .tag-out       { background:#fdf2f8; color:#831843; border-color:#fce7f3; }
+  .tag-inb       { background:#f5f3ff; color:#4c1d95; border-color:#ede9fe; }
+  .tag-mkt       { background:#fff7ed; color:#7c2d12; border-color:#ffedd5; }
+  .tag-enterprise{ background:#f8fafc; color:#0f172a; border-color:#e2e8f0; }
+  .tag-gg        { background:#f0fdf4; color:#14532d; border-color:#dcfce7; }
+  .tag-smb       { background:#fefce8; color:#713f12; border-color:#fef9c3; }
 
   /* Drag handle */
   .drag-handle { cursor: grab; color: var(--muted); user-select: none; padding: 0 6px; font-size: 16px; }
@@ -149,25 +257,37 @@
 
   /* ── Tabs ─────────────────────────────────── */
   #tab-nav { background:#fff; border-bottom:1px solid var(--border); }
-  .tab-btn { padding:10px 22px; font-size:13px; font-weight:600; border-bottom:3px solid transparent;
-             cursor:pointer; color:var(--text2); background:none; border-top:none; border-left:none; border-right:none;
-             transition:all 0.15s; }
-  .tab-btn.active { border-bottom-color:var(--accent); color:var(--accent); }
-  .tab-btn:hover:not(.active) { color:var(--text); background:var(--accent-light); }
-
-  /* ── Cadeiras status badges ─────────────────── */
-  .cad-badge {
-    display:block; width:100%; border-radius:5px; padding:4px 2px;
-    font-size:10px; font-weight:700; text-align:center; cursor:pointer;
-    user-select:none; transition:filter 0.12s, transform 0.1s; letter-spacing:.3px;
-    white-space:nowrap;
+  .tab-btn {
+    padding: 12px 18px;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: -0.005em;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: var(--text2);
+    background: none; border-top: none; border-left: none; border-right: none;
+    transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out);
   }
-  .cad-badge:hover  { filter:brightness(0.88); transform:scale(1.04); }
-  .cad-badge:active { transform:scale(0.97); }
-  .cb-ativo      { background:#16a34a; color:#fff; }
-  .cb-saindo     { background:#d97706; color:#fff; }
-  .cb-fora       { background:#94a3b8; color:#fff; }
-  .cb-vazio      { background:#f1f5f9; color:#cbd5e1; }
+  .tab-btn.active { border-bottom-color: var(--text); color: var(--text); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* ── Cadeiras status badges (refinados) ─────────────────── */
+  .cad-badge {
+    display: block; width: 100%;
+    border-radius: 6px; padding: 4px 2px;
+    font-size: 10px; font-weight: 600;
+    text-align: center; cursor: pointer;
+    user-select: none;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition: background-color 150ms var(--ease-out), transform 100ms var(--ease-out);
+  }
+  .cad-badge:hover  { transform: scale(1.02); }
+  .cad-badge:active { transform: scale(0.97); }
+  .cb-ativo      { background:#dcfce7; color:#14532d; border-color:#bbf7d0; }
+  .cb-saindo     { background:#fef3c7; color:#78350f; border-color:#fde68a; }
+  .cb-fora       { background:#f4f4f5; color:#52525b; border-color:#e4e4e7; }
+  .cb-vazio      { background:#fafafa; color:#d4d4d8; border-color:#f4f4f5; }
 
   /* ── Cadeiras table ─────────────────────────── */
   #cadeiras-table td, #cadeiras-table th { border-bottom:1px solid #ede9fe; }
@@ -179,58 +299,147 @@
   #cadeiras-table th button { background:none; border:none; cursor:pointer;
     color:inherit; padding:0; font:inherit; display:flex; align-items:center; gap:4px; }
   #cadeiras-table th button:hover { color:var(--accent); }
-  /* ── Revenue filter chips ───────────────────── */
-  .rfilt { padding:3px 12px; border-radius:20px; font-size:11px; font-weight:700;
-    cursor:pointer; border:2px solid var(--rc,#6366f1);
-    background:#fff; color:var(--rc,#6366f1); transition:all .15s; }
-  .rfilt:hover    { background:var(--rc,#6366f1); color:var(--rct,#fff); }
-  .rfilt.active-rfilt { background:var(--rc,#6366f1); color:var(--rct,#fff); }
+  /* ── Revenue filter chips (Emil: minimal, neutral default) ─── */
+  .rfilt {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    transition: all 150ms var(--ease-out);
+  }
+  .rfilt:hover {
+    background: var(--surface-2);
+    border-color: var(--border-2);
+    color: var(--text);
+  }
+  .rfilt.active-rfilt {
+    background: var(--text);
+    color: var(--surface);
+    border-color: var(--text);
+  }
 
   /* ── Contratos table ────────────────────────── */
-  #contratos-table td, #contratos-table th { border-bottom:1px solid #ede9fe; }
-  #contratos-table tbody tr:hover td { background:#f5f3ff !important; }
-  #contratos-table tbody tr:nth-child(even) td { background:#faf9ff; }
-  .cont-cell { display:inline-block; min-width:60px; padding:2px 4px; border-radius:4px; transition:background .1s; }
-  .cont-cell:hover  { background:#ede9fe; }
-  .cont-cell:focus  { background:#ede9fe; outline:2px solid var(--accent); }
-  .cont-tipo { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
-               font-weight:600; text-align:center; outline:none; width:100%; }
-  .cont-dur  { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
-               font-weight:700; text-align:center; outline:none; color:var(--accent); }
-  .tag-oc   { background:#fef3c7; color:#92400e; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
-  .tag-cs   { background:#dcfce7; color:#15803d; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
-  .tag-sc   { background:#fee2e2; color:#991b1b; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
-  .link-contrato { color:var(--accent); font-size:11px; font-weight:600; text-decoration:underline; cursor:pointer; }
+  #contratos-table td, #contratos-table th { border-bottom: 1px solid var(--border); }
+  #contratos-table tbody tr { transition: background-color 120ms var(--ease-out); }
+  #contratos-table tbody tr:hover td { background: var(--surface-2) !important; }
+  #contratos-table tbody tr:nth-child(even) td { background: transparent; }
+  .cont-cell {
+    display: inline-block; min-width: 60px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    transition: background-color 120ms var(--ease-out);
+  }
+  .cont-cell:hover  { background: var(--surface-2); }
+  .cont-cell:focus  { background: var(--surface-2); outline: 2px solid var(--text); outline-offset: 1px; }
+  .cont-tipo { appearance: none; border: none; background: transparent; font-size: 12px; cursor: pointer;
+               font-weight: 500; text-align: center; outline: none; width: 100%; }
+  .cont-dur  { appearance: none; border: none; background: transparent; font-size: 12px; cursor: pointer;
+               font-weight: 600; text-align: center; outline: none; color: var(--text); }
+  .tag-oc { background: var(--amber-bg); color: var(--amber-2); border: 1px solid #fde68a; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+  .tag-cs { background: var(--green-bg); color: var(--green-2); border: 1px solid #bbf7d0; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+  .tag-sc { background: var(--red-bg);   color: var(--red-2);   border: 1px solid #fecaca; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+  .link-contrato { color: var(--text); font-size: 11px; font-weight: 500; text-decoration: underline; text-decoration-color: var(--border-2); text-underline-offset: 2px; cursor: pointer; }
+  .link-contrato:hover { text-decoration-color: var(--text); }
 
-  .filt-dur-btn { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600;
-    cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--text2);
-    transition:all .15s; }
-  .filt-dur-btn:hover   { border-color:var(--accent); color:var(--accent); background:#f5f3ff; }
-  .filt-dur-btn.active-filt { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .filt-dur-btn {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    transition: all 150ms var(--ease-out);
+  }
+  .filt-dur-btn:hover {
+    border-color: var(--border-2);
+    color: var(--text);
+    background: var(--surface-2);
+  }
+  .filt-dur-btn.active-filt {
+    background: var(--text);
+    color: var(--surface);
+    border-color: var(--text);
+  }
   .dur-sel { appearance:none; border:none; background:transparent; font-size:11px;
     font-weight:700; cursor:pointer; text-align:center; width:100%; outline:none; }
 
-  /* ── Dashboard sub-tabs ─────────────────────── */
-  .dash-subtabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:16px; }
-  .dash-sub { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700;
-    cursor:pointer; border:2px solid var(--border); background:#fff; color:var(--text2);
-    transition:all .15s; white-space:nowrap; }
-  .dash-sub:hover { border-color:var(--accent); color:var(--accent); background:#f5f3ff; }
-  .dash-sub.ds-active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  /* ── Dashboard sub-tabs (Emil: segmented control feel) ── */
+  .dash-subtabs {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .dash-sub {
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    transition: all 150ms var(--ease-out);
+    white-space: nowrap;
+  }
+  .dash-sub:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+  .dash-sub.ds-active {
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+  }
 
-  /* ── Historical tables ──────────────────────── */
-  .hist-table { width:100%; font-size:12px; border-collapse:collapse; }
-  .hist-table th, .hist-table td { padding:6px 10px; border-bottom:1px solid var(--border); text-align:right; }
-  .hist-table th { background:#f3f2ff; color:var(--accent2); text-align:center; font-weight:700; text-transform:uppercase; font-size:10px; letter-spacing:.5px; }
-  .hist-table td:first-child, .hist-table th:first-child { text-align:left; }
-  .hist-table tbody tr:hover td { background:#f5f3ff; }
-  .hist-table .total-row td { font-weight:700; background:#f0effe; border-top:2px solid var(--accent); }
+  /* ── Historical tables (Emil: light, generous spacing, tabular nums) ── */
+  .hist-table { width: 100%; font-size: 12px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .hist-table th, .hist-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+  .hist-table th {
+    background: var(--surface-2);
+    color: var(--text2);
+    text-align: center;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+  .hist-table td:first-child, .hist-table th:first-child { text-align: left; }
+  .hist-table tbody tr { transition: background-color 120ms var(--ease-out); }
+  .hist-table tbody tr:hover td { background: var(--surface-2); }
+  .hist-table .total-row td {
+    font-weight: 600;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border-2);
+    border-bottom: none;
+  }
 
-  .q-badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
-  .qb-green { background:#dcfce7; color:#15803d; }
-  .qb-red   { background:#fee2e2; color:#991b1b; }
-  .qb-blue  { background:#dbeafe; color:#1e40af; }
-  .qb-yellow{ background:#fef3c7; color:#92400e; }
+  /* ── Status badges em tabelas (refinados) ── */
+  .q-badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: -0.005em;
+    border: 1px solid transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .qb-green  { background: var(--green-bg);  color: var(--green-2);  border-color: #bbf7d0; }
+  .qb-red    { background: var(--red-bg);    color: var(--red-2);    border-color: #fecaca; }
+  .qb-blue   { background: var(--blue-bg);   color: var(--blue-2);   border-color: #dbeafe; }
+  .qb-yellow { background: var(--amber-bg);  color: var(--amber-2);  border-color: #fde68a; }
 
   /* ── Churn table ──────────────────────────── */
   #churn-table td, #churn-table th { border-bottom:1px solid #ede9fe; }
@@ -315,123 +524,125 @@
 <div id="dash-sub-q2-2026">
 
 <!-- ══════════════════════════════════════════════
-     SEÇÃO 1 — OKRs
+     SEÇÃO 1 — OKRs (Emil: neutral, generous spacing, color on data only)
 ══════════════════════════════════════════════ -->
 <section>
-  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
-    <span class="text-lg font-bold">OKRs</span>
-    <span class="text-blue-200 text-sm font-medium">— Consolidar a marca Intera como referência em soluções de RPO</span>
+  <div class="bg-blue-700 rounded-t-xl px-6 py-4 flex items-center gap-3 flex-wrap">
+    <span class="text-base font-semibold" style="letter-spacing:-0.015em;">OKRs</span>
+    <span class="text-sm" style="color:var(--muted);">Consolidar a marca Intera como referência em RPO</span>
   </div>
 
-  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-6 space-y-6">
 
-    <!-- ── Linha 1: Meta de Receita (full width) ── -->
+    <!-- ── KR1: Meta de Receita ── -->
     <div>
-      <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:var(--accent);">KR1 — Crescer a base de forma sustentável</p>
-      <div class="rounded-2xl p-5 border" style="background:linear-gradient(135deg,#f8f7ff 0%,#ede9fe 100%);border-color:#c4c2e8;">
-        <div class="flex flex-wrap justify-between items-start gap-4 mb-3">
+      <div class="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+        <p class="text-[11px] font-medium uppercase" style="color:var(--muted);letter-spacing:0.08em;">KR1 · Crescer a base de forma sustentável</p>
+      </div>
+
+      <div class="rounded-xl p-6 border" style="background:var(--surface);border-color:var(--border);">
+        <div class="flex flex-wrap justify-between items-end gap-6 mb-4">
           <div>
-            <p class="text-xs font-semibold" style="color:var(--text2);">META DE RECEITA</p>
-            <p class="text-2xl font-bold mt-0.5" style="color:var(--black);">R$ <span id="meta-receita-label">2.100.000,00</span></p>
+            <p class="text-[11px] font-medium uppercase mb-1" style="color:var(--muted);letter-spacing:0.08em;">Meta de receita</p>
+            <p class="text-3xl font-semibold" style="color:var(--text);letter-spacing:-0.025em;">R$ <span id="meta-receita-label">2.100.000,00</span></p>
           </div>
-          <div class="text-right">
-            <p class="text-xs font-semibold" style="color:var(--text2);">REALIZADO</p>
-            <p class="text-2xl font-bold mt-0.5 text-yellow-500" id="realizado-label">R$ 516.000,00</p>
+          <div>
+            <p class="text-[11px] font-medium uppercase mb-1" style="color:var(--muted);letter-spacing:0.08em;">Realizado</p>
+            <p class="text-3xl font-semibold" id="realizado-label" style="color:var(--text);letter-spacing:-0.025em;">R$ 516.000,00</p>
           </div>
-          <div class="flex gap-2 items-center no-print self-end">
-            <label class="text-xs" style="color:var(--muted);">Realizado (R$):</label>
+          <div class="flex gap-2 items-center no-print">
+            <label class="text-xs" style="color:var(--muted);">Realizado (R$)</label>
             <input type="number" id="input-realizado" value="516000" step="1000"
-              class="border rounded px-2 py-1 text-xs w-32"
+              class="border rounded-md px-2 py-1 text-xs w-32"
               oninput="lockRealizado(); updateOKR('receita', this.value)" />
             <button onclick="unlockRealizado()" title="Sincronizar com HubSpot"
-              class="text-xs hover:text-blue-600 no-print" style="color:var(--muted);" id="btn-unlock-realizado">🔒</button>
+              class="text-xs no-print" style="color:var(--muted);" id="btn-unlock-realizado">🔒</button>
           </div>
         </div>
-        <div class="relative h-4 rounded-full overflow-hidden" style="background:#d8d5f5;">
-          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:24.57%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+
+        <div class="relative h-1.5 rounded-full overflow-hidden" style="background:var(--surface-2);">
+          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:24.57%;background:var(--text);"></div>
         </div>
-        <div class="flex justify-between mt-2">
-          <span class="text-xs font-semibold text-yellow-500" id="pct-receita">24,57%</span>
-          <div class="flex flex-wrap gap-4 text-xs no-print">
-            <span style="color:var(--muted);">Gastos: <input type="number" id="cac-gastos" value="0" step="500" class="border rounded px-1.5 py-0.5 w-24 ml-1" oninput="calcCAC()" /></span>
-            <span style="color:var(--muted);">CAC: <strong id="cac-value" style="color:var(--accent);">—</strong></span>
-            <span style="color:var(--muted);">Novos clientes: <strong id="cac-novos" style="color:var(--accent);">0</strong></span>
+        <div class="flex justify-between mt-3 items-center flex-wrap gap-3">
+          <span class="text-sm font-semibold" id="pct-receita" style="color:var(--text);">24,57%</span>
+          <div class="flex flex-wrap gap-5 text-xs no-print items-center" style="color:var(--text2);">
+            <span class="flex items-center gap-1.5">Gastos
+              <input type="number" id="cac-gastos" value="0" step="500" class="border rounded-md px-2 py-1 w-24" oninput="calcCAC()" />
+            </span>
+            <span>CAC <strong id="cac-value" style="color:var(--text);font-weight:600;">—</strong></span>
+            <span>Novos clientes <strong id="cac-novos" style="color:var(--text);font-weight:600;">0</strong></span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── Linha 2: 4 KPIs em grid ── -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- ── 4 KPIs em grid (Emil: cards brancos com left-border colorida sutil) ── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
 
       <!-- Receita Casa -->
-      <div class="rounded-xl p-4 border" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">RECEITA CASA</p>
-        <p class="text-xs mb-2" style="color:#94a3b8;">REN + UP · Meta R$ 1.500.000</p>
-        <p id="receita-casa-valor" class="text-xl font-bold mb-2" style="color:#0369a1;">R$ 0,00</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#e0f2fe;">
-          <div id="bar-receita-casa" class="progress-bar h-full rounded-full" style="width:0%;background:#0284c7;"></div>
+      <div class="rounded-xl p-4 border" style="background:var(--surface);border-color:var(--border);border-left:3px solid var(--blue);">
+        <p class="text-[10px] font-medium uppercase mb-1" style="color:var(--muted);letter-spacing:0.08em;">Receita casa</p>
+        <p class="text-[11px] mb-3" style="color:var(--text2);">REN + UP · Meta R$ 1.500.000</p>
+        <p id="receita-casa-valor" class="text-xl font-semibold mb-3" style="color:var(--text);letter-spacing:-0.02em;">R$ 0,00</p>
+        <div class="relative h-1 rounded-full overflow-hidden" style="background:var(--surface-2);">
+          <div id="bar-receita-casa" class="progress-bar h-full rounded-full" style="width:0%;background:var(--blue);"></div>
         </div>
-        <span id="pct-receita-casa" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
+        <span id="pct-receita-casa" class="text-[11px] mt-2 block" style="color:var(--muted);">0% da meta</span>
       </div>
 
       <!-- Receita Novos -->
-      <div class="rounded-xl p-4 border" style="background:#f0fdf4;border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">RECEITA NOVOS</p>
-        <p class="text-xs mb-2" style="color:#94a3b8;">NTW, OUT, INB, MKT… · Meta R$ 600.000</p>
-        <p id="receita-novos-valor" class="text-xl font-bold mb-2" style="color:#16a34a;">R$ 0,00</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#dcfce7;">
-          <div id="bar-receita-novos" class="progress-bar h-full rounded-full" style="width:0%;background:#16a34a;"></div>
+      <div class="rounded-xl p-4 border" style="background:var(--surface);border-color:var(--border);border-left:3px solid var(--green);">
+        <p class="text-[10px] font-medium uppercase mb-1" style="color:var(--muted);letter-spacing:0.08em;">Receita novos</p>
+        <p class="text-[11px] mb-3" style="color:var(--text2);">NTW, OUT, INB, MKT · Meta R$ 600.000</p>
+        <p id="receita-novos-valor" class="text-xl font-semibold mb-3" style="color:var(--text);letter-spacing:-0.02em;">R$ 0,00</p>
+        <div class="relative h-1 rounded-full overflow-hidden" style="background:var(--surface-2);">
+          <div id="bar-receita-novos" class="progress-bar h-full rounded-full" style="width:0%;background:var(--green);"></div>
         </div>
-        <span id="pct-receita-novos" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
+        <span id="pct-receita-novos" class="text-[11px] mt-2 block" style="color:var(--muted);">0% da meta</span>
       </div>
 
       <!-- Novos Clientes -->
-      <div class="rounded-xl p-4 border" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">NOVOS CLIENTES</p>
-        <p class="text-xs mb-2" style="color:#94a3b8;">Meta: <span id="novos-clientes-meta-label">8</span> clientes</p>
-        <p id="novos-clientes-valor" class="text-xl font-bold mb-2" style="color:#7c3aed;">0</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#ede9fe;">
-          <div id="bar-novos-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:#7c3aed;"></div>
+      <div class="rounded-xl p-4 border" style="background:var(--surface);border-color:var(--border);border-left:3px solid var(--text);">
+        <p class="text-[10px] font-medium uppercase mb-1" style="color:var(--muted);letter-spacing:0.08em;">Novos clientes</p>
+        <p class="text-[11px] mb-3" style="color:var(--text2);">Meta: <span id="novos-clientes-meta-label">8</span> clientes</p>
+        <p id="novos-clientes-valor" class="text-xl font-semibold mb-3" style="color:var(--text);letter-spacing:-0.02em;">0</p>
+        <div class="relative h-1 rounded-full overflow-hidden" style="background:var(--surface-2);">
+          <div id="bar-novos-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:var(--text);"></div>
         </div>
-        <div class="flex items-center justify-between mt-1">
-          <span id="pct-novos-clientes" class="text-xs" style="color:#94a3b8;">0%</span>
+        <div class="flex items-center justify-between mt-2">
+          <span id="pct-novos-clientes" class="text-[11px]" style="color:var(--muted);">0%</span>
           <input type="number" id="input-meta-novos-clientes" value="8" min="1"
-            class="border rounded px-1.5 py-0.5 text-xs w-14 no-print"
-            oninput="updateReceitaCards(); saveOKRInputs()" />
+            class="border rounded-md px-2 py-0.5 text-[11px] w-14 no-print" />
         </div>
       </div>
 
       <!-- Crescimento base + Duração juntos -->
-      <div class="rounded-xl p-4 border space-y-3" style="background:#f8f7ff;border-color:#e0dff7;">
-        <!-- Crescimento -->
+      <div class="rounded-xl p-4 border space-y-4" style="background:var(--surface);border-color:var(--border);border-left:3px solid var(--amber);">
         <div>
           <div class="flex justify-between items-center mb-1">
-            <p class="text-xs font-semibold" style="color:var(--text2);">CRESCIMENTO BASE</p>
-            <span class="text-xs font-bold text-green-600" id="pct-clientes">0%</span>
+            <p class="text-[10px] font-medium uppercase" style="color:var(--muted);letter-spacing:0.08em;">Crescimento base</p>
+            <span class="text-xs font-semibold" id="pct-clientes" style="color:var(--text);">0%</span>
           </div>
-          <p class="text-xs mb-1" style="color:#94a3b8;">Meta: +10% de clientes</p>
-          <div class="relative h-2 rounded-full overflow-hidden bg-gray-200">
-            <div id="bar-clientes" class="progress-bar h-full rounded-full bg-green-500" style="width:0%;"></div>
+          <p class="text-[11px] mb-2" style="color:var(--text2);">Meta: +10% de clientes</p>
+          <div class="relative h-1 rounded-full overflow-hidden" style="background:var(--surface-2);">
+            <div id="bar-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:var(--green);"></div>
           </div>
           <input type="number" id="input-clientes" value="0" min="0" max="100"
-            class="border rounded px-1.5 py-0.5 text-xs w-16 mt-1 no-print"
+            class="border rounded-md px-2 py-0.5 text-[11px] w-16 mt-2 no-print"
             oninput="setBar('bar-clientes','pct-clientes',this.value,'green')" />
         </div>
-        <!-- Divisor -->
         <div style="border-top:1px solid var(--border);"></div>
-        <!-- Duração -->
         <div>
           <div class="flex justify-between items-center mb-1">
-            <p class="text-xs font-semibold" style="color:var(--text2);">DURAÇÃO +5 MESES</p>
-            <span class="text-xs font-bold" style="color:var(--accent);" id="pct-duracao">52,63%</span>
+            <p class="text-[10px] font-medium uppercase" style="color:var(--muted);letter-spacing:0.08em;">Duração +5 meses</p>
+            <span class="text-xs font-semibold" id="pct-duracao" style="color:var(--text);">52,63%</span>
           </div>
-          <p class="text-xs mb-1" style="color:#94a3b8;">Meta: 80% das cadeiras</p>
-          <div class="relative h-2 rounded-full overflow-hidden bg-gray-200">
-            <div id="bar-duracao" class="progress-bar h-full rounded-full" style="width:52.63%;background:var(--accent);"></div>
+          <p class="text-[11px] mb-2" style="color:var(--text2);">Meta: 80% das cadeiras</p>
+          <div class="relative h-1 rounded-full overflow-hidden" style="background:var(--surface-2);">
+            <div id="bar-duracao" class="progress-bar h-full rounded-full" style="width:52.63%;background:var(--text);"></div>
           </div>
           <input type="number" id="input-duracao" value="52.63" min="0" max="100"
-            class="border rounded px-1.5 py-0.5 text-xs w-16 mt-1 no-print"
+            class="border rounded-md px-2 py-0.5 text-[11px] w-16 mt-2 no-print"
             oninput="setBar('bar-duracao','pct-duracao',this.value,'indigo')" />
         </div>
       </div>
