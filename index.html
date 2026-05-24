@@ -1921,6 +1921,13 @@ window.addEventListener('DOMContentLoaded', () => {
   renderCadeiras();
   renderContratos();
 
+  // Popula gráficos a partir dos dados salvos (não precisa recarregar HubSpot)
+  if (tableRows.length > 0) {
+    updateCicloChart();
+    updateFunilChart();
+    rebuildLineChart();
+  }
+
   // Render tabelas históricas (não precisam de canvas visível)
   renderQ1Deals();
   renderHist2025Table();
