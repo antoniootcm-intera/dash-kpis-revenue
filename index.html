@@ -2193,6 +2193,30 @@ function _indiceVoceEstaAqui() {
   }
 }
 
+// Mantém o marcador "Você está aqui" sempre atualizado sem precisar refresh
+let _voceEstaAquiTimer = null;
+function _agendarAtualizacaoVoceEstaAqui() {
+  if (_voceEstaAquiTimer) return; // já agendado
+  // Recalcula a cada 1h
+  _voceEstaAquiTimer = setInterval(() => {
+    if (!charts.linear) return;
+    const novo = _indiceVoceEstaAqui();
+    if (charts.linear.config._currentIdx !== novo) {
+      charts.linear.config._currentIdx = novo;
+      charts.linear.update('none');
+    }
+  }, 60 * 60 * 1000);
+  // Também recalcula quando o usuário volta pra aba (após dias/horas longe)
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible' || !charts.linear) return;
+    const novo = _indiceVoceEstaAqui();
+    if (charts.linear.config._currentIdx !== novo) {
+      charts.linear.config._currentIdx = novo;
+      charts.linear.update('none');
+    }
+  });
+}
+
 function initCharts() {
   const ctxL = document.getElementById('chartLinear').getContext('2d');
   charts.linear = new Chart(ctxL, {
@@ -2318,6 +2342,7 @@ function rebuildLineChart() {
   const data = buildLinearData();
   charts.linear.data = data;
   charts.linear.config._currentIdx = _indiceVoceEstaAqui();
+  _agendarAtualizacaoVoceEstaAqui();
   charts.linear.update();
   saveOKRInputs();
 }
