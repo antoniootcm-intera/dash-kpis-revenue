@@ -1193,9 +1193,12 @@
   <section>
     <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
       <span class="text-lg font-bold">📊 Conversão — Oportunidades criadas vs Deals fechados</span>
-      <div class="flex items-center gap-2 no-print">
+      <div class="flex items-center gap-2 no-print flex-wrap">
         <button id="conv-mode-tri" onclick="setConversaoMode('tri')" class="filt-dur-btn active-filt" style="background:#fff;color:var(--accent);">Trimestral</button>
         <button id="conv-mode-mes" onclick="setConversaoMode('mes')" class="filt-dur-btn" style="background:#fff;color:var(--accent);">Mensal</button>
+        <button onclick="importarOportunidadesHS()" class="admin-only bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition" title="Puxa oportunidades por canal a partir do pipeline RPO Vendas e Renovação no HubSpot">
+          🔄 Sincronizar do HubSpot
+        </button>
       </div>
     </div>
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
@@ -4541,6 +4544,64 @@ function _convBadge(pct) {
   if (pct === null) return '<span style="color:var(--muted);">—</span>';
   const cls = pct >= 30 ? 'qb-green' : pct >= 15 ? 'qb-blue' : 'qb-red';
   return `<span class="q-badge ${cls}">${pct.toFixed(1)}%</span>`;
+}
+
+// Importa oportunidades direto do HubSpot, contando todos os deals do pipeline por (período, canal)
+async function importarOportunidadesHS() {
+  const token = localStorage.getItem('hs_token') || document.getElementById('hubspot-token')?.value?.trim();
+  if (!token) { alert('Cole o HubSpot Access Token no header antes de sincronizar.'); return; }
+
+  if (!confirm('Isso vai SOBRESCREVER os números de "Oportunidades" por canal de cada trimestre/mês com o que está no HubSpot.\n\n• Trimestre/Mês são derivados do createdate de cada deal.\n• Canal é extraído do nome (último segmento após "|").\n• Os campos por TIPO não são alterados (continuam manuais).\n\nContinuar?')) return;
+
+  setStatus('Sincronizando oportunidades do HubSpot…', 'blue');
+  try {
+    const deals = await searchDeals(token);
+
+    // Zera apenas os canais; preserva tipos manuais
+    Object.keys(oportunidadesData).forEach(k => {
+      const b = oportunidadesData[k];
+      if (b && b.canais) {
+        CONV_CANAIS.forEach(c => { b.canais[c] = 0; });
+      }
+    });
+
+    let importados = 0;
+    deals.forEach(d => {
+      if (hsDeleted.has(String(d.id))) return;
+      const props = d.properties || {};
+      const created = props.createdate;
+      if (!created) return;
+      const date = new Date(created);
+      if (isNaN(date)) return;
+
+      // Quarter e mês
+      const mesIdx = date.getMonth();
+      const qNum   = Math.floor(mesIdx / 3) + 1;
+      const qKey   = 'Q' + qNum;
+      const mKey   = MESES[mesIdx]; // 'Jan', 'Fev', ...
+
+      // Canal — último segmento depois de "|", uppercase
+      const name  = props.dealname || '';
+      const parts = name.split('|');
+      let canal   = parts.length >= 2 ? parts[parts.length - 1].trim().toUpperCase() : '';
+      // Normaliza variações comuns
+      if (canal === 'UPSELL')                canal = 'UP';
+      if (canal === 'RENOVAÇÃO' || canal === 'RENOVACAO') canal = 'REN';
+      if (!CONV_CANAIS.includes(canal)) return; // ignora N/D ou canais desconhecidos
+
+      // Incrementa quarter e mês
+      _ensureConvBucket(qKey).canais[canal] = (_ensureConvBucket(qKey).canais[canal] || 0) + 1;
+      _ensureConvBucket(mKey).canais[canal] = (_ensureConvBucket(mKey).canais[canal] || 0) + 1;
+      importados++;
+    });
+
+    saveOportunidadesData();
+    renderConversao();
+    setStatus(`✓ ${importados} oportunidade(s) importadas do HubSpot — ${new Date().toLocaleTimeString('pt-BR')}`, 'green');
+  } catch (e) {
+    setStatus('Erro ao sincronizar: ' + (e.message || e), 'red');
+    console.error(e);
+  }
 }
 
 function renderConversao() {
