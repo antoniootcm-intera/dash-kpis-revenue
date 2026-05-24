@@ -2140,6 +2140,59 @@ function darkScales(extra = {}) {
   };
 }
 
+// Plugin "Você está aqui" — desenha linha vertical pontilhada no período atual
+const _voceEstaAquiPlugin = {
+  id: 'voceEstaAqui',
+  afterDatasetsDraw(chart) {
+    const idx = chart.config && chart.config._currentIdx;
+    if (idx === undefined || idx === null || idx < 0) return;
+    const ctx = chart.ctx;
+    const xScale = chart.scales.x;
+    if (!xScale) return;
+    const xPos = xScale.getPixelForValue(idx);
+    const yTop = chart.chartArea.top;
+    const yBot = chart.chartArea.bottom;
+
+    // Linha vertical
+    ctx.save();
+    ctx.strokeStyle = '#dc2626';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(xPos, yTop);
+    ctx.lineTo(xPos, yBot);
+    ctx.stroke();
+
+    // Etiqueta
+    ctx.setLineDash([]);
+    const label = '📍 Você está aqui';
+    ctx.font = 'bold 11px sans-serif';
+    const tw = ctx.measureText(label).width + 12;
+    const bx = Math.min(Math.max(xPos - tw/2, chart.chartArea.left), chart.chartArea.right - tw);
+    const by = yTop + 4;
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx, by, tw, 18, 4);
+    else ctx.rect(bx, by, tw, 18);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, bx + tw/2, by + 9);
+    ctx.restore();
+  }
+};
+
+function _indiceVoceEstaAqui() {
+  const period = document.getElementById('chart-periodo')?.value || 'semanas';
+  if (period === 'semanas') {
+    return Math.max(0, getSemana(new Date()) - 1);
+  } else {
+    // Modo meses: mostra apenas Q corrente (3 meses). Pega o mês atual dentro do trimestre.
+    return new Date().getMonth() % 3;
+  }
+}
+
 function initCharts() {
   const ctxL = document.getElementById('chartLinear').getContext('2d');
   charts.linear = new Chart(ctxL, {
@@ -2147,6 +2200,7 @@ function initCharts() {
     data: buildLinearData(),
     options: {
       responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 26 } }, // espaço para a etiqueta "Você está aqui"
       plugins: {
         legend: { position: 'top', labels: { color: '#a0a0b8', boxWidth: 14 } },
         tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits:2}) } }
@@ -2155,8 +2209,10 @@ function initCharts() {
         y: { ticks: { color: CHART_DEFAULTS.tick, callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
         x: { grid: { display: false } }
       })
-    }
+    },
+    plugins: [_voceEstaAquiPlugin]
   });
+  charts.linear.config._currentIdx = _indiceVoceEstaAqui();
 
   const ctxC = document.getElementById('chartCiclo').getContext('2d');
   charts.ciclo = new Chart(ctxC, {
@@ -2261,6 +2317,7 @@ function rebuildLineChart() {
   if (!charts.linear) return;
   const data = buildLinearData();
   charts.linear.data = data;
+  charts.linear.config._currentIdx = _indiceVoceEstaAqui();
   charts.linear.update();
   saveOKRInputs();
 }
@@ -2719,11 +2776,48 @@ function updateCell(i, key, val) {
   if (key === 'semana') val = normSemana(val);
   tableRows[i][key] = val;
   saveOverride(i, key, val);
+  // Quando a data muda, recalcula semana e mês automaticamente
+  if (key === 'data') {
+    const sem = semanaFromData(val);
+    const mes = mesFromData(val);
+    if (sem !== null) {
+      tableRows[i].semana = sem;
+      saveOverride(i, 'semana', sem);
+    }
+    if (mes !== null) {
+      tableRows[i].mes = mes;
+      saveOverride(i, 'mes', mes);
+    }
+    renderTable(); // mostra os novos valores nas células de semana/mês
+    rebuildLineChart();
+  }
   if (key === 'valor')       { updateTotals(); rebuildLineChart(); }
   if (key === 'ciclo')       { updateCicloChart(); }
   if (key === 'mensalidade') { updateFunilChart(); updateTotals(); }
   if (key === 'canal')       { updateReceitaCards(); }
   saveTableState();
+}
+
+// Calcula a semana (1-13) a partir de uma string de data "DD/MM"
+function semanaFromData(str) {
+  if (!str) return null;
+  const m = String(str).match(/(\d{1,2})\/(\d{1,2})/);
+  if (!m) return null;
+  const dia = parseInt(m[1]), mes = parseInt(m[2]) - 1;
+  const ano = new Date().getFullYear();
+  const date = new Date(ano, mes, dia);
+  if (isNaN(date)) return null;
+  return getSemana(date);
+}
+
+// Extrai o mês ('Jan', 'Fev', ...) a partir de "DD/MM"
+function mesFromData(str) {
+  if (!str) return null;
+  const m = String(str).match(/(\d{1,2})\/(\d{1,2})/);
+  if (!m) return null;
+  const mes = parseInt(m[2]) - 1;
+  if (mes < 0 || mes > 11) return null;
+  return MESES[mes];
 }
 
 function updateCanalTag(i, val) {
@@ -2753,11 +2847,17 @@ function saveOverride(i, key, val) {
 }
 
 function addRow() {
+  const hoje = new Date();
+  const dataStr = String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0');
   const newRow = {
     id: 'manual_' + Date.now(),
     cliente: 'Novo Cliente', servico: 'RPO', canal: 'NTW',
-    valor: 0, mensalidade: 0, data: '', mes: MESES[new Date().getMonth()],
-    alocacoes: '', tipo: 'N/D', semana: 1, ciclo: 0,
+    valor: 0, mensalidade: 0,
+    data: dataStr,
+    mes: MESES[hoje.getMonth()],
+    alocacoes: '', tipo: 'N/D',
+    semana: getSemana(hoje),
+    ciclo: 0,
     source: 'manual'
   };
   tableRows.push(newRow);
