@@ -266,6 +266,7 @@
     <button id="tab-dashboard"  class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
     <button id="tab-cadeiras"  class="tab-btn" onclick="switchTab('cadeiras')">🪑 Controle de Cadeiras</button>
     <button id="tab-contratos" class="tab-btn" onclick="switchTab('contratos')">📋 Controle de Contratos</button>
+    <button id="tab-conversao" class="tab-btn" onclick="switchTab('conversao')">📊 Conversão</button>
     <button id="tab-churn"     class="tab-btn" onclick="switchTab('churn')">📉 Churn</button>
   </div>
 </div>
@@ -1183,6 +1184,34 @@
 
 </div><!-- /panel-churn -->
 
+<!-- ══════════════════════════════════════════════
+     PAINEL CONVERSÃO
+══════════════════════════════════════════════ -->
+<div id="panel-conversao" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+
+  <!-- Header com toggle trimestral/mensal -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+      <span class="text-lg font-bold">📊 Conversão — Oportunidades criadas vs Deals fechados</span>
+      <div class="flex items-center gap-2 no-print">
+        <button id="conv-mode-tri" onclick="setConversaoMode('tri')" class="filt-dur-btn active-filt" style="background:#fff;color:var(--accent);">Trimestral</button>
+        <button id="conv-mode-mes" onclick="setConversaoMode('mes')" class="filt-dur-btn" style="background:#fff;color:var(--accent);">Mensal</button>
+      </div>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <p class="text-xs" style="color:var(--muted);">
+        <strong>Oportunidades criadas</strong> = cards criados no funil RPO Vendas e Renovação (digite manualmente abaixo).
+        <strong>Deals fechados</strong> = puxados automaticamente da tabela Revenue (Q1 da página Q1 2026, Q2+ da página atual).
+        <strong>Conversão</strong> = fechados ÷ oportunidades.
+      </p>
+    </div>
+  </section>
+
+  <!-- Container dinâmico — preenchido por renderConversao() -->
+  <div id="conv-container" class="space-y-6"></div>
+
+</div><!-- /panel-conversao -->
+
 <footer class="text-center text-xs text-gray-400 py-6 no-print">
   INTERA Dashboard · Gestão à Vista RPO · Dados via HubSpot API v3
 </footer>
@@ -1811,6 +1840,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
         if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
         if (Array.isArray(d.q1_deals) && d.q1_deals.length) Q1_DEALS = d.q1_deals;
+        if (d.oportunidades_data && typeof d.oportunidades_data === 'object') oportunidadesData = d.oportunidades_data;
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
         if (d.realizado_locked !== undefined) realizadoLocked = d.realizado_locked;
@@ -2007,6 +2037,7 @@ async function publicarSnapshot() {
       contratos_rows:   contratosRows,
       churn_rows:       churnRows,
       q1_deals:         Q1_DEALS,
+      oportunidades_data: oportunidadesData,
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
       okr_state:        okrState,
@@ -2823,15 +2854,20 @@ try {
 //  TAB NAVIGATION
 // ════════════════════════════════════════════════
 function switchTab(tab) {
-  ['dashboard','cadeiras','contratos','churn'].forEach(t => {
-    document.getElementById('panel-' + t).style.display = tab === t ? '' : 'none';
-    document.getElementById('tab-'   + t).classList.toggle('active', tab === t);
+  ['dashboard','cadeiras','contratos','churn','conversao'].forEach(t => {
+    const panel = document.getElementById('panel-' + t);
+    if (panel) panel.style.display = tab === t ? '' : 'none';
+    const btn = document.getElementById('tab-' + t);
+    if (btn) btn.classList.toggle('active', tab === t);
   });
   localStorage.setItem('active_tab', tab);
-  // Lazy render do chart de churn quando o painel fica visível
   if (tab === 'churn' && !_churnChartReady) {
     _churnChartReady = true;
     setTimeout(() => { renderChurnChart(); renderMotivosCharts(); }, 50);
+  }
+  if (tab === 'conversao' && !_conversaoReady) {
+    _conversaoReady = true;
+    setTimeout(renderConversao, 50);
   }
 }
 
@@ -4408,6 +4444,261 @@ try {
   if (Array.isArray(savedCh)) churnRows = savedCh;
   _migrateChurnTipo();
 } catch(e) {}
+
+// ════════════════════════════════════════════════
+//  CONVERSÃO — STATE & RENDER
+// ════════════════════════════════════════════════
+// Estrutura: oportunidadesData = {
+//   'Q1': { canais:{NTW:0,MKT:0,OUT:0,INB:0,UP:0,REN:0}, tipos:{Enterprise:0,GG:0,SMB:0} },
+//   'Q2': {...}, ...,
+//   'Jan': {...}, 'Fev': {...}, ... // por mês também
+// }
+let oportunidadesData = {};
+try {
+  const saved = JSON.parse(localStorage.getItem('oportunidades_data') || '{}');
+  if (saved && typeof saved === 'object') oportunidadesData = saved;
+} catch(e) {}
+
+let _conversaoMode = 'tri'; // 'tri' ou 'mes'
+let _conversaoReady = false;
+
+const CONV_CANAIS = ['NTW','MKT','OUT','INB','UP','REN'];
+const CONV_TIPOS  = ['Enterprise','GG','SMB'];
+const CONV_MESES_POR_Q = {
+  Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'],
+  Q3:['Jul','Ago','Set'], Q4:['Out','Nov','Dez']
+};
+
+function saveOportunidadesData() {
+  try { localStorage.setItem('oportunidades_data', JSON.stringify(oportunidadesData)); } catch(e) {}
+}
+
+function setConversaoMode(mode) {
+  _conversaoMode = mode;
+  document.getElementById('conv-mode-tri').classList.toggle('active-filt', mode === 'tri');
+  document.getElementById('conv-mode-mes').classList.toggle('active-filt', mode === 'mes');
+  renderConversao();
+}
+
+function _ensureConvBucket(key) {
+  if (!oportunidadesData[key]) {
+    oportunidadesData[key] = {
+      canais: Object.fromEntries(CONV_CANAIS.map(c => [c, 0])),
+      tipos:  Object.fromEntries(CONV_TIPOS.map(t => [t, 0])),
+    };
+  }
+  return oportunidadesData[key];
+}
+
+function updateOportunidade(key, dim, val, num) {
+  const bucket = _ensureConvBucket(key);
+  bucket[dim][val] = Math.max(0, parseInt(num) || 0);
+  saveOportunidadesData();
+  renderConversao();
+}
+
+// Conta deals fechados para um período (Q1/Q2/.. ou mês 'Jan'/'Fev'...)
+// Filtros opcionais por canal ou tipo
+function getFechadosCount(key, filtroDim, filtroVal) {
+  let meses;
+  if (CONV_MESES_POR_Q[key]) {
+    meses = CONV_MESES_POR_Q[key]; // trimestre
+  } else {
+    meses = [key]; // mês único
+  }
+
+  const Q1_MESES = ['Jan','Fev','Mar'];
+  const usaQ1 = meses.some(m => Q1_MESES.includes(m));
+  const usaTb = meses.some(m => !Q1_MESES.includes(m));
+
+  let count = 0;
+
+  if (usaQ1) {
+    (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
+      if (!meses.includes(d.mes)) return;
+      if (filtroDim === 'canais' && (d.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
+      if (filtroDim === 'tipos'  && d.tipo  !== filtroVal) return;
+      count++;
+    });
+  }
+  if (usaTb) {
+    tableRows.forEach(r => {
+      if (!meses.includes(r.mes)) return;
+      if (filtroDim === 'canais' && (r.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
+      if (filtroDim === 'tipos'  && r.tipo  !== filtroVal) return;
+      count++;
+    });
+  }
+  return count;
+}
+
+function _pctConv(fechados, oport) {
+  if (!oport || oport <= 0) return null;
+  return (fechados / oport) * 100;
+}
+
+function _convBadge(pct) {
+  if (pct === null) return '<span style="color:var(--muted);">—</span>';
+  const cls = pct >= 30 ? 'qb-green' : pct >= 15 ? 'qb-blue' : 'qb-red';
+  return `<span class="q-badge ${cls}">${pct.toFixed(1)}%</span>`;
+}
+
+function renderConversao() {
+  const container = document.getElementById('conv-container');
+  if (!container) return;
+
+  // Quais períodos mostrar? Mesma lógica do saldo líquido — atual ou anterior + com dados
+  const qAtual = Math.floor(new Date().getMonth() / 3) + 1;
+  const TODOS_QS = ['Q1','Q2','Q3','Q4'];
+
+  let periodos;
+  if (_conversaoMode === 'tri') {
+    periodos = TODOS_QS.filter((q, idx) => {
+      const qNum = idx + 1;
+      if (qNum <= qAtual) return true;
+      // Mostra Q futuro se já tem dados (oportunidades ou fechados)
+      const temDado = oportunidadesData[q] || getFechadosCount(q) > 0;
+      return temDado;
+    });
+  } else {
+    // mensal: mostra meses até o atual + futuros com dados
+    const TODOS_MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const mAtualIdx = new Date().getMonth();
+    periodos = TODOS_MESES.filter((m, idx) => {
+      if (idx <= mAtualIdx) return true;
+      const temDado = oportunidadesData[m] || getFechadosCount(m) > 0;
+      return temDado;
+    });
+  }
+
+  container.innerHTML = periodos.map(key => _renderConvBloco(key)).join('');
+}
+
+function _renderConvBloco(key) {
+  const bucket = oportunidadesData[key] || { canais:{}, tipos:{} };
+  const isQuarter = !!CONV_MESES_POR_Q[key];
+  const titulo    = isQuarter ? `${key} 2026` : `${key}/2026`;
+  const subtitulo = isQuarter ? CONV_MESES_POR_Q[key].join(' · ') : '';
+
+  // Totais
+  const totalOport = CONV_CANAIS.reduce((s,c) => s + (bucket.canais[c]||0), 0);
+  const totalFech  = getFechadosCount(key);
+  const convTotal  = _pctConv(totalFech, totalOport);
+
+  // Linhas por canal
+  const linhasCanal = CONV_CANAIS.map(c => {
+    const oport = bucket.canais[c] || 0;
+    const fech  = getFechadosCount(key, 'canais', c);
+    const conv  = _pctConv(fech, oport);
+    return `<tr>
+      <td style="text-align:left;font-weight:600;">${c}</td>
+      <td><span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','canais','${c}',this.textContent)">${oport}</span></td>
+      <td style="font-weight:600;color:var(--accent);">${fech}</td>
+      <td>${_convBadge(conv)}</td>
+    </tr>`;
+  }).join('');
+
+  // Linhas por tipo
+  const totalOportTipo = CONV_TIPOS.reduce((s,t) => s + (bucket.tipos[t]||0), 0);
+  const linhasTipo = CONV_TIPOS.map(t => {
+    const oport = bucket.tipos[t] || 0;
+    const fech  = getFechadosCount(key, 'tipos', t);
+    const conv  = _pctConv(fech, oport);
+    return `<tr>
+      <td style="text-align:left;font-weight:600;">${t}</td>
+      <td><span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','tipos','${t}',this.textContent)">${oport}</span></td>
+      <td style="font-weight:600;color:var(--accent);">${fech}</td>
+      <td>${_convBadge(conv)}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <section>
+      <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+        <span class="text-base font-bold">📅 ${titulo}</span>
+        ${subtitulo ? `<span class="text-blue-200 text-xs">${subtitulo}</span>` : ''}
+      </div>
+      <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+        <!-- Resumo -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+            <p class="text-xs font-semibold mb-1" style="color:var(--text2);">OPORTUNIDADES CRIADAS</p>
+            <p class="text-2xl font-bold" style="color:var(--accent);">${totalOport}</p>
+            <p class="text-xs mt-1" style="color:#94a3b8;">soma dos canais (edite abaixo)</p>
+          </div>
+          <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
+            <p class="text-xs font-semibold mb-1" style="color:#166534;">DEALS FECHADOS</p>
+            <p class="text-2xl font-bold" style="color:#16a34a;">${totalFech}</p>
+            <p class="text-xs mt-1" style="color:#94a3b8;">auto — tabela Revenue + Q1 deals</p>
+          </div>
+          <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
+            <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">CONVERSÃO</p>
+            <p class="text-2xl font-bold" style="color:${convTotal===null?'var(--muted)':convTotal>=30?'#16a34a':convTotal>=15?'#0369a1':'#dc2626'};">
+              ${convTotal===null ? '—' : convTotal.toFixed(1) + '%'}
+            </p>
+            <p class="text-xs mt-1" style="color:#94a3b8;">fechados ÷ oportunidades</p>
+          </div>
+        </div>
+
+        <!-- Por canal -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Por canal</h3>
+          <div class="overflow-x-auto">
+            <table class="hist-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Canal</th>
+                  <th>Oportunidades</th>
+                  <th>Fechados</th>
+                  <th>Conversão</th>
+                </tr>
+              </thead>
+              <tbody>${linhasCanal}</tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td style="text-align:left;">Total</td>
+                  <td>${totalOport}</td>
+                  <td>${totalFech}</td>
+                  <td>${_convBadge(convTotal)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Por tipo de empresa -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Por tipo de empresa</h3>
+          <div class="overflow-x-auto">
+            <table class="hist-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Tipo</th>
+                  <th>Oportunidades</th>
+                  <th>Fechados</th>
+                  <th>Conversão</th>
+                </tr>
+              </thead>
+              <tbody>${linhasTipo}</tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td style="text-align:left;">Total</td>
+                  <td>${totalOportTipo}</td>
+                  <td>${totalFech}</td>
+                  <td>${_convBadge(_pctConv(totalFech, totalOportTipo))}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p class="text-xs italic mt-2" style="color:var(--muted);">
+            Oportunidades por tipo são independentes das por canal (uma mesma oportunidade conta nos dois recortes).
+          </p>
+        </div>
+
+      </div>
+    </section>`;
+}
 
 // ─── LOAD SAVED CADEIRAS STATE ───────────────────
 try {
