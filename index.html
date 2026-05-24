@@ -1258,6 +1258,72 @@
 // ─── VIEWER MODE ────────────────────────────────
 const IS_VIEWER = !['localhost','127.0.0.1'].includes(location.hostname);
 
+// ─── LOGGER ─────────────────────────────────────
+// Log estruturado em JSON · sanitiza tokens/secrets · notifica visualmente só no admin
+const _logBuffer = [];
+const _SENSITIVE_RE = /token|secret|password|authorization|bearer|api[_-]?key/i;
+
+function _sanitize(v, depth) {
+  depth = depth || 0;
+  if (depth > 4 || v === null || v === undefined) return v;
+  if (typeof v === 'string') return v.length > 300 ? v.slice(0,300) + '…' : v;
+  if (typeof v === 'number' || typeof v === 'boolean') return v;
+  if (Array.isArray(v)) return v.slice(0, 50).map(x => _sanitize(x, depth+1));
+  if (typeof v === 'object') {
+    const out = {};
+    for (const k in v) {
+      if (!Object.prototype.hasOwnProperty.call(v, k)) continue;
+      if (_SENSITIVE_RE.test(k)) { out[k] = '[REDACTED]'; continue; }
+      try { out[k] = _sanitize(v[k], depth+1); } catch(_) { out[k] = '[unserializable]'; }
+    }
+    return out;
+  }
+  return String(v);
+}
+
+function _emit(level, scope, context, err) {
+  const entry = {
+    ts: new Date().toISOString(),
+    level,
+    scope,
+    ctx: _sanitize(context || {}),
+  };
+  if (err) {
+    entry.err = { name: err.name, message: err.message };
+    if (err.stack) {
+      // Sanitiza stack: redige qualquer string longa que pareça token
+      const cleaned = String(err.stack).replace(/[A-Za-z0-9_-]{30,}/g, m =>
+        _SENSITIVE_RE.test(m) || /^(gh|hs|pat|ghp|sk)[-_]?[A-Za-z0-9]{20,}/.test(m) ? '[REDACTED]' : m
+      );
+      entry.err.stack = cleaned.slice(0, 800);
+    }
+  }
+  _logBuffer.push(entry);
+  if (_logBuffer.length > 200) _logBuffer.shift();
+  const fn = (level === 'error' || level === 'fatal') ? 'error' : level === 'warn' ? 'warn' : 'log';
+  console[fn]('[' + scope + ']', entry);
+}
+
+const log = {
+  info:  function(scope, ctx)      { _emit('info',  scope, ctx); },
+  warn:  function(scope, ctx, err) { _emit('warn',  scope, ctx, err); },
+  error: function(scope, ctx, err) {
+    _emit('error', scope, ctx, err);
+    if (!IS_VIEWER && typeof setStatus === 'function') {
+      try { setStatus('⚠ ' + scope + ': ' + (err && err.message || 'erro'), 'red'); } catch(_) {}
+    }
+  },
+  fatal: function(scope, ctx, err) {
+    _emit('fatal', scope, ctx, err);
+    if (!IS_VIEWER && typeof setStatus === 'function') {
+      try { setStatus('💥 ' + scope + ': ' + (err && err.message || 'erro fatal'), 'red'); } catch(_) {}
+    }
+  },
+};
+
+// Acessível pelo console pra debug: __interaLogs() retorna os últimos 200 logs
+window.__interaLogs = function() { return _logBuffer.slice(); };
+
 // ─── DASHBOARD SUB-TABS ─────────────────────────
 const DASH_SUBS = ['q2-2026','q1-2026','hist-2025','comp-tri'];
 let _histChartsReady = false;
@@ -1328,11 +1394,12 @@ try {
       if (d.mensalidade === undefined) d.mensalidade = 0;
     });
     if (changed) localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS));
-  } catch(e) {}
+  } catch(e) { log.warn('q1.migrate.failed', { dealsCount: Q1_DEALS.length }, e); }
 })();
 
 function saveQ1Deals() {
-  try { localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS)); } catch(e) {}
+  try { localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'q1_deals', size: JSON.stringify(Q1_DEALS).length }, e); }
 }
 
 function updateQ1Field(i, field, value) {
@@ -2926,7 +2993,8 @@ function clearHSRows() {
 }
 
 function saveTableState() {
-  try { localStorage.setItem('table_rows', JSON.stringify(tableRows)); } catch(e) {}
+  try { localStorage.setItem('table_rows', JSON.stringify(tableRows)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'table_rows', rows: tableRows.length }, e); }
 }
 
 // ─── CSV EXPORT ──────────────────────────────────
@@ -3024,7 +3092,7 @@ function setStatus(msg, color) {
 try {
   const saved = JSON.parse(localStorage.getItem('table_rows') || '[]');
   if (Array.isArray(saved) && saved.length) { tableRows = saved; }
-} catch(e) {}
+} catch(e) { log.error('localstorage.read.failed', { key:'table_rows' }, e); }
 
 // ════════════════════════════════════════════════
 //  TAB NAVIGATION
@@ -3053,7 +3121,8 @@ function switchTab(tab) {
 let cadeirasRows = [];
 
 function saveCadeirasState() {
-  try { localStorage.setItem('cadeiras_rows', JSON.stringify(cadeirasRows)); } catch(e) {}
+  try { localStorage.setItem('cadeiras_rows', JSON.stringify(cadeirasRows)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'cadeiras_rows', rows: cadeirasRows.length }, e); }
 }
 
 // ── Filtro de duração ────────────────────────────
@@ -3576,7 +3645,8 @@ function importarCSVInicial() {
 let contratosRows = [];
 
 function saveContratosState() {
-  try { localStorage.setItem('contratos_rows', JSON.stringify(contratosRows)); } catch(e) {}
+  try { localStorage.setItem('contratos_rows', JSON.stringify(contratosRows)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'contratos_rows', rows: contratosRows.length }, e); }
 }
 
 let _contFiltVence = null; // null = todos
@@ -3888,7 +3958,7 @@ function exportContratosCSV() {
 try {
   const savedC = JSON.parse(localStorage.getItem('contratos_rows') || '[]');
   if (Array.isArray(savedC)) contratosRows = savedC;
-} catch(e) {}
+} catch(e) { log.error('localstorage.read.failed', { key:'contratos_rows' }, e); }
 
 // ════════════════════════════════════════════════
 //  CHURN — STATE & RENDER
@@ -3906,7 +3976,8 @@ function mesParaQuarter(mes) {
 }
 
 function saveChurnState() {
-  try { localStorage.setItem('churn_rows', JSON.stringify(churnRows)); } catch(e) {}
+  try { localStorage.setItem('churn_rows', JSON.stringify(churnRows)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'churn_rows', rows: churnRows.length }, e); }
 }
 
 // Filtros por quarter (estado de UI)
@@ -4624,7 +4695,7 @@ try {
   const savedCh = JSON.parse(localStorage.getItem('churn_rows') || '[]');
   if (Array.isArray(savedCh)) churnRows = savedCh;
   _migrateChurnTipo();
-} catch(e) {}
+} catch(e) { log.error('localstorage.read.failed', { key:'churn_rows' }, e); }
 
 // ════════════════════════════════════════════════
 //  CONVERSÃO — STATE & RENDER
@@ -4638,7 +4709,7 @@ let oportunidadesData = {};
 try {
   const saved = JSON.parse(localStorage.getItem('oportunidades_data') || '{}');
   if (saved && typeof saved === 'object') oportunidadesData = saved;
-} catch(e) {}
+} catch(e) { log.error('localstorage.read.failed', { key:'oportunidades_data' }, e); }
 
 let _conversaoMode = 'tri'; // 'tri' ou 'mes'
 let _conversaoReady = false;
@@ -4651,7 +4722,8 @@ const CONV_MESES_POR_Q = {
 };
 
 function saveOportunidadesData() {
-  try { localStorage.setItem('oportunidades_data', JSON.stringify(oportunidadesData)); } catch(e) {}
+  try { localStorage.setItem('oportunidades_data', JSON.stringify(oportunidadesData)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'oportunidades_data' }, e); }
 }
 
 function setConversaoMode(mode) {
@@ -5059,7 +5131,7 @@ try {
   // Auto-completa meses vazios baseado na vigência (seguro: só preenche células vazias)
   cadeirasRows.forEach(r => autoCompletarMeses(r));
   saveCadeirasState();
-} catch(e) {}
+} catch(e) { log.error('cadeiras.load.failed', { key:'cadeiras_rows' }, e); }
 
 function _carregarPlanilhaInicial() {
   cadeirasRows = [ // meses Set–Dez serão preenchidos por autoCompletarMeses
