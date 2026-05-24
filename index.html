@@ -1199,6 +1199,9 @@
         <button onclick="importarOportunidadesHS()" class="admin-only bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition" title="Puxa oportunidades por canal a partir do pipeline RPO Vendas e Renovação no HubSpot">
           🔄 Sincronizar do HubSpot
         </button>
+        <button onclick="resetManualOportunidades()" class="admin-only bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Remove proteções manuais (próximo sync vai sobrescrever)">
+          🔓 Resetar manual
+        </button>
       </div>
     </div>
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
@@ -4488,14 +4491,34 @@ function _ensureConvBucket(key) {
     oportunidadesData[key] = {
       canais: Object.fromEntries(CONV_CANAIS.map(c => [c, 0])),
       tipos:  Object.fromEntries(CONV_TIPOS.map(t => [t, 0])),
+      manual: [], // lista de chaves "canais:NTW", "tipos:Enterprise" que foram editadas manualmente
     };
   }
+  if (!Array.isArray(oportunidadesData[key].manual)) oportunidadesData[key].manual = [];
   return oportunidadesData[key];
+}
+
+function _isManual(key, dim, val) {
+  const b = oportunidadesData[key];
+  return b && Array.isArray(b.manual) && b.manual.includes(dim + ':' + val);
 }
 
 function updateOportunidade(key, dim, val, num) {
   const bucket = _ensureConvBucket(key);
   bucket[dim][val] = Math.max(0, parseInt(num) || 0);
+  // Marca como editado manualmente (protege em sincs futuros)
+  const mKey = dim + ':' + val;
+  if (!bucket.manual.includes(mKey)) bucket.manual.push(mKey);
+  saveOportunidadesData();
+  renderConversao();
+}
+
+// Limpa todas as marcações manuais (usado em "Resetar manual" se quiser)
+function resetManualOportunidades() {
+  if (!confirm('Limpar todas as marcações manuais? Próximo sync do HubSpot vai sobrescrever os números editados.')) return;
+  Object.keys(oportunidadesData).forEach(k => {
+    if (oportunidadesData[k]) oportunidadesData[k].manual = [];
+  });
   saveOportunidadesData();
   renderConversao();
 }
@@ -4546,58 +4569,138 @@ function _convBadge(pct) {
   return `<span class="q-badge ${cls}">${pct.toFixed(1)}%</span>`;
 }
 
+// Extrai canal do nome do deal — tenta vários padrões
+function _extrairCanal(name) {
+  if (!name) return null;
+  const upper = name.toUpperCase();
+
+  // 1) Último segmento após "|"
+  const parts = name.split('|');
+  if (parts.length >= 2) {
+    let last = parts[parts.length - 1].trim().toUpperCase();
+    if (last === 'UPSELL') last = 'UP';
+    if (last === 'RENOVAÇÃO' || last === 'RENOVACAO') last = 'REN';
+    if (CONV_CANAIS.includes(last)) return last;
+  }
+
+  // 2) Busca canal em qualquer posição como palavra isolada
+  const padroes = [
+    { re: /\bNTW\b/,                         canal: 'NTW' },
+    { re: /\bMKT\b|\bMARKETING\b/,           canal: 'MKT' },
+    { re: /\bOUT\b|\bOUTBOUND\b/,            canal: 'OUT' },
+    { re: /\bINB\b|\bINBOUND\b/,             canal: 'INB' },
+    { re: /\bUP\b|\bUPSELL\b/,               canal: 'UP'  },
+    { re: /\bREN\b|RENOVAÇÃO|RENOVACAO/,     canal: 'REN' },
+  ];
+  for (const p of padroes) if (p.re.test(upper)) return p.canal;
+
+  return null;
+}
+
+const CONV_ANO = 2026; // ano dos dados que importamos
+
 // Importa oportunidades direto do HubSpot, contando todos os deals do pipeline por (período, canal)
 async function importarOportunidadesHS() {
   const token = localStorage.getItem('hs_token') || document.getElementById('hubspot-token')?.value?.trim();
   if (!token) { alert('Cole o HubSpot Access Token no header antes de sincronizar.'); return; }
 
-  if (!confirm('Isso vai SOBRESCREVER os números de "Oportunidades" por canal de cada trimestre/mês com o que está no HubSpot.\n\n• Trimestre/Mês são derivados do createdate de cada deal.\n• Canal é extraído do nome (último segmento após "|").\n• Os campos por TIPO não são alterados (continuam manuais).\n\nContinuar?')) return;
+  if (!confirm(
+    'Sincronizar oportunidades do HubSpot?\n\n' +
+    '• Apenas deals com createdate em ' + CONV_ANO + '.\n' +
+    '• Canal extraído do nome do deal (último segmento após "|" ou palavra-chave em qualquer posição).\n' +
+    '• Células EDITADAS MANUALMENTE são PRESERVADAS (cinza protegido).\n' +
+    '• Tipos de empresa continuam manuais (HubSpot não tem essa info).\n\n' +
+    'Continuar?'
+  )) return;
 
   setStatus('Sincronizando oportunidades do HubSpot…', 'blue');
   try {
     const deals = await searchDeals(token);
 
-    // Zera apenas os canais; preserva tipos manuais
+    // Zera apenas canais NÃO marcados como manuais
     Object.keys(oportunidadesData).forEach(k => {
       const b = oportunidadesData[k];
-      if (b && b.canais) {
-        CONV_CANAIS.forEach(c => { b.canais[c] = 0; });
-      }
+      if (!b || !b.canais) return;
+      CONV_CANAIS.forEach(c => {
+        if (!_isManual(k, 'canais', c)) b.canais[c] = 0;
+      });
     });
 
     let importados = 0;
+    let ignoradosSemData = 0;
+    let ignoradosAnoErrado = 0;
+    let ignoradosSemCanal = 0;
+    let ignoradosManual = 0;
+    let ignoradosDeletados = 0;
+    const exemplosSemCanal = [];
+
     deals.forEach(d => {
-      if (hsDeleted.has(String(d.id))) return;
+      if (hsDeleted.has(String(d.id))) { ignoradosDeletados++; return; }
       const props = d.properties || {};
       const created = props.createdate;
-      if (!created) return;
+      if (!created) { ignoradosSemData++; return; }
       const date = new Date(created);
-      if (isNaN(date)) return;
+      if (isNaN(date)) { ignoradosSemData++; return; }
 
-      // Quarter e mês
+      // Filtra por ano
+      if (date.getFullYear() !== CONV_ANO) { ignoradosAnoErrado++; return; }
+
+      // Período
       const mesIdx = date.getMonth();
       const qNum   = Math.floor(mesIdx / 3) + 1;
       const qKey   = 'Q' + qNum;
       const mKey   = MESES[mesIdx]; // 'Jan', 'Fev', ...
 
-      // Canal — último segmento depois de "|", uppercase
-      const name  = props.dealname || '';
-      const parts = name.split('|');
-      let canal   = parts.length >= 2 ? parts[parts.length - 1].trim().toUpperCase() : '';
-      // Normaliza variações comuns
-      if (canal === 'UPSELL')                canal = 'UP';
-      if (canal === 'RENOVAÇÃO' || canal === 'RENOVACAO') canal = 'REN';
-      if (!CONV_CANAIS.includes(canal)) return; // ignora N/D ou canais desconhecidos
+      // Canal
+      const canal = _extrairCanal(props.dealname || '');
+      if (!canal) {
+        ignoradosSemCanal++;
+        if (exemplosSemCanal.length < 5) exemplosSemCanal.push(props.dealname || '(sem nome)');
+        return;
+      }
 
-      // Incrementa quarter e mês
-      _ensureConvBucket(qKey).canais[canal] = (_ensureConvBucket(qKey).canais[canal] || 0) + 1;
-      _ensureConvBucket(mKey).canais[canal] = (_ensureConvBucket(mKey).canais[canal] || 0) + 1;
-      importados++;
+      // Respeita marcações manuais — não incrementa em quarter/mês que foram editados à mão
+      let contou = false;
+      if (!_isManual(qKey, 'canais', canal)) {
+        _ensureConvBucket(qKey).canais[canal] = (_ensureConvBucket(qKey).canais[canal] || 0) + 1;
+        contou = true;
+      }
+      if (!_isManual(mKey, 'canais', canal)) {
+        _ensureConvBucket(mKey).canais[canal] = (_ensureConvBucket(mKey).canais[canal] || 0) + 1;
+        contou = true;
+      }
+      if (contou) importados++;
+      else ignoradosManual++;
     });
 
     saveOportunidadesData();
     renderConversao();
-    setStatus(`✓ ${importados} oportunidade(s) importadas do HubSpot — ${new Date().toLocaleTimeString('pt-BR')}`, 'green');
+
+    const resumo = [
+      `${importados} importadas`,
+      `${ignoradosManual} ignoradas (cells manuais)`,
+      `${ignoradosSemCanal} sem canal reconhecível`,
+      `${ignoradosAnoErrado} fora de ${CONV_ANO}`,
+      `${ignoradosSemData} sem createdate`,
+      `${ignoradosDeletados} marcadas como deletadas`,
+    ].join(' · ');
+    setStatus(`✓ Sincronizado · ${resumo}`, 'green');
+
+    // Log para debug
+    console.log('[Conversão sync]', {
+      totalDealsHubSpot: deals.length,
+      importados,
+      ignoradosManual,
+      ignoradosSemCanal,
+      ignoradosAnoErrado,
+      ignoradosSemData,
+      ignoradosDeletados,
+      exemplosSemCanal,
+    });
+
+    if (ignoradosSemCanal > 0) {
+      console.warn(`[Conversão] ${ignoradosSemCanal} deals sem canal reconhecível. Exemplos:`, exemplosSemCanal);
+    }
   } catch (e) {
     setStatus('Erro ao sincronizar: ' + (e.message || e), 'red');
     console.error(e);
@@ -4651,9 +4754,13 @@ function _renderConvBloco(key) {
     const oport = bucket.canais[c] || 0;
     const fech  = getFechadosCount(key, 'canais', c);
     const conv  = _pctConv(fech, oport);
+    const manual = _isManual(key, 'canais', c);
     return `<tr>
       <td style="text-align:left;font-weight:600;">${c}</td>
-      <td><span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','canais','${c}',this.textContent)">${oport}</span></td>
+      <td>
+        <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','canais','${c}',this.textContent)" style="${manual?'background:#fef3c7;':''}">${oport}</span>
+        ${manual ? '<span title="Valor editado manualmente — protegido contra sync" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+      </td>
       <td style="font-weight:600;color:var(--accent);">${fech}</td>
       <td>${_convBadge(conv)}</td>
     </tr>`;
@@ -4665,9 +4772,13 @@ function _renderConvBloco(key) {
     const oport = bucket.tipos[t] || 0;
     const fech  = getFechadosCount(key, 'tipos', t);
     const conv  = _pctConv(fech, oport);
+    const manual = _isManual(key, 'tipos', t);
     return `<tr>
       <td style="text-align:left;font-weight:600;">${t}</td>
-      <td><span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','tipos','${t}',this.textContent)">${oport}</span></td>
+      <td>
+        <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','tipos','${t}',this.textContent)" style="${manual?'background:#fef3c7;':''}">${oport}</span>
+        ${manual ? '<span title="Valor editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+      </td>
       <td style="font-weight:600;color:var(--accent);">${fech}</td>
       <td>${_convBadge(conv)}</td>
     </tr>`;
