@@ -1956,13 +1956,15 @@ function _criarOuAtualizar(canvasId, labels, data, colorByLabel, opts) {
       plugins: {
         legend: { display: false },
         tooltip: { callbacks: { label: c =>
-          opts?.tooltipFmt ? opts.tooltipFmt(c.raw) : c.raw
+          opts?.tooltipFmt ? opts.tooltipFmt(c.raw, c.dataIndex, c.label) : c.raw
         }}
       },
       scales: darkScales({ x: { grid: { display: false }}})
     }
   });
 }
+// Pluraliza "contrato" baseado em N (helper para tooltips)
+function _plContratos(n) { return n + ' contrato' + (n !== 1 ? 's' : ''); }
 
 // Renderiza os 4 gráficos do Q1: ciclo×canal, ciclo×tipo, ticket×canal, ticket×tipo
 function renderQ1Analytics() {
@@ -1981,13 +1983,17 @@ function renderQ1Analytics() {
 
   // Ticket por canal (média de mensalidade)
   const tc = Object.keys(aggCanal).filter(k => aggCanal[k].mrrTotal > 0);
+  const tcCounts = tc.map(k => aggCanal[k].count);
   _criarOuAtualizar('chartQ1ticketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
-    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+    _CANAL_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(tcCounts[idx]) });
 
   // Ticket por tipo
   const tt = Object.keys(aggTipo).filter(k => aggTipo[k].mrrTotal > 0);
+  const ttCounts = tt.map(k => aggTipo[k].count);
   _criarOuAtualizar('chartQ1ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
-    _TIPO_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+    _TIPO_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
 }
 
 // Renderiza ticket médio por canal e tipo no Q2 (live de tableRows)
@@ -1996,12 +2002,16 @@ function renderQ2TicketCharts() {
   const aggTipo  = _aggregar(tableRows, r => r.tipo);
 
   const tc = Object.keys(aggCanal).filter(k => aggCanal[k].mrrTotal > 0);
+  const tcCounts = tc.map(k => aggCanal[k].count);
   _criarOuAtualizar('chartQ2ticketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
-    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+    _CANAL_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(tcCounts[idx]) });
 
   const tt = Object.keys(aggTipo).filter(k => aggTipo[k].mrrTotal > 0);
+  const ttCounts = tt.map(k => aggTipo[k].count);
   _criarOuAtualizar('chartQ2ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
-    _TIPO_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+    _TIPO_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
 }
 
 // ═══════════════════════════════════════════════════
@@ -2090,15 +2100,19 @@ function renderAnual() {
 
   // Ticket médio por canal
   const tcLabels = Object.keys(aggCanal).filter(k => k && aggCanal[k].mrrTotal > 0);
+  const tcCounts = tcLabels.map(k => aggCanal[k].count);
   _criarOuAtualizar('chartAnualTicketCanal', tcLabels,
     tcLabels.map(k => _ticketMedio(aggCanal[k])),
-    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+    _CANAL_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(tcCounts[idx]) });
 
   // Ticket médio por tipo
   const ttLabels = Object.keys(aggTipo).filter(k => k && aggTipo[k].mrrTotal > 0);
+  const ttCounts = ttLabels.map(k => aggTipo[k].count);
   _criarOuAtualizar('chartAnualTicketTipo', ttLabels,
     ttLabels.map(k => _ticketMedio(aggTipo[k])),
-    _TIPO_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+    _TIPO_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
 
   // Ciclo por canal
   const ccLabels = Object.keys(aggCanal).filter(k => k && aggCanal[k].ciclosArr.length > 0);
