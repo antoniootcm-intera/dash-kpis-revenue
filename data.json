@@ -2033,6 +2033,104 @@
       "semana": "Sem 13"
     }
   ],
+  "oportunidades_data": {
+    "Q1": {
+      "canais": {
+        "NTW": 2,
+        "MKT": 2,
+        "OUT": 6,
+        "INB": 9,
+        "UP": 0,
+        "REN": 2
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Fev": {
+      "canais": {
+        "NTW": 0,
+        "MKT": 0,
+        "OUT": 2,
+        "INB": 5,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Mar": {
+      "canais": {
+        "NTW": 2,
+        "MKT": 2,
+        "OUT": 4,
+        "INB": 4,
+        "UP": 0,
+        "REN": 2
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Q2": {
+      "canais": {
+        "NTW": 2,
+        "MKT": 0,
+        "OUT": 6,
+        "INB": 2,
+        "UP": 4,
+        "REN": 4
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Abr": {
+      "canais": {
+        "NTW": 0,
+        "MKT": 0,
+        "OUT": 3,
+        "INB": 1,
+        "UP": 0,
+        "REN": 2
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Mai": {
+      "canais": {
+        "NTW": 2,
+        "MKT": 0,
+        "OUT": 3,
+        "INB": 1,
+        "UP": 4,
+        "REN": 2
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    }
+  },
   "hs_overrides": {
     "59186379620": {
       "mensalidade": 16000,
@@ -2092,6 +2190,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "churn",
-  "snapshot_at": "2026-05-23T21:53:34.141Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-05-25T13:31:25.749Z"
 }
