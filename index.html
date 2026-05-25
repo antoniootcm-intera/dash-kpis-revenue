@@ -604,6 +604,17 @@
   </div>
 </section>
 
+<!-- Conversão Q2 (espelha da aba 📊 Conversão) -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+    <span class="text-lg font-bold">📊 Conversão — Q2 2026</span>
+    <span class="text-blue-200 text-xs">Espelho da aba Conversão · edite os números lá</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+    <div id="conv-summary-q2"></div>
+  </div>
+</section>
+
 </div><!-- /dash-sub-q2-2026 -->
 
 <!-- ═══ SUB-PAINEL: Q1 2026 ═══ -->
@@ -718,6 +729,17 @@
   </div>
 </section>
 
+<!-- Conversão Q1 (espelha da aba 📊 Conversão) -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+    <span class="text-lg font-bold">📊 Conversão — Q1 2026</span>
+    <span class="text-blue-200 text-xs">Espelho da aba Conversão · edite os números lá</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+    <div id="conv-summary-q1"></div>
+  </div>
+</section>
+
 </div><!-- /dash-sub-q1-2026 -->
 
 <!-- ═══ SUB-PAINEL: Anual 2026 ═══ -->
@@ -798,6 +820,15 @@
           <tbody id="anual-tipo-tbody"></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Conversão YTD (soma de todos os Qs) -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3 mt-2" style="color:var(--text2);">📊 Conversão — 2026 YTD (Q1 + Q2 + Q3 + Q4)</h3>
+      <div id="conv-summary-anual"></div>
+      <p class="text-xs italic mt-3" style="color:var(--muted);">
+        Oportunidades vêm da aba <strong>📊 Conversão</strong> (somadas dos 4 trimestres). Fechados são contados ao vivo de Q1_DEALS + tabela Revenue.
+      </p>
     </div>
 
   </div>
@@ -1966,6 +1997,125 @@ function _criarOuAtualizar(canvasId, labels, data, colorByLabel, opts) {
 // Pluraliza "contrato" baseado em N (helper para tooltips)
 function _plContratos(n) { return n + ' contrato' + (n !== 1 ? 's' : ''); }
 
+// ═══════════════════════════════════════════════════
+//  RESUMO DE CONVERSÃO (compartilhado entre Q1/Q2/Anual)
+//  bucket: { canais:{NTW,MKT,OUT,INB,UP,REN}, tipos:{...} }
+//  fechFn(dim, val) → quantidade de fechados; sem args = total
+// ═══════════════════════════════════════════════════
+function _convBadgeMini(pct) {
+  if (pct === null || isNaN(pct)) return '<span style="color:var(--muted);">—</span>';
+  const cls = pct >= 30 ? 'qb-green' : pct >= 15 ? 'qb-blue' : 'qb-red';
+  return `<span class="q-badge ${cls}">${pct.toFixed(1)}%</span>`;
+}
+
+function renderConvSummaryInto(containerId, bucket, fechFn) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  // Define listas locais caso CONV_CANAIS/CONV_TIPOS não estejam definidos ainda
+  const CANAIS = (typeof CONV_CANAIS !== 'undefined') ? CONV_CANAIS : ['NTW','MKT','OUT','INB','UP','REN'];
+  const TIPOS  = (typeof CONV_TIPOS  !== 'undefined') ? CONV_TIPOS  : ['Enterprise','GG','SMB'];
+
+  bucket = bucket || { canais:{}, tipos:{} };
+  const canais = bucket.canais || {};
+  const tipos  = bucket.tipos  || {};
+
+  const totalOportCanal = CANAIS.reduce((s,c) => s + (canais[c]||0), 0);
+  const totalOportTipo  = TIPOS.reduce((s,t) => s + (tipos[t]||0), 0);
+  const totalFech = fechFn();
+  const convPct = totalOportCanal > 0 ? (totalFech / totalOportCanal * 100) : null;
+  const convCor = convPct === null ? '#9ca3af' : convPct >= 30 ? '#16a34a' : convPct >= 15 ? '#0369a1' : '#dc2626';
+
+  const linhaCanal = c => {
+    const o = canais[c] || 0;
+    const f = fechFn('canais', c);
+    if (o === 0 && f === 0) return '';
+    const pct = o > 0 ? (f / o * 100) : null;
+    return `<tr>
+      <td style="text-align:left;font-weight:600;">${c}</td>
+      <td>${o}</td>
+      <td style="color:var(--accent);font-weight:600;">${f}</td>
+      <td>${_convBadgeMini(pct)}</td>
+    </tr>`;
+  };
+  const linhaTipo = t => {
+    const o = tipos[t] || 0;
+    const f = fechFn('tipos', t);
+    if (o === 0 && f === 0) return '';
+    const pct = o > 0 ? (f / o * 100) : null;
+    return `<tr>
+      <td style="text-align:left;font-weight:600;">${t}</td>
+      <td>${o}</td>
+      <td style="color:var(--accent);font-weight:600;">${f}</td>
+      <td>${_convBadgeMini(pct)}</td>
+    </tr>`;
+  };
+  const rowsCanal = CANAIS.map(linhaCanal).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);font-style:italic;padding:8px;">Sem oportunidades preenchidas — vá em <strong>📊 Conversão</strong> para registrar</td></tr>';
+  const rowsTipo  = TIPOS.map(linhaTipo).join('')   || '<tr><td colspan="4" style="text-align:center;color:var(--muted);font-style:italic;padding:8px;">Sem oportunidades preenchidas</td></tr>';
+
+  container.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">OPORTUNIDADES CRIADAS</p>
+        <p class="text-xl font-bold" style="color:var(--accent);">${totalOportCanal}</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">soma dos canais</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
+        <p class="text-xs font-semibold mb-1" style="color:#166534;">DEALS FECHADOS</p>
+        <p class="text-xl font-bold" style="color:#16a34a;">${totalFech}</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">CONVERSÃO</p>
+        <p class="text-xl font-bold" style="color:${convCor};">${convPct === null ? '—' : convPct.toFixed(1) + '%'}</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Por Canal</h4>
+        <table class="hist-table">
+          <thead><tr><th style="text-align:left;">Canal</th><th>Oport.</th><th>Fech.</th><th>Conv.</th></tr></thead>
+          <tbody>${rowsCanal}</tbody>
+        </table>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Por Tipo de Empresa</h4>
+        <table class="hist-table">
+          <thead><tr><th style="text-align:left;">Tipo</th><th>Oport.</th><th>Fech.</th><th>Conv.</th></tr></thead>
+          <tbody>${rowsTipo}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// Wrappers convenientes
+function renderConvQuarter(qKey, containerId) {
+  if (typeof oportunidadesData === 'undefined' || typeof getFechadosCount !== 'function') return;
+  const bucket = oportunidadesData[qKey];
+  renderConvSummaryInto(containerId, bucket, (dim, val) => {
+    return dim ? getFechadosCount(qKey, dim, val) : getFechadosCount(qKey);
+  });
+}
+
+function renderConvAnual(containerId) {
+  if (typeof oportunidadesData === 'undefined' || typeof getFechadosCount !== 'function') return;
+  // Soma todos os Q em buckets virtuais
+  const CANAIS = (typeof CONV_CANAIS !== 'undefined') ? CONV_CANAIS : ['NTW','MKT','OUT','INB','UP','REN'];
+  const TIPOS  = (typeof CONV_TIPOS  !== 'undefined') ? CONV_TIPOS  : ['Enterprise','GG','SMB'];
+  const QS = ['Q1','Q2','Q3','Q4'];
+  const bucket = {
+    canais: Object.fromEntries(CANAIS.map(c => [c, 0])),
+    tipos:  Object.fromEntries(TIPOS.map(t  => [t, 0])),
+  };
+  QS.forEach(q => {
+    const b = oportunidadesData[q];
+    if (!b) return;
+    if (b.canais) CANAIS.forEach(c => bucket.canais[c] += (b.canais[c]||0));
+    if (b.tipos)  TIPOS.forEach(t  => bucket.tipos[t]  += (b.tipos[t]||0));
+  });
+  renderConvSummaryInto(containerId, bucket, (dim, val) => {
+    return QS.reduce((s, q) => s + (dim ? getFechadosCount(q, dim, val) : getFechadosCount(q)), 0);
+  });
+}
+
 // Renderiza os 4 gráficos do Q1: ciclo×canal, ciclo×tipo, ticket×canal, ticket×tipo
 function renderQ1Analytics() {
   const aggCanal = _aggregar(Q1_DEALS, d => (d.canal||'').toUpperCase());
@@ -1994,6 +2144,9 @@ function renderQ1Analytics() {
   _criarOuAtualizar('chartQ1ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
     _TIPO_CHART_COLORS,
     { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
+
+  // Conversão Q1 (espelho)
+  renderConvQuarter('Q1', 'conv-summary-q1');
 }
 
 // Renderiza ticket médio por canal e tipo no Q2 (live de tableRows)
@@ -2012,6 +2165,9 @@ function renderQ2TicketCharts() {
   _criarOuAtualizar('chartQ2ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
     _TIPO_CHART_COLORS,
     { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
+
+  // Conversão Q2 (espelho)
+  renderConvQuarter('Q2', 'conv-summary-q2');
 }
 
 // ═══════════════════════════════════════════════════
@@ -2155,6 +2311,9 @@ function renderAnual() {
       </tr>`;
     }).join('');
   }
+
+  // Conversão YTD (agregado de Q1+Q2+Q3+Q4)
+  renderConvAnual('conv-summary-anual');
 }
 
 function initHistoricalCharts() {
@@ -2852,6 +3011,8 @@ function updateCicloChart() {
   if (_anualReady && typeof renderAnual === 'function') {
     try { renderAnual(); } catch(e) { log.warn('anual.render.failed', {}, e); }
   }
+  // Espelhos de conversão também (fechados mudaram)
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
 }
 
 function updateCicloTipoCanalChart() {
@@ -5172,6 +5333,16 @@ function updateOportunidade(key, dim, val, num) {
   if (!bucket.manual.includes(mKey)) bucket.manual.push(mKey);
   saveOportunidadesData();
   renderConversao();
+  _refreshConvMirrors();
+}
+
+// Atualiza os espelhos de Conversão em Q1, Q2 e Anual (se já estiverem renderizados)
+function _refreshConvMirrors() {
+  try {
+    if (document.getElementById('conv-summary-q1'))    renderConvQuarter('Q1', 'conv-summary-q1');
+    if (document.getElementById('conv-summary-q2'))    renderConvQuarter('Q2', 'conv-summary-q2');
+    if (document.getElementById('conv-summary-anual')) renderConvAnual('conv-summary-anual');
+  } catch(e) { log.warn('conv.mirror.refresh.failed', {}, e); }
 }
 
 // Limpa todas as marcações manuais (usado em "Resetar manual" se quiser)
@@ -5182,6 +5353,7 @@ function resetManualOportunidades() {
   });
   saveOportunidadesData();
   renderConversao();
+  _refreshConvMirrors();
 }
 
 // Conta deals fechados para um período (Q1/Q2/.. ou mês 'Jan'/'Fev'...)
@@ -5336,6 +5508,7 @@ async function importarOportunidadesHS() {
 
     saveOportunidadesData();
     renderConversao();
+    _refreshConvMirrors();
 
     const resumo = [
       `${importados} importadas`,
