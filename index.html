@@ -1393,6 +1393,64 @@
     </div>
   </section>
 
+  <!-- Auditoria do último sync (admin-only) -->
+  <section class="admin-only">
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+      <span class="text-lg font-bold">🔍 Auditoria do último sync</span>
+      <button onclick="abrirAuditoriaSync()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+        Ver deals importados
+      </button>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+      <div id="audit-summary" class="text-xs" style="color:var(--muted);">
+        Rode "🔄 Sincronizar do HubSpot" e depois clique em <strong>Ver deals importados</strong> para inspecionar onde cada deal caiu (canal, mês, quarter).
+      </div>
+      <div id="audit-content" style="display:none;" class="mt-4 space-y-3">
+        <!-- Filtros -->
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="audit-search" placeholder="Buscar por nome (ex: vale, osklen)"
+            oninput="renderAuditoria()"
+            class="border rounded-md px-3 py-1.5 text-sm" style="width:280px;" />
+          <select id="audit-canal" onchange="renderAuditoria()" class="border rounded-md px-2 py-1.5 text-sm">
+            <option value="">Todos os canais</option>
+            <option>NTW</option><option>MKT</option><option>OUT</option>
+            <option>INB</option><option>UP</option><option>REN</option>
+          </select>
+          <select id="audit-quarter" onchange="renderAuditoria()" class="border rounded-md px-2 py-1.5 text-sm">
+            <option value="">Todos os trimestres</option>
+            <option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option>
+          </select>
+          <select id="audit-status" onchange="renderAuditoria()" class="border rounded-md px-2 py-1.5 text-sm">
+            <option value="">Todos os status</option>
+            <option value="contou">✓ Contou</option>
+            <option value="ignorado_ano_diferente">✗ Ano diferente</option>
+            <option value="ignorado_sem_canal">✗ Sem canal</option>
+            <option value="ignorado_sem_createdate">✗ Sem createdate</option>
+            <option value="ignorado_deletado">✗ Deletado</option>
+            <option value="ignorado_manual">✗ Célula manual</option>
+          </select>
+          <span id="audit-count" class="text-xs ml-auto" style="color:var(--muted);"></span>
+        </div>
+        <!-- Tabela -->
+        <div class="overflow-x-auto">
+          <table class="hist-table text-xs">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Nome do deal</th>
+                <th>Canal</th>
+                <th>Createdate</th>
+                <th>Mês</th>
+                <th>Quarter</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Container dinâmico — preenchido por renderConversao() -->
   <div id="conv-container" class="space-y-6"></div>
 
@@ -5478,6 +5536,12 @@ async function importarOportunidadesHS() {
     // Exposto globalmente pra debug
     window.__lastConvImport = { ts: new Date().toISOString(), totalDeals: deals.length, trilha };
 
+    // Atualiza summary do bloco de auditoria
+    const sumEl = document.getElementById('audit-summary');
+    if (sumEl) {
+      sumEl.innerHTML = `Último sync: <strong>${new Date().toLocaleString('pt-BR')}</strong> · ${deals.length} deals · ${importados} contaram · ${ignoradosSemCanal + ignoradosAnoErrado + ignoradosSemData + ignoradosDeletados + ignoradosManual} ignorados`;
+    }
+
     saveOportunidadesData();
     renderConversao();
     _refreshConvMirrors();
@@ -5511,6 +5575,69 @@ async function importarOportunidadesHS() {
     setStatus('Erro ao sincronizar: ' + (e.message || e), 'red');
     console.error(e);
   }
+}
+
+// Abre o bloco de auditoria e renderiza
+function abrirAuditoriaSync() {
+  const content = document.getElementById('audit-content');
+  if (!content) return;
+  content.style.display = '';
+  renderAuditoria();
+}
+
+function renderAuditoria() {
+  const tbody = document.getElementById('audit-tbody');
+  const countEl = document.getElementById('audit-count');
+  if (!tbody) return;
+  const trilha = (window.__lastConvImport && window.__lastConvImport.trilha) || [];
+
+  const qSearch  = (document.getElementById('audit-search')?.value || '').toLowerCase().trim();
+  const fCanal   = document.getElementById('audit-canal')?.value || '';
+  const fQuarter = document.getElementById('audit-quarter')?.value || '';
+  const fStatus  = document.getElementById('audit-status')?.value || '';
+
+  const filtered = trilha.filter(d => {
+    if (qSearch && !(d.nome||'').toLowerCase().includes(qSearch)) return false;
+    if (fCanal   && d.canal !== fCanal) return false;
+    if (fQuarter && d.quarter !== fQuarter) return false;
+    if (fStatus  && d.status !== fStatus) return false;
+    return true;
+  });
+
+  if (countEl) countEl.textContent = filtered.length + ' de ' + trilha.length + ' deals';
+
+  if (!trilha.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
+    return;
+  }
+
+  const statusLabel = {
+    'contou':                   '<span class="q-badge qb-green">✓ Contou</span>',
+    'ignorado_manual':          '<span class="q-badge qb-yellow">Célula manual</span>',
+    'ignorado_sem_canal':       '<span class="q-badge qb-red">Sem canal</span>',
+    'ignorado_sem_createdate':  '<span class="q-badge qb-red">Sem createdate</span>',
+    'ignorado_createdate_invalido':'<span class="q-badge qb-red">Createdate inválido</span>',
+    'ignorado_ano_diferente':   '<span class="q-badge qb-blue">Ano diferente</span>',
+    'ignorado_deletado':        '<span class="q-badge qb-red">Deletado</span>',
+  };
+
+  const fmtDate = s => {
+    if (!s) return '—';
+    try { return new Date(s).toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' }); }
+    catch(_) { return s; }
+  };
+
+  tbody.innerHTML = filtered.length
+    ? filtered.map(d => `
+      <tr>
+        <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}</td>
+        <td>${d.canal || '—'}</td>
+        <td>${fmtDate(d.createdate)}</td>
+        <td>${d.mes || '—'}</td>
+        <td>${d.quarter || (d.ano && d.ano !== 2026 ? d.ano : '—')}</td>
+        <td>${statusLabel[d.status] || d.status}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
 }
 
 function renderConversao() {
