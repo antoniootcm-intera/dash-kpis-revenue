@@ -3769,9 +3769,9 @@ function switchTab(tab) {
     _churnChartReady = true;
     setTimeout(() => { renderChurnChart(); renderMotivosCharts(); }, 50);
   }
-  if (tab === 'conversao' && !_conversaoReady) {
-    _conversaoReady = true;
-    setTimeout(renderConversao, 50);
+  if (tab === 'conversao') {
+    if (!_conversaoReady) { _conversaoReady = true; setTimeout(renderConversao, 50); }
+    setTimeout(() => { try { _refreshAuditSummary(); } catch(e) {} }, 60);
   }
 }
 
@@ -5707,6 +5707,20 @@ function abrirAuditoriaSync() {
   renderAuditoria();
 }
 
+// Atualiza o summary do bloco de auditoria a partir do estado persistido
+function _refreshAuditSummary() {
+  const sumEl = document.getElementById('audit-summary');
+  if (!sumEl) return;
+  const data = window.__lastConvImport;
+  if (!data || !Array.isArray(data.trilha) || !data.trilha.length) return;
+  const total = data.totalDeals || data.trilha.length;
+  const contaram = data.trilha.filter(d => d && d.status === 'contou').length;
+  const ignorados = total - contaram;
+  const ts = data.ts ? new Date(data.ts).toLocaleString('pt-BR') : 'desconhecido';
+  sumEl.innerHTML = `Último sync: <strong>${ts}</strong> · ${total} deals · ${contaram} contaram · ${ignorados} ignorados. Clique em <strong>Ver deals importados</strong> para inspecionar ou editar.`;
+}
+document.addEventListener('DOMContentLoaded', () => { try { _refreshAuditSummary(); } catch(e) {} });
+
 // ── Helpers para mexer nos buckets de conversão a partir da trilha ──
 function _adjustConvBucket(periodKey, canal, delta) {
   if (!periodKey || !canal) return;
@@ -5813,6 +5827,94 @@ function toggleTrilhaDeleted(idx) {
   if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
 }
 
+// Define canal manualmente quando o sync não detectou (status ignorado_sem_canal)
+function updateTrilhaCanal(idx, newCanal) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+  if (!newCanal || !CONV_CANAIS.includes(newCanal)) return;
+
+  // Se já estava contando: ajusta buckets (troca canal antigo pelo novo)
+  if (t.status === 'contou' && t.canal && t.mes && t.quarter) {
+    _adjustConvBucket(t.quarter, t.canal, -1);
+    _adjustConvBucket(t.mes,     t.canal, -1);
+    _adjustConvBucket(t.quarter, newCanal, +1);
+    _adjustConvBucket(t.mes,     newCanal, +1);
+    t.canal = newCanal;
+  } else {
+    t.canal = newCanal;
+    // Tenta promover a 'contou' se já tem mes/quarter
+    if (t.mes && t.quarter && (t.status === 'ignorado_sem_canal' || t.status === 'ignorado_manual')) {
+      _adjustConvBucket(t.quarter, newCanal, +1);
+      _adjustConvBucket(t.mes,     newCanal, +1);
+      t.status = 'contou';
+    }
+  }
+
+  // Persiste override
+  if (t.id) {
+    if (!dealOverrides[t.id]) dealOverrides[t.id] = {};
+    dealOverrides[t.id].canal = newCanal;
+    saveDealOverrides();
+  }
+  t.overridden = true;
+
+  saveOportunidadesData();
+  _saveTrilha();
+  renderAuditoria();
+  if (typeof renderConversao === 'function') renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+}
+
+// Define data (createdate) manualmente — útil quando HubSpot não enviou ou veio fora do ano
+function updateTrilhaDate(idx, newDateStr) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+  if (!newDateStr) return;
+  const date = new Date(newDateStr);
+  if (isNaN(date)) { alert('Data inválida'); return; }
+
+  const mesIdx = date.getMonth();
+  const newMes = MESES[mesIdx];
+  const newQ   = 'Q' + (Math.floor(mesIdx / 3) + 1);
+
+  // Se já contava: tira do bucket antigo
+  if (t.status === 'contou' && t.canal && t.mes && t.quarter) {
+    _adjustConvBucket(t.quarter, t.canal, -1);
+    _adjustConvBucket(t.mes,     t.canal, -1);
+  }
+
+  t.createdate = date.toISOString();
+  t.ano = date.getFullYear();
+  t.mes = newMes;
+  t.quarter = newQ;
+
+  // Tenta promover a 'contou' se tem canal
+  if (t.canal && (t.status === 'ignorado_sem_createdate' || t.status === 'ignorado_createdate_invalido' || t.status === 'ignorado_ano_diferente' || t.status === 'ignorado_manual' || t.status === 'contou')) {
+    _adjustConvBucket(newQ,   t.canal, +1);
+    _adjustConvBucket(newMes, t.canal, +1);
+    t.status = 'contou';
+  }
+
+  // Persiste override de mes/quarter (força sobreviver ao próximo sync)
+  if (t.id) {
+    if (!dealOverrides[t.id]) dealOverrides[t.id] = {};
+    dealOverrides[t.id].mes = newMes;
+    dealOverrides[t.id].quarter = newQ;
+    saveDealOverrides();
+  }
+  t.overridden = true;
+
+  saveOportunidadesData();
+  _saveTrilha();
+  renderAuditoria();
+  if (typeof renderConversao === 'function') renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+}
+
 function renderAuditoria() {
   const tbody = document.getElementById('audit-tbody');
   const countEl = document.getElementById('audit-count');
@@ -5860,18 +5962,31 @@ function renderAuditoria() {
   tbody.innerHTML = filtered.length
     ? filtered.map(d => {
         const origIdx = trilha.indexOf(d);
-        const editable = !!d.canal;
         const isContou = d.status === 'contou';
         const isDeleted = d.status === 'manual_deletado' || d.status === 'ignorado_deletado';
 
-        // Select de mês — editável se houver canal
-        const overrideMark = d.overridden ? '<span title="Mês foi alterado manualmente — sobrevive a re-syncs" style="color:#d97706;font-size:10px;margin-left:4px;">✏️</span>' : '';
-        const mesSelect = editable
-          ? `<select onchange="updateTrilhaMes(${origIdx}, this.value)"
-               class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;">
-               ${MESES.map(m => `<option ${d.mes===m?'selected':''}>${m}</option>`).join('')}
-             </select>${overrideMark}`
-          : (d.mes || '—');
+        // Select de mês — sempre editável (admin), permite arrumar mesmo deals sem canal/data
+        const overrideMark = d.overridden ? '<span title="Editado manualmente — sobrevive a re-syncs" style="color:#d97706;font-size:10px;margin-left:4px;">✏️</span>' : '';
+        const mesSelect = `<select onchange="updateTrilhaMes(${origIdx}, this.value)"
+             class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;">
+             ${!d.mes ? '<option value="" selected>—</option>' : ''}
+             ${MESES.map(m => `<option ${d.mes===m?'selected':''}>${m}</option>`).join('')}
+           </select>${overrideMark}`;
+
+        // Canal: select editável (admin) — sempre disponível
+        const canalSelect = `<select onchange="updateTrilhaCanal(${origIdx}, this.value)"
+             class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;${!d.canal?'background:#fee2e2;color:#991b1b;':''}">
+             <option value="" ${!d.canal?'selected':''}>—</option>
+             ${CONV_CANAIS.map(c => `<option ${d.canal===c?'selected':''}>${c}</option>`).join('')}
+           </select>`;
+
+        // Data: input date editável quando faltando ou inválida
+        const dateValue = (() => {
+          if (!d.createdate) return '';
+          try { return new Date(d.createdate).toISOString().slice(0,10); } catch(_) { return ''; }
+        })();
+        const dateCell = `<input type="date" value="${dateValue}" onchange="updateTrilhaDate(${origIdx}, this.value)"
+             class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:500;${!d.createdate?'background:#fee2e2;':''}">`;
 
         // Botão de toggle status — admin only
         const toggleBtn = (isContou || isDeleted)
@@ -5884,8 +5999,8 @@ function renderAuditoria() {
         return `<tr>
           <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}</td>
           <td style="text-align:left;font-family:monospace;font-size:11px;color:var(--text2);">${esc(d.hint || '—')}</td>
-          <td>${d.canal || '<span style="color:#dc2626;">—</span>'}</td>
-          <td>${fmtDate(d.createdate)}</td>
+          <td>${canalSelect}</td>
+          <td>${dateCell}</td>
           <td>${mesSelect}</td>
           <td>${d.quarter || '—'}${d.ano && d.ano !== 2026 ? ' <span style="font-size:9px;color:#dc2626;">/'+d.ano+'</span>' : ''}</td>
           <td>${statusLabel[d.status] || d.status}${toggleBtn}</td>
