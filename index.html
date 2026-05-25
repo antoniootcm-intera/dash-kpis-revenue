@@ -1396,9 +1396,14 @@
   <section class="admin-only">
     <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
       <span class="text-lg font-bold">🔍 Auditoria do último sync</span>
-      <button onclick="abrirAuditoriaSync()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
-        Ver deals importados
-      </button>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="abrirAuditoriaSync()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+          Ver deals importados
+        </button>
+        <button onclick="resetarDealOverrides()" class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Apaga todos os overrides manuais de mês/quarter (próximo sync usa só createdate do HubSpot)">
+          🗑 Resetar overrides
+        </button>
+      </div>
     </div>
     <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
       <div id="audit-summary" class="text-xs" style="color:var(--muted);">
@@ -5372,6 +5377,18 @@ try {
   if (rawTrilha) window.__lastConvImport = JSON.parse(rawTrilha);
 } catch(e) { log.warn('trilha.load.failed', {}, e); }
 
+// Overrides persistentes por deal ID — sobrevivem a re-syncs
+// Estrutura: { '<dealId>': { mes: 'Fev', quarter: 'Q1', canal: 'INB' } }
+let dealOverrides = {};
+try {
+  const raw = localStorage.getItem('deal_overrides');
+  if (raw) dealOverrides = JSON.parse(raw) || {};
+} catch(e) { log.warn('deal_overrides.load.failed', {}, e); }
+function saveDealOverrides() {
+  try { localStorage.setItem('deal_overrides', JSON.stringify(dealOverrides)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'deal_overrides' }, e); }
+}
+
 let _conversaoMode = 'tri'; // 'tri' ou 'mes'
 let _conversaoReady = false;
 
@@ -5591,18 +5608,22 @@ async function importarOportunidadesHS() {
       if (isNaN(date)) { ignoradosSemData++; trilha.push({ id, nome, hint, status:'ignorado_createdate_invalido', raw:created }); return; }
 
       const mesIdx = date.getMonth();
-      const qNum   = Math.floor(mesIdx / 3) + 1;
-      const qKey   = 'Q' + qNum;
-      const mKey   = MESES[mesIdx];
       const ano    = date.getFullYear();
+      const ov     = dealOverrides[id] || null; // override persistido (mes/quarter/canal)
 
-      if (ano !== CONV_ANO) {
+      // Define mês/quarter: override > derivado de createdate
+      let mKey = (ov && ov.mes) ? ov.mes : MESES[mesIdx];
+      let qKey = (ov && ov.quarter) ? ov.quarter : ('Q' + (Math.floor(mesIdx / 3) + 1));
+
+      // Filtro de ano só rejeita quando NÃO houver override (override força o deal a ficar no ano corrente)
+      if (ano !== CONV_ANO && !ov) {
         ignoradosAnoErrado++;
-        trilha.push({ id, nome, hint, status:'ignorado_ano_diferente', createdate: created, ano, mes: mKey, quarter: qKey });
+        trilha.push({ id, nome, hint, status:'ignorado_ano_diferente', createdate: created, ano, mes: MESES[mesIdx], quarter: 'Q'+(Math.floor(mesIdx/3)+1) });
         return;
       }
 
-      const canal = _extrairCanal(nome);
+      const canalDetectado = _extrairCanal(nome);
+      const canal = (ov && ov.canal) ? ov.canal : canalDetectado;
       if (!canal) {
         ignoradosSemCanal++;
         if (exemplosSemCanal.length < 5) exemplosSemCanal.push(nome);
@@ -5625,7 +5646,8 @@ async function importarOportunidadesHS() {
       trilha.push({
         id, nome, hint, canal, createdate: created,
         ano, mes: mKey, quarter: qKey,
-        status: contou ? 'contou' : 'ignorado_manual'
+        status: contou ? 'contou' : 'ignorado_manual',
+        overridden: !!ov, // flag visual pra mostrar na UI
       });
     });
 
@@ -5701,8 +5723,20 @@ function _quarterFromMes(mes) {
   return 'Q' + (Math.floor(idx / 3) + 1);
 }
 
+// Limpa todos os overrides persistidos de deal (próximo sync vai usar só createdate do HubSpot)
+function resetarDealOverrides() {
+  if (IS_VIEWER) return;
+  const total = Object.keys(dealOverrides).length;
+  if (total === 0) { alert('Não há overrides para limpar.'); return; }
+  if (!confirm(`Apagar ${total} override(s) manual(is) de mês/quarter?\n\nIsso NÃO mexe nos contadores atuais — só faz com que o próximo sync use o createdate original de cada deal.\n\nContinuar?`)) return;
+  dealOverrides = {};
+  saveDealOverrides();
+  alert('✓ Overrides limpos. Rode "🔄 Sincronizar do HubSpot" para reprocessar.');
+}
+
 // Muda o mês de um deal da trilha (e o quarter recalcula sozinho).
 // Decrementa do bucket antigo e incrementa no novo.
+// Persiste como override por deal ID — sobrevive a re-syncs.
 function updateTrilhaMes(idx, newMes) {
   if (IS_VIEWER) return;
   const data = window.__lastConvImport;
@@ -5720,6 +5754,15 @@ function updateTrilhaMes(idx, newMes) {
   }
   t.mes = newMes;
   t.quarter = newQ;
+
+  // Persiste override (próximo sync vai respeitar)
+  if (t.id) {
+    if (!dealOverrides[t.id]) dealOverrides[t.id] = {};
+    dealOverrides[t.id].mes = newMes;
+    dealOverrides[t.id].quarter = newQ;
+    saveDealOverrides();
+  }
+
   saveOportunidadesData();
   _saveTrilha();
   renderAuditoria();
@@ -5822,12 +5865,12 @@ function renderAuditoria() {
         const isDeleted = d.status === 'manual_deletado' || d.status === 'ignorado_deletado';
 
         // Select de mês — editável se houver canal
+        const overrideMark = d.overridden ? '<span title="Mês foi alterado manualmente — sobrevive a re-syncs" style="color:#d97706;font-size:10px;margin-left:4px;">✏️</span>' : '';
         const mesSelect = editable
           ? `<select onchange="updateTrilhaMes(${origIdx}, this.value)"
                class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;">
                ${MESES.map(m => `<option ${d.mes===m?'selected':''}>${m}</option>`).join('')}
-             </select>
-             <span class="admin-only no-print" style="display:none;"></span>` // placeholder
+             </select>${overrideMark}`
           : (d.mes || '—');
 
         // Botão de toggle status — admin only
