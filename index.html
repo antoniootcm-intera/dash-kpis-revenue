@@ -1437,7 +1437,8 @@
             <thead>
               <tr>
                 <th style="text-align:left;">Nome do deal</th>
-                <th>Canal</th>
+                <th>Sufixo do nome</th>
+                <th>Canal detectado</th>
                 <th>Createdate</th>
                 <th>Mês</th>
                 <th>Quarter</th>
@@ -1447,6 +1448,9 @@
             <tbody id="audit-tbody"></tbody>
           </table>
         </div>
+        <p class="text-xs italic mt-2" style="color:var(--muted);">
+          <strong>Sufixo do nome</strong> = última parte depois de "|" — se o canal saiu errado, esse texto te dá a dica do que precisa ser ajustado no HubSpot ou na regra de canal.
+        </p>
       </div>
     </div>
   </section>
@@ -5425,27 +5429,46 @@ function _extrairCanal(name) {
   if (!name) return null;
   const upper = name.toUpperCase();
 
+  // Normaliza sinônimos (last-segment OU palavra isolada)
+  const normalizar = s => {
+    s = (s || '').trim().toUpperCase();
+    if (['UPSELL','UP-SELL','UP SELL'].includes(s))                        return 'UP';
+    if (['RENOVAÇÃO','RENOVACAO','RENOVATION','RENEWAL'].includes(s))      return 'REN';
+    if (['HR','HAND RAISE','HAND-RAISE','HAND_RAISE','HANDRAISE'].includes(s)) return 'INB';
+    if (['INBOUND'].includes(s))                                           return 'INB';
+    if (['OUTBOUND'].includes(s))                                          return 'OUT';
+    if (['MARKETING'].includes(s))                                         return 'MKT';
+    if (['NETWORK','NETWORKING'].includes(s))                              return 'NTW';
+    return s;
+  };
+
   // 1) Último segmento após "|"
   const parts = name.split('|');
   if (parts.length >= 2) {
-    let last = parts[parts.length - 1].trim().toUpperCase();
-    if (last === 'UPSELL') last = 'UP';
-    if (last === 'RENOVAÇÃO' || last === 'RENOVACAO') last = 'REN';
+    const last = normalizar(parts[parts.length - 1]);
     if (CONV_CANAIS.includes(last)) return last;
   }
 
   // 2) Busca canal em qualquer posição como palavra isolada
   const padroes = [
-    { re: /\bNTW\b/,                         canal: 'NTW' },
-    { re: /\bMKT\b|\bMARKETING\b/,           canal: 'MKT' },
-    { re: /\bOUT\b|\bOUTBOUND\b/,            canal: 'OUT' },
-    { re: /\bINB\b|\bINBOUND\b/,             canal: 'INB' },
-    { re: /\bUP\b|\bUPSELL\b/,               canal: 'UP'  },
-    { re: /\bREN\b|RENOVAÇÃO|RENOVACAO/,     canal: 'REN' },
+    { re: /\b(NTW|NETWORK|NETWORKING)\b/,                 canal: 'NTW' },
+    { re: /\b(MKT|MARKETING)\b/,                          canal: 'MKT' },
+    { re: /\b(OUT|OUTBOUND)\b/,                           canal: 'OUT' },
+    { re: /\b(INB|INBOUND|HR|HAND[\s\-_]?RAISE)\b/,       canal: 'INB' },
+    { re: /\b(UP|UPSELL|UP[\s\-]?SELL)\b/,                canal: 'UP'  },
+    { re: /\b(REN|RENOVAÇÃO|RENOVACAO|RENEWAL)\b/,        canal: 'REN' },
   ];
   for (const p of padroes) if (p.re.test(upper)) return p.canal;
 
   return null;
+}
+
+// Retorna a "dica" do que foi tentado: último segmento após "|" — útil pra debug
+function _hintCanal(name) {
+  if (!name) return '';
+  const parts = name.split('|');
+  if (parts.length >= 2) return parts[parts.length - 1].trim();
+  return '';
 }
 
 const CONV_ANO = 2026; // ano dos dados que importamos
@@ -5489,28 +5512,36 @@ async function importarOportunidadesHS() {
     deals.forEach(d => {
       const props = d.properties || {};
       const nome  = props.dealname || '(sem nome)';
-      if (hsDeleted.has(String(d.id))) { ignoradosDeletados++; trilha.push({nome, status:'ignorado_deletado', id:String(d.id)}); return; }
-      const created = props.createdate;
-      if (!created) { ignoradosSemData++; trilha.push({nome, status:'ignorado_sem_createdate'}); return; }
-      const date = new Date(created);
-      if (isNaN(date)) { ignoradosSemData++; trilha.push({nome, status:'ignorado_createdate_invalido', raw:created}); return; }
+      const hint  = _hintCanal(nome); // último segmento do nome (debug)
 
-      if (date.getFullYear() !== CONV_ANO) {
-        ignoradosAnoErrado++;
-        trilha.push({nome, status:'ignorado_ano_diferente', createdate: created, ano: date.getFullYear()});
+      if (hsDeleted.has(String(d.id))) {
+        ignoradosDeletados++;
+        trilha.push({ nome, hint, status:'ignorado_deletado', id:String(d.id) });
         return;
       }
+      const created = props.createdate;
+      if (!created) { ignoradosSemData++; trilha.push({ nome, hint, status:'ignorado_sem_createdate' }); return; }
+      const date = new Date(created);
+      if (isNaN(date)) { ignoradosSemData++; trilha.push({ nome, hint, status:'ignorado_createdate_invalido', raw:created }); return; }
 
+      // Computa mes/quarter SEMPRE (mesmo se ano diferente ou sem canal — pra debug ficar útil)
       const mesIdx = date.getMonth();
       const qNum   = Math.floor(mesIdx / 3) + 1;
       const qKey   = 'Q' + qNum;
       const mKey   = MESES[mesIdx];
+      const ano    = date.getFullYear();
+
+      if (ano !== CONV_ANO) {
+        ignoradosAnoErrado++;
+        trilha.push({ nome, hint, status:'ignorado_ano_diferente', createdate: created, ano, mes: mKey, quarter: qKey });
+        return;
+      }
 
       const canal = _extrairCanal(nome);
       if (!canal) {
         ignoradosSemCanal++;
         if (exemplosSemCanal.length < 5) exemplosSemCanal.push(nome);
-        trilha.push({nome, status:'ignorado_sem_canal', createdate: created});
+        trilha.push({ nome, hint, status:'ignorado_sem_canal', createdate: created, ano, mes: mKey, quarter: qKey });
         return;
       }
 
@@ -5527,8 +5558,8 @@ async function importarOportunidadesHS() {
       else ignoradosManual++;
 
       trilha.push({
-        nome, canal, createdate: created,
-        ano: date.getFullYear(), mes: mKey, quarter: qKey,
+        nome, hint, canal, createdate: created,
+        ano, mes: mKey, quarter: qKey,
         status: contou ? 'contou' : 'ignorado_manual'
       });
     });
@@ -5607,7 +5638,7 @@ function renderAuditoria() {
   if (countEl) countEl.textContent = filtered.length + ' de ' + trilha.length + ' deals';
 
   if (!trilha.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
     return;
   }
 
@@ -5631,13 +5662,14 @@ function renderAuditoria() {
     ? filtered.map(d => `
       <tr>
         <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}</td>
-        <td>${d.canal || '—'}</td>
+        <td style="text-align:left;font-family:monospace;font-size:11px;color:var(--text2);">${esc(d.hint || '—')}</td>
+        <td>${d.canal || '<span style="color:#dc2626;">—</span>'}</td>
         <td>${fmtDate(d.createdate)}</td>
         <td>${d.mes || '—'}</td>
-        <td>${d.quarter || (d.ano && d.ano !== 2026 ? d.ano : '—')}</td>
+        <td>${d.quarter || '—'}${d.ano && d.ano !== 2026 ? ' <span style="font-size:9px;color:#dc2626;">/'+d.ano+'</span>' : ''}</td>
         <td>${statusLabel[d.status] || d.status}</td>
       </tr>`).join('')
-    : '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
+    : '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
 }
 
 function renderConversao() {
