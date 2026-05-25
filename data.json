@@ -92,7 +92,7 @@
     },
     {
       "id": "manual_1778679705125",
-      "cliente": "Cielo SP",
+      "cliente": "Cielo SP*",
       "servico": "RPO",
       "canal": "UP",
       "valor": 102000,
@@ -151,6 +151,21 @@
       "mensalidade": 16000
     },
     {
+      "id": "60236781075",
+      "cliente": "Cielo CO*",
+      "servico": "RPO",
+      "canal": "UP",
+      "valor": 102000,
+      "data": "25/05",
+      "mes": "Mai",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 8,
+      "ciclo": 18,
+      "source": "hs",
+      "mensalidade": 17000
+    },
+    {
       "id": "60524924470",
       "cliente": "Renner Corp",
       "servico": "RPO",
@@ -167,7 +182,7 @@
     },
     {
       "id": "60486922796",
-      "cliente": "Renner Varejo",
+      "cliente": "Renner Varejo*",
       "servico": "RPO",
       "canal": "Up",
       "valor": 64000,
@@ -1153,6 +1168,30 @@
       ],
       "source": "csv",
       "duracao": 12
+    },
+    {
+      "id": "cad_hs_60236781075",
+      "dealId": "60236781075",
+      "servico": "RPO",
+      "cliente": "Cielo CO",
+      "vigencia": "",
+      "dataInicio": "31/05",
+      "meses": [
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO",
+        "DESALOCADO",
+        "DESALOCADO"
+      ],
+      "source": "hs",
+      "duracao": 6
     }
   ],
   "contratos_rows": [
@@ -1527,20 +1566,6 @@
       "source": "hs"
     },
     {
-      "id": "cont_1779479924180",
-      "cliente": "Renner Varejo Up",
-      "vigencia": "setembro/2026",
-      "inicio": "25/05",
-      "fim": "25/09",
-      "duracao": 4,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 64000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
       "id": "cont_cad_1778536769511_21",
       "cliente": "Riachuelo",
       "vigencia": "junho/2026",
@@ -1623,6 +1648,21 @@
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "cadeiras"
+    },
+    {
+      "id": "cont_60236781075",
+      "dealId": "60236781075",
+      "cliente": "Cielo CO- Mari - Up",
+      "vigencia": "novembro/2026",
+      "inicio": "31/05",
+      "fim": "31/11",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 102000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "churn_rows": [
@@ -2049,11 +2089,11 @@
   "oportunidades_data": {
     "Q1": {
       "canais": {
-        "NTW": 3,
+        "NTW": 2,
         "OUT": 6,
-        "INB": 16,
-        "UP": 1,
-        "REN": 4
+        "INB": 15,
+        "UP": 0,
+        "REN": 2
       },
       "tipos": {
         "Enterprise": 0,
@@ -2069,7 +2109,7 @@
         "OUT": 2,
         "INB": 8,
         "UP": 0,
-        "REN": 1
+        "REN": 0
       },
       "tipos": {
         "Enterprise": 0,
@@ -2080,11 +2120,11 @@
     },
     "Mar": {
       "canais": {
-        "NTW": 3,
+        "NTW": 2,
         "OUT": 4,
-        "INB": 8,
-        "UP": 1,
-        "REN": 3
+        "INB": 7,
+        "UP": 0,
+        "REN": 2
       },
       "tipos": {
         "Enterprise": 0,
@@ -2099,8 +2139,8 @@
         "MKT": 0,
         "OUT": 6,
         "INB": 2,
-        "UP": 7,
-        "REN": 5
+        "UP": 4,
+        "REN": 4
       },
       "tipos": {
         "Enterprise": 0,
@@ -2118,8 +2158,8 @@
         "MKT": 0,
         "OUT": 3,
         "INB": 1,
-        "UP": 1,
-        "REN": 3
+        "UP": 0,
+        "REN": 2
       },
       "tipos": {
         "Enterprise": 0,
@@ -2134,7 +2174,7 @@
         "MKT": 0,
         "OUT": 3,
         "INB": 1,
-        "UP": 6,
+        "UP": 4,
         "REN": 2
       },
       "tipos": {
@@ -2147,7 +2187,7 @@
     "Q4": {
       "canais": {
         "NTW": 0,
-        "OUT": 1,
+        "OUT": 0,
         "INB": 0,
         "UP": 0,
         "REN": 0
@@ -2162,7 +2202,127 @@
     "Out": {
       "canais": {
         "NTW": 0,
-        "OUT": 1,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Q3": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Jan": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Jun": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Jul": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Ago": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Set": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Nov": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Dez": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 0,
         "INB": 0,
         "UP": 0,
         "REN": 0
@@ -2205,16 +2365,37 @@
       "mensalidade": 16000
     },
     "60486922796": {
-      "cliente": "Renner Varejo",
+      "cliente": "Renner Varejo*",
       "mensalidade": 16000,
       "alocacoes": "1",
       "tipo": "Enterprise",
       "ciclo": 2
+    },
+    "60236781075": {
+      "cliente": "Cielo CO*",
+      "canal": "UP",
+      "mensalidade": 17000,
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "data": "25/05",
+      "semana": 8,
+      "mes": "Mai"
     }
   },
-  "hs_deleted": [],
+  "hs_deleted": [
+    "56706852109",
+    "56709218725",
+    "56709733784",
+    "60076958763",
+    "59502615984",
+    "59419154613",
+    "60234055077",
+    "58025288319",
+    "57506905995",
+    "57447167917"
+  ],
   "okr_state": {
-    "input-realizado": "1160500",
+    "input-realizado": "1262500",
     "input-clientes": "0",
     "input-duracao": "60",
     "cac-gastos": "0",
@@ -2223,6 +2404,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-05-25T19:05:16.034Z"
+  "active_tab": "churn",
+  "snapshot_at": "2026-05-25T21:15:02.091Z"
 }
