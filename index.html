@@ -5426,33 +5426,36 @@ async function importarOportunidadesHS() {
     let ignoradosManual = 0;
     let ignoradosDeletados = 0;
     const exemplosSemCanal = [];
+    const trilha = []; // auditoria por deal — onde cada um caiu
 
     deals.forEach(d => {
-      if (hsDeleted.has(String(d.id))) { ignoradosDeletados++; return; }
       const props = d.properties || {};
+      const nome  = props.dealname || '(sem nome)';
+      if (hsDeleted.has(String(d.id))) { ignoradosDeletados++; trilha.push({nome, status:'ignorado_deletado', id:String(d.id)}); return; }
       const created = props.createdate;
-      if (!created) { ignoradosSemData++; return; }
+      if (!created) { ignoradosSemData++; trilha.push({nome, status:'ignorado_sem_createdate'}); return; }
       const date = new Date(created);
-      if (isNaN(date)) { ignoradosSemData++; return; }
+      if (isNaN(date)) { ignoradosSemData++; trilha.push({nome, status:'ignorado_createdate_invalido', raw:created}); return; }
 
-      // Filtra por ano
-      if (date.getFullYear() !== CONV_ANO) { ignoradosAnoErrado++; return; }
-
-      // Período
-      const mesIdx = date.getMonth();
-      const qNum   = Math.floor(mesIdx / 3) + 1;
-      const qKey   = 'Q' + qNum;
-      const mKey   = MESES[mesIdx]; // 'Jan', 'Fev', ...
-
-      // Canal
-      const canal = _extrairCanal(props.dealname || '');
-      if (!canal) {
-        ignoradosSemCanal++;
-        if (exemplosSemCanal.length < 5) exemplosSemCanal.push(props.dealname || '(sem nome)');
+      if (date.getFullYear() !== CONV_ANO) {
+        ignoradosAnoErrado++;
+        trilha.push({nome, status:'ignorado_ano_diferente', createdate: created, ano: date.getFullYear()});
         return;
       }
 
-      // Respeita marcações manuais — não incrementa em quarter/mês que foram editados à mão
+      const mesIdx = date.getMonth();
+      const qNum   = Math.floor(mesIdx / 3) + 1;
+      const qKey   = 'Q' + qNum;
+      const mKey   = MESES[mesIdx];
+
+      const canal = _extrairCanal(nome);
+      if (!canal) {
+        ignoradosSemCanal++;
+        if (exemplosSemCanal.length < 5) exemplosSemCanal.push(nome);
+        trilha.push({nome, status:'ignorado_sem_canal', createdate: created});
+        return;
+      }
+
       let contou = false;
       if (!_isManual(qKey, 'canais', canal)) {
         _ensureConvBucket(qKey).canais[canal] = (_ensureConvBucket(qKey).canais[canal] || 0) + 1;
@@ -5464,7 +5467,16 @@ async function importarOportunidadesHS() {
       }
       if (contou) importados++;
       else ignoradosManual++;
+
+      trilha.push({
+        nome, canal, createdate: created,
+        ano: date.getFullYear(), mes: mKey, quarter: qKey,
+        status: contou ? 'contou' : 'ignorado_manual'
+      });
     });
+
+    // Exposto globalmente pra debug
+    window.__lastConvImport = { ts: new Date().toISOString(), totalDeals: deals.length, trilha };
 
     saveOportunidadesData();
     renderConversao();
