@@ -526,7 +526,6 @@
     <button onclick="filtrarCanal('REN')" id="rfilt-REN"  class="rfilt" style="--rc:#92400e;--rct:#fff;">REN</button>
     <button onclick="filtrarCanal('OUT')" id="rfilt-OUT"  class="rfilt" style="--rc:#9d174d;--rct:#fff;">OUT</button>
     <button onclick="filtrarCanal('INB')" id="rfilt-INB"  class="rfilt" style="--rc:#5b21b6;--rct:#fff;">INB</button>
-    <button onclick="filtrarCanal('MKT')" id="rfilt-MKT"  class="rfilt" style="--rc:#c2410c;--rct:#fff;">MKT</button>
     <button onclick="filtrarCanal('N/D')" id="rfilt-ND"   class="rfilt" style="--rc:#6b7280;--rct:#fff;">N/D</button>
     <span id="rfilt-count" class="text-xs ml-1" style="color:var(--muted);"></span>
   </div>
@@ -915,9 +914,9 @@
           <p class="text-lg font-bold" style="color:#16a34a;">R$ 681.000</p>
           <p class="text-xs mt-1" style="color:#94a3b8;">7 vendas</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#fff7ed;border-color:#fdba74;">
-          <p class="text-xs font-bold mb-1" style="color:#c2410c;">MKT</p>
-          <p class="text-lg font-bold" style="color:#ea580c;">R$ 458.500</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#ede9fe;border-color:#c4b5fd;">
+          <p class="text-xs font-bold mb-1" style="color:#5b21b6;">INB</p>
+          <p class="text-lg font-bold" style="color:#7c3aed;">R$ 458.500</p>
           <p class="text-xs mt-1" style="color:#94a3b8;">3 vendas</p>
         </div>
         <div class="rounded-xl p-4 border text-center" style="background:#fce7f3;border-color:#f9a8d4;">
@@ -929,7 +928,7 @@
       <div class="overflow-x-auto">
         <table class="hist-table">
           <thead>
-            <tr><th></th><th>NTW</th><th>MKT</th><th>OUT</th><th>Total Novos</th></tr>
+            <tr><th></th><th>NTW</th><th>INB</th><th>OUT</th><th>Total Novos</th></tr>
           </thead>
           <tbody>
             <tr><td style="text-align:left;font-weight:600;">Q1</td><td>R$ 0</td><td>R$ 74.500</td><td>R$ 0</td><td style="font-weight:600;">R$ 74.500</td></tr>
@@ -1413,7 +1412,7 @@
             class="border rounded-md px-3 py-1.5 text-sm" style="width:280px;" />
           <select id="audit-canal" onchange="renderAuditoria()" class="border rounded-md px-2 py-1.5 text-sm">
             <option value="">Todos os canais</option>
-            <option>NTW</option><option>MKT</option><option>OUT</option>
+            <option>NTW</option><option>OUT</option>
             <option>INB</option><option>UP</option><option>REN</option>
           </select>
           <select id="audit-quarter" onchange="renderAuditoria()" class="border rounded-md px-2 py-1.5 text-sm">
@@ -1578,14 +1577,14 @@ function switchDashSub(key) {
 const Q1_DEALS_DEFAULTS = [
   { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:204000, mensalidade:0, ciclo:0, data:'19/01', mes:'Jan', alocacoes:'4', tipo:'Enterprise', semana:'Sem 2' },
   { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:102000, mensalidade:0, ciclo:0, data:'30/01', mes:'Jan', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
-  { cliente:'Flowa',           servico:'RPO', canal:'MKT', valor:48000,  mensalidade:0, ciclo:0, data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Flowa',           servico:'RPO', canal:'INB', valor:48000,  mensalidade:0, ciclo:0, data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
   { cliente:'Cielo',           servico:'RPO', canal:'NTW', valor:51000,  mensalidade:0, ciclo:0, data:'03/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 4' },
   { cliente:'Ilegra',          servico:'RPO', canal:'NTW', valor:48000,  mensalidade:0, ciclo:0, data:'06/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 5' },
   { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:144000, mensalidade:0, ciclo:0, data:'13/02', mes:'Fev', alocacoes:'3', tipo:'Enterprise', semana:'Sem 5' },
   { cliente:'Localiza',        servico:'RPO', canal:'OUT', valor:90000,  mensalidade:0, ciclo:0, data:'19/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 5' },
   { cliente:'Facta Tech',      servico:'RPO', canal:'REN', valor:90000,  mensalidade:0, ciclo:0, data:'02/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
   { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:51000,  mensalidade:0, ciclo:0, data:'04/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
-  { cliente:'Caffeine Army',   servico:'RPO', canal:'MKT', valor:51000,  mensalidade:0, ciclo:0, data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
+  { cliente:'Caffeine Army',   servico:'RPO', canal:'INB', valor:51000,  mensalidade:0, ciclo:0, data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
   { cliente:'Jeitto',          servico:'RPO', canal:'REN', valor:46500,  mensalidade:0, ciclo:0, data:'16/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
   { cliente:'Sanar',           servico:'RPO', canal:'REN', valor:15000,  mensalidade:0, ciclo:0, data:'20/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
   { cliente:'Stellantis',      servico:'RPO', canal:'REN', valor:96000,  mensalidade:0, ciclo:0, data:'23/01', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 11' },
@@ -1618,6 +1617,65 @@ try {
     });
     if (changed) localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS));
   } catch(e) { log.warn('q1.migrate.failed', { dealsCount: Q1_DEALS.length }, e); }
+})();
+
+// ─── MIGRAÇÃO MKT → INB (Marketing unificado em Inbound) ─────────────
+(function _migrateMKTtoINB() {
+  try {
+    let changes = 0;
+    // Q1_DEALS
+    Q1_DEALS.forEach(d => {
+      if ((d.canal||'').toUpperCase() === 'MKT') { d.canal = 'INB'; changes++; }
+    });
+    if (changes > 0) localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS));
+
+    // table_rows (tableRows) — pode não estar carregado ainda, então mexer direto no localStorage
+    try {
+      const raw = localStorage.getItem('table_rows');
+      if (raw) {
+        const arr = JSON.parse(raw);
+        let tbChanges = 0;
+        arr.forEach(r => {
+          if ((r.canal||'').toUpperCase() === 'MKT') { r.canal = 'INB'; tbChanges++; }
+        });
+        if (tbChanges > 0) {
+          localStorage.setItem('table_rows', JSON.stringify(arr));
+          changes += tbChanges;
+        }
+      }
+    } catch(_) {}
+
+    // oportunidades_data — soma MKT em INB e remove MKT
+    try {
+      const raw = localStorage.getItem('oportunidades_data');
+      if (raw) {
+        const data = JSON.parse(raw);
+        let opChanges = 0;
+        Object.keys(data).forEach(k => {
+          const b = data[k];
+          if (b && b.canais && b.canais.MKT) {
+            b.canais.INB = (b.canais.INB || 0) + b.canais.MKT;
+            delete b.canais.MKT;
+            opChanges++;
+          }
+          // Limpa marcações manuais antigas que referenciavam MKT
+          if (b && Array.isArray(b.manual)) {
+            const before = b.manual.length;
+            b.manual = b.manual.filter(m => !m.endsWith(':MKT'));
+            if (b.manual.length !== before) opChanges++;
+          }
+        });
+        if (opChanges > 0) {
+          localStorage.setItem('oportunidades_data', JSON.stringify(data));
+          changes += opChanges;
+        }
+      }
+    } catch(_) {}
+
+    if (changes > 0) {
+      log.info('canal.migrate.mkt_to_inb', { changes });
+    }
+  } catch(e) { log.warn('canal.migrate.mkt_to_inb.failed', {}, e); }
 })();
 
 function saveQ1Deals() {
@@ -1714,7 +1772,7 @@ function renderQ1Deals() {
   if (!tbody) return;
   tbody.innerHTML = '';
   let totalMens = 0, totalValor = 0, ciclosArr = [];
-  const CANAIS_OPTS = ['UP','NTW','MKT','OUT','INB','REN'];
+  const CANAIS_OPTS = ['UP','NTW','OUT','INB','REN']; // MKT unificado em INB
   const SERVICO_OPTS = ['RPO','Staffing','Hunting'];
   const TIPO_OPTS = ['Enterprise','GG','SMB'];
   const MESES_OPTS = ['Jan','Fev','Mar'];
@@ -2497,7 +2555,7 @@ function initHistoricalCharts() {
       labels: ['Q1','Q2','Q3','Q4'],
       datasets: [
         { label:'NTW', data:[0, 243000, 144000, 294000], backgroundColor:'#4ade80', borderRadius:4 },
-        { label:'MKT', data:[74500, 384000, 0, 0],       backgroundColor:'#fb923c', borderRadius:4 },
+        { label:'INB', data:[74500, 384000, 0, 0],       backgroundColor:'#a78bfa', borderRadius:4 },
         { label:'OUT', data:[0, 208000, 102000, 96000],   backgroundColor:'#f472b6', borderRadius:4 },
       ]
     },
@@ -3362,7 +3420,7 @@ function renderTable() {
       </td>
       <td class="px-3 py-2">
         <select class="tag ${canalClass(row.canal)} border-0 cursor-pointer" onchange="updateCanalTag(${i},this.value)">
-          ${['UP','NTW','REN','OUT','INB','MKT','N/D'].map(c=>`<option ${row.canal===c?'selected':''}>${c}</option>`).join('')}
+          ${['UP','NTW','REN','OUT','INB','N/D'].map(c=>`<option ${row.canal===c?'selected':''}>${c}</option>`).join('')}
         </select>
       </td>
       <td class="px-3 py-2 text-right font-medium">
@@ -5310,7 +5368,7 @@ try {
 let _conversaoMode = 'tri'; // 'tri' ou 'mes'
 let _conversaoReady = false;
 
-const CONV_CANAIS = ['NTW','MKT','OUT','INB','UP','REN'];
+const CONV_CANAIS = ['NTW','OUT','INB','UP','REN']; // MKT foi unificado em INB
 const CONV_TIPOS  = ['Enterprise','GG','SMB'];
 const CONV_MESES_POR_Q = {
   Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'],
@@ -5436,8 +5494,8 @@ function _extrairCanal(name) {
     if (['RENOVAÇÃO','RENOVACAO','RENOVATION','RENEWAL'].includes(s))      return 'REN';
     if (['HR','HAND RAISE','HAND-RAISE','HAND_RAISE','HANDRAISE'].includes(s)) return 'INB';
     if (['INBOUND'].includes(s))                                           return 'INB';
+    if (['MKT','MARKETING'].includes(s))                                   return 'INB'; // MKT unificado em INB
     if (['OUTBOUND'].includes(s))                                          return 'OUT';
-    if (['MARKETING'].includes(s))                                         return 'MKT';
     if (['NETWORK','NETWORKING'].includes(s))                              return 'NTW';
     return s;
   };
@@ -5451,12 +5509,12 @@ function _extrairCanal(name) {
 
   // 2) Busca canal em qualquer posição como palavra isolada
   const padroes = [
-    { re: /\b(NTW|NETWORK|NETWORKING)\b/,                 canal: 'NTW' },
-    { re: /\b(MKT|MARKETING)\b/,                          canal: 'MKT' },
-    { re: /\b(OUT|OUTBOUND)\b/,                           canal: 'OUT' },
-    { re: /\b(INB|INBOUND|HR|HAND[\s\-_]?RAISE)\b/,       canal: 'INB' },
-    { re: /\b(UP|UPSELL|UP[\s\-]?SELL)\b/,                canal: 'UP'  },
-    { re: /\b(REN|RENOVAÇÃO|RENOVACAO|RENEWAL)\b/,        canal: 'REN' },
+    { re: /\b(NTW|NETWORK|NETWORKING)\b/,                                 canal: 'NTW' },
+    // MKT, MARKETING, HR, INB, INBOUND, HAND RAISE → todos viram INB (MKT unificado)
+    { re: /\b(MKT|MARKETING|INB|INBOUND|HR|HAND[\s\-_]?RAISE)\b/,         canal: 'INB' },
+    { re: /\b(OUT|OUTBOUND)\b/,                                          canal: 'OUT' },
+    { re: /\b(UP|UPSELL|UP[\s\-]?SELL)\b/,                               canal: 'UP'  },
+    { re: /\b(REN|RENOVAÇÃO|RENOVACAO|RENEWAL)\b/,                       canal: 'REN' },
   ];
   for (const p of padroes) if (p.re.test(upper)) return p.canal;
 
