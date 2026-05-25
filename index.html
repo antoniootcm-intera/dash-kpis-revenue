@@ -472,26 +472,16 @@
       </div>
     </div>
 
-    <!-- Bar charts -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <h3 class="font-semibold text-gray-700 mb-3">Ciclo de Vendas por Canal (dias)</h3>
-        <div class="relative h-56">
-          <canvas id="chartCiclo"></canvas>
-        </div>
+    <!-- Bar chart de Ciclo (Ticket Médio movido para seção dedicada abaixo) -->
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="font-semibold text-gray-700">Ciclo de Vendas por Canal (dias)</h3>
+      <div class="text-right">
+        <span class="text-xs text-gray-400">Ticket médio mensalidade (geral)</span>
+        <p id="ticket-medio-geral" class="text-base font-bold text-blue-700">—</p>
       </div>
-      <div>
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-gray-700">Ticket Médio da Mensalidade por Canal (R$)</h3>
-          <div class="text-right">
-            <span class="text-xs text-gray-400">Ticket médio geral</span>
-            <p id="ticket-medio-geral" class="text-base font-bold text-blue-700">—</p>
-          </div>
-        </div>
-        <div class="relative h-52">
-          <canvas id="chartFunil"></canvas>
-        </div>
-      </div>
+    </div>
+    <div class="relative h-56">
+      <canvas id="chartCiclo"></canvas>
     </div>
 
     <!-- Ciclo por Tipo de Empresa × Canal -->
@@ -2892,23 +2882,8 @@ function initCharts() {
     }
   });
 
-  const ctxF = document.getElementById('chartFunil').getContext('2d');
-  charts.funil = new Chart(ctxF, {
-    type: 'bar',
-    data: { labels: [], datasets: [{ label: 'Ticket Médio (R$)', data: [], backgroundColor: '#6366f1', borderRadius: 4 }] },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      indexAxis: 'y',
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.x.toLocaleString('pt-BR', {minimumFractionDigits:2}) } }
-      },
-      scales: darkScales({
-        x: { ticks: { color: CHART_DEFAULTS.tick, callback: v => 'R$' + (v/1000).toFixed(0)+'k' } },
-        y: { grid: { display: false } }
-      })
-    }
-  });
+  // chartFunil removido (Ticket Médio por Canal agora vive na seção dedicada Q2 Ticket Médio)
+  charts.funil = null;
 
   // Ciclo por Tipo de Empresa × Canal (barras agrupadas)
   const ctxCT = document.getElementById('chartCicloTipoCanal');
@@ -3074,24 +3049,9 @@ function updateCicloTipoCanalChart() {
 }
 
 function updateFunilChart() {
-  // Ticket médio da mensalidade agrupado por canal
-  const agg = {};
-  tableRows.forEach(r => {
-    const m = parseFloat(r.mensalidade);
-    if (!m || m <= 0) return;
-    const c = (r.canal || 'N/D').toUpperCase();
-    if (!agg[c]) agg[c] = [];
-    agg[c].push(m);
-  });
-  const labels = Object.keys(agg);
-  const data   = labels.map(c => Math.round(agg[c].reduce((a,b)=>a+b,0)/agg[c].length));
-  charts.funil.data.labels   = labels;
-  charts.funil.data.datasets[0].data = data;
-  charts.funil.data.datasets[0].backgroundColor = labels.map(c => ({
-    'UP':'#bfdbfe','NTW':'#bbf7d0','REN':'#fef08a','OUT':'#fbcfe8',
-    'INB':'#ddd6fe','MKT':'#fed7aa'
-  }[c] || '#e5e7eb'));
-  charts.funil.update();
+  // Chart removido (substituído pela seção dedicada Q2 Ticket Médio).
+  // Mantemos a função para não quebrar chamadas antigas, mas é no-op.
+  if (!charts.funil) return;
 }
 
 const CANAIS_CASA = new Set(['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO']);
