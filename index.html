@@ -307,6 +307,7 @@
 <div class="dash-subtabs">
   <button class="dash-sub ds-active" onclick="switchDashSub('q2-2026')">🎯 Q2 2026 — Atual</button>
   <button class="dash-sub" onclick="switchDashSub('q1-2026')">✅ Q1 2026</button>
+  <button class="dash-sub" onclick="switchDashSub('anual-2026')">🗓️ Anual 2026</button>
   <button class="dash-sub" onclick="switchDashSub('hist-2025')">📅 Histórico 2025</button>
   <button class="dash-sub" onclick="switchDashSub('comp-tri')">📈 Comparativo Trimestral</button>
 </div>
@@ -584,6 +585,25 @@
   </div>
 </section>
 
+<!-- Ticket médio Q2 — por canal e por tipo -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
+    <span class="text-lg font-bold">Ticket Médio — Q2 2026</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — Q2 (mensalidade)</h3>
+        <div class="relative h-52"><canvas id="chartQ2ticketCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo de Empresa — Q2 (mensalidade)</h3>
+        <div class="relative h-52"><canvas id="chartQ2ticketTipo"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 </div><!-- /dash-sub-q2-2026 -->
 
 <!-- ═══ SUB-PAINEL: Q1 2026 ═══ -->
@@ -633,6 +653,7 @@
             <th>Cliente</th><th>Serviço</th><th>Canal</th><th>Valor (R$)</th>
             <th>Mensalidade</th>
             <th>Data</th><th>Mês</th><th>Alocações</th><th>Tipo</th><th>Semana</th>
+            <th>Ciclo (dias)</th>
             <th class="no-print admin-only" style="width:36px;">✕</th>
           </tr>
         </thead>
@@ -643,6 +664,7 @@
             <td id="q1-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
             <td id="q1-total-mens" style="font-weight:700;color:#0284c7;">R$ 0,00</td>
             <td colspan="5"></td>
+            <td id="q1-ciclo-medio" style="font-weight:700;color:var(--accent);"></td>
             <td class="no-print admin-only"></td>
           </tr>
         </tfoot>
@@ -670,10 +692,118 @@
       <div id="q1-canal-blocks"></div>
     </div>
 
+    <!-- 4 Gráficos: ciclo×canal, ciclo×tipo, ticket×canal, ticket×tipo -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ciclo de Vendas por Canal — Q1 (dias)</h3>
+        <div class="relative h-52"><canvas id="chartQ1cicloCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ciclo de Vendas por Tipo de Empresa — Q1 (dias)</h3>
+        <div class="relative h-52"><canvas id="chartQ1cicloTipo"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — Q1 (mensalidade)</h3>
+        <div class="relative h-52"><canvas id="chartQ1ticketCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo de Empresa — Q1 (mensalidade)</h3>
+        <div class="relative h-52"><canvas id="chartQ1ticketTipo"></canvas></div>
+      </div>
+    </div>
+    <p class="text-xs italic" style="color:var(--muted);">
+      Ticket médio usa a coluna <strong>Mensalidade</strong>. Preencha as células acima para popular esses gráficos.
+    </p>
+
   </div>
 </section>
 
 </div><!-- /dash-sub-q1-2026 -->
+
+<!-- ═══ SUB-PAINEL: Anual 2026 ═══ -->
+<div id="dash-sub-anual-2026" style="display:none" class="space-y-8">
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
+    <span class="text-lg font-bold">🗓️ Anual 2026 — Consolidado YTD</span>
+    <span class="text-blue-200 text-sm font-medium">Q1 + Q2 (+ Q3/Q4 quando houver dados)</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-6">
+
+    <!-- Cards de resumo anual -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="anual-summary"></div>
+
+    <!-- Gráficos lado a lado -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita Mensal — 2026 YTD</h3>
+        <div class="relative h-56"><canvas id="chartAnualMensal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Canal — 2026 YTD</h3>
+        <div class="relative h-56"><canvas id="chartAnualCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — 2026 YTD</h3>
+        <div class="relative h-56"><canvas id="chartAnualTicketCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo — 2026 YTD</h3>
+        <div class="relative h-56"><canvas id="chartAnualTicketTipo"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ciclo de Vendas por Canal — 2026 YTD</h3>
+        <div class="relative h-56"><canvas id="chartAnualCicloCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ciclo de Vendas por Tipo — 2026 YTD</h3>
+        <div class="relative h-56"><canvas id="chartAnualCicloTipo"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Tabela de breakdown -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Detalhamento por Canal — 2026 YTD</h3>
+      <div class="overflow-x-auto">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Canal</th>
+              <th>Deals</th>
+              <th>Receita Total</th>
+              <th>MRR (mensalidade)</th>
+              <th>Ticket Médio</th>
+              <th>Ciclo Médio (dias)</th>
+            </tr>
+          </thead>
+          <tbody id="anual-canal-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-sm mb-3 mt-2" style="color:var(--text2);">Detalhamento por Tipo de Empresa — 2026 YTD</h3>
+      <div class="overflow-x-auto">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Tipo</th>
+              <th>Deals</th>
+              <th>Receita Total</th>
+              <th>MRR</th>
+              <th>Ticket Médio</th>
+              <th>Ciclo Médio (dias)</th>
+            </tr>
+          </thead>
+          <tbody id="anual-tipo-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</div><!-- /dash-sub-anual-2026 -->
 
 <!-- ═══ SUB-PAINEL: Histórico 2025 ═══ -->
 <div id="dash-sub-hist-2025" style="display:none" class="space-y-8">
@@ -1325,7 +1455,7 @@ const log = {
 window.__interaLogs = function() { return _logBuffer.slice(); };
 
 // ─── DASHBOARD SUB-TABS ─────────────────────────
-const DASH_SUBS = ['q2-2026','q1-2026','hist-2025','comp-tri'];
+const DASH_SUBS = ['q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
 let _histChartsReady = false;
 
 let _q2CanalReady = false;
@@ -1347,29 +1477,38 @@ function switchDashSub(key) {
   // Lazy init do canal Q2 (precisa canvas visível + dados carregados)
   if (!_q2CanalReady && key === 'q2-2026' && tableRows.length > 0) {
     _q2CanalReady = true;
-    setTimeout(renderQ2CanalCards, 50);
+    setTimeout(() => { renderQ2CanalCards(); renderQ2TicketCharts(); }, 50);
+  }
+  // Re-render quando entra no Q1 (sempre, pra refletir edições)
+  if (key === 'q1-2026') {
+    setTimeout(renderQ1Analytics, 50);
+  }
+  // Render do painel anual (lazy)
+  if (key === 'anual-2026') {
+    if (!_anualReady) _anualReady = true;
+    setTimeout(renderAnual, 50);
   }
 }
 
 // ─── Q1 2026 DATA ───────────────────────────────
 // Q1_DEALS defaults — usado só na primeira carga; depois lê de localStorage
 const Q1_DEALS_DEFAULTS = [
-  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:204000, mensalidade:0, data:'19/01', mes:'Jan', alocacoes:'4', tipo:'Enterprise', semana:'Sem 2' },
-  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:102000, mensalidade:0, data:'30/01', mes:'Jan', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
-  { cliente:'Flowa',           servico:'RPO', canal:'MKT', valor:48000,  mensalidade:0, data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
-  { cliente:'Cielo',           servico:'RPO', canal:'NTW', valor:51000,  mensalidade:0, data:'03/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 4' },
-  { cliente:'Ilegra',          servico:'RPO', canal:'NTW', valor:48000,  mensalidade:0, data:'06/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 5' },
-  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:144000, mensalidade:0, data:'13/02', mes:'Fev', alocacoes:'3', tipo:'Enterprise', semana:'Sem 5' },
-  { cliente:'Localiza',        servico:'RPO', canal:'OUT', valor:90000,  mensalidade:0, data:'19/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 5' },
-  { cliente:'Facta Tech',      servico:'RPO', canal:'REN', valor:90000,  mensalidade:0, data:'02/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
-  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:51000,  mensalidade:0, data:'04/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
-  { cliente:'Caffeine Army',   servico:'RPO', canal:'MKT', valor:51000,  mensalidade:0, data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
-  { cliente:'Jeitto',          servico:'RPO', canal:'REN', valor:46500,  mensalidade:0, data:'16/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
-  { cliente:'Sanar',           servico:'RPO', canal:'REN', valor:15000,  mensalidade:0, data:'20/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
-  { cliente:'Stellantis',      servico:'RPO', canal:'REN', valor:96000,  mensalidade:0, data:'23/01', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 11' },
-  { cliente:'dLocal',          servico:'RPO', canal:'NTW', valor:68000,  mensalidade:0, data:'25/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
-  { cliente:'Frete.com',       servico:'RPO', canal:'NTW', valor:34000,  mensalidade:0, data:'30/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 13' },
-  { cliente:'Riachuelo',       servico:'RPO', canal:'UP',  valor:48000,  mensalidade:0, data:'31/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
+  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:204000, mensalidade:0, ciclo:0, data:'19/01', mes:'Jan', alocacoes:'4', tipo:'Enterprise', semana:'Sem 2' },
+  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:102000, mensalidade:0, ciclo:0, data:'30/01', mes:'Jan', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Flowa',           servico:'RPO', canal:'MKT', valor:48000,  mensalidade:0, ciclo:0, data:'02/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 4' },
+  { cliente:'Cielo',           servico:'RPO', canal:'NTW', valor:51000,  mensalidade:0, ciclo:0, data:'03/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 4' },
+  { cliente:'Ilegra',          servico:'RPO', canal:'NTW', valor:48000,  mensalidade:0, ciclo:0, data:'06/02', mes:'Fev', alocacoes:'1', tipo:'GG',         semana:'Sem 5' },
+  { cliente:'Grupo Boticário', servico:'RPO', canal:'UP',  valor:144000, mensalidade:0, ciclo:0, data:'13/02', mes:'Fev', alocacoes:'3', tipo:'Enterprise', semana:'Sem 5' },
+  { cliente:'Localiza',        servico:'RPO', canal:'OUT', valor:90000,  mensalidade:0, ciclo:0, data:'19/02', mes:'Fev', alocacoes:'1', tipo:'Enterprise', semana:'Sem 5' },
+  { cliente:'Facta Tech',      servico:'RPO', canal:'REN', valor:90000,  mensalidade:0, ciclo:0, data:'02/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
+  { cliente:'Ebanx',           servico:'RPO', canal:'UP',  valor:51000,  mensalidade:0, ciclo:0, data:'04/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 6' },
+  { cliente:'Caffeine Army',   servico:'RPO', canal:'MKT', valor:51000,  mensalidade:0, ciclo:0, data:'12/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 8' },
+  { cliente:'Jeitto',          servico:'RPO', canal:'REN', valor:46500,  mensalidade:0, ciclo:0, data:'16/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
+  { cliente:'Sanar',           servico:'RPO', canal:'REN', valor:15000,  mensalidade:0, ciclo:0, data:'20/03', mes:'Mar', alocacoes:'1', tipo:'SMB',        semana:'Sem 9' },
+  { cliente:'Stellantis',      servico:'RPO', canal:'REN', valor:96000,  mensalidade:0, ciclo:0, data:'23/01', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 11' },
+  { cliente:'dLocal',          servico:'RPO', canal:'NTW', valor:68000,  mensalidade:0, ciclo:0, data:'25/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
+  { cliente:'Frete.com',       servico:'RPO', canal:'NTW', valor:34000,  mensalidade:0, ciclo:0, data:'30/03', mes:'Mar', alocacoes:'1', tipo:'GG',         semana:'Sem 13' },
+  { cliente:'Riachuelo',       servico:'RPO', canal:'UP',  valor:48000,  mensalidade:0, ciclo:0, data:'31/03', mes:'Mar', alocacoes:'1', tipo:'Enterprise', semana:'Sem 13' },
 ];
 
 let Q1_DEALS;
@@ -1392,6 +1531,7 @@ try {
         changed = true;
       }
       if (d.mensalidade === undefined) d.mensalidade = 0;
+      if (d.ciclo === undefined) { d.ciclo = 0; changed = true; } // migration: novo campo
     });
     if (changed) localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS));
   } catch(e) { log.warn('q1.migrate.failed', { dealsCount: Q1_DEALS.length }, e); }
@@ -1408,14 +1548,16 @@ function updateQ1Field(i, field, value) {
   Q1_DEALS[i][field] = value;
   saveQ1Deals();
   renderQ1Deals();
-  // Recalcula dependentes (Net New Logos, canal breakdown, chart)
+  // Recalcula dependentes (Net New Logos, canal breakdown, charts Q1, painel Anual)
   renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
+  if (typeof renderQ1Analytics === 'function') renderQ1Analytics();
   if (typeof updateChurnCards === 'function') updateChurnCards();
+  if (_anualReady && typeof renderAnual === 'function') renderAnual();
 }
 
 function addQ1Deal() {
   Q1_DEALS.push({
-    cliente:'Novo cliente', servico:'RPO', canal:'NTW', valor:0, mensalidade:0,
+    cliente:'Novo cliente', servico:'RPO', canal:'NTW', valor:0, mensalidade:0, ciclo:0,
     data:'', mes:'Jan', alocacoes:'1', tipo:'Enterprise', semana:''
   });
   saveQ1Deals();
@@ -1488,7 +1630,7 @@ function renderQ1Deals() {
   const tbody = document.getElementById('q1-deals-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
-  let totalMens = 0, totalValor = 0;
+  let totalMens = 0, totalValor = 0, ciclosArr = [];
   const CANAIS_OPTS = ['UP','NTW','MKT','OUT','INB','REN'];
   const SERVICO_OPTS = ['RPO','Staffing','Hunting'];
   const TIPO_OPTS = ['Enterprise','GG','SMB'];
@@ -1499,9 +1641,12 @@ function renderQ1Deals() {
     const tipoCls  = { 'Enterprise':'tag-enterprise', 'GG':'tag-gg', 'SMB':'tag-smb' }[d.tipo] || '';
     const mens     = parseFloat(d.mensalidade)||0;
     const val      = parseFloat(d.valor)||0;
+    const ciclo    = parseInt(d.ciclo)||0;
     totalMens     += mens;
     totalValor    += val;
+    if (ciclo > 0) ciclosArr.push(ciclo);
     const mensCor  = mens > 0 ? '#0284c7' : '#9ca3af';
+    const cicloCor = ciclo > 0 ? 'var(--accent)' : '#9ca3af';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -1543,6 +1688,9 @@ function renderQ1Deals() {
       <td style="text-align:center;">
         <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'semana',this.textContent.trim())">${esc(d.semana||'')}</span>
       </td>
+      <td style="font-weight:600;color:${cicloCor};text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ1Field(${i},'ciclo',parseInt(this.textContent)||0)">${ciclo > 0 ? ciclo : '0'}</span>
+      </td>
       <td class="no-print admin-only" style="text-align:center;">
         <button onclick="removeQ1Deal(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;background:none;border:none;cursor:pointer;"
           onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
@@ -1551,8 +1699,13 @@ function renderQ1Deals() {
   });
   const elMens  = document.getElementById('q1-total-mens');
   const elValor = document.getElementById('q1-total-valor');
+  const elCiclo = document.getElementById('q1-ciclo-medio');
   if (elMens)  elMens.textContent  = fmtBRL(totalMens);
   if (elValor) elValor.textContent = fmtBRL(totalValor);
+  if (elCiclo) {
+    const m = ciclosArr.length ? Math.round(ciclosArr.reduce((a,b)=>a+b,0) / ciclosArr.length) : 0;
+    elCiclo.textContent = m > 0 ? (m + ' d') : '—';
+  }
 }
 
 function renderHist2025Table() {
@@ -1750,6 +1903,244 @@ function renderCanalBreakdown(deals, containerId) {
 
 function renderQ2CanalCards() {
   renderCanalBreakdown(tableRows, 'q2-canal-blocks');
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS DE AGREGAÇÃO (ciclo / ticket por canal/tipo)
+// ═══════════════════════════════════════════════════
+const _CANAL_CHART_COLORS = {
+  'UP':'#60a5fa', 'NTW':'#4ade80', 'MKT':'#fb923c',
+  'OUT':'#f472b6', 'INB':'#a78bfa', 'REN':'#fbbf24',
+  'UPSELL':'#60a5fa', 'RENOVAÇÃO':'#fbbf24', 'RENOVACAO':'#fbbf24',
+  'N/D':'#9ca3af'
+};
+const _TIPO_CHART_COLORS = {
+  'Enterprise':'#6366f1', 'GG':'#10b981', 'SMB':'#f59e0b', 'N/D':'#9ca3af'
+};
+
+function _aggregar(deals, getKey) {
+  // Retorna { key: { count, valorTotal, mrrTotal, ciclosArr } }
+  const agg = {};
+  deals.forEach(d => {
+    const k = getKey(d);
+    if (!k) return;
+    if (!agg[k]) agg[k] = { count:0, valorTotal:0, mrrTotal:0, ciclosArr:[] };
+    agg[k].count++;
+    agg[k].valorTotal += parseFloat(d.valor) || 0;
+    agg[k].mrrTotal   += parseFloat(d.mensalidade) || 0;
+    const c = parseInt(d.ciclo) || 0;
+    if (c > 0) agg[k].ciclosArr.push(c);
+  });
+  return agg;
+}
+function _ticketMedio(bucket) {
+  return bucket.count > 0 ? Math.round(bucket.mrrTotal / bucket.count) : 0;
+}
+function _cicloMedio(bucket) {
+  if (!bucket.ciclosArr.length) return 0;
+  return Math.round(bucket.ciclosArr.reduce((a,b)=>a+b,0) / bucket.ciclosArr.length);
+}
+
+// Cria/atualiza um chart bar simples. Reutiliza se já existe (substitui dados).
+const _chartRegistry = {};
+function _criarOuAtualizar(canvasId, labels, data, colorByLabel, opts) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+  if (_chartRegistry[canvasId]) { _chartRegistry[canvasId].destroy(); }
+  const colors = labels.map(l => (colorByLabel && colorByLabel[l]) || '#6366f1');
+  _chartRegistry[canvasId] = new Chart(ctx.getContext('2d'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: opts?.dataLabel || 'Valor', data, backgroundColor: colors, borderRadius: 5 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c =>
+          opts?.tooltipFmt ? opts.tooltipFmt(c.raw) : c.raw
+        }}
+      },
+      scales: darkScales({ x: { grid: { display: false }}})
+    }
+  });
+}
+
+// Renderiza os 4 gráficos do Q1: ciclo×canal, ciclo×tipo, ticket×canal, ticket×tipo
+function renderQ1Analytics() {
+  const aggCanal = _aggregar(Q1_DEALS, d => (d.canal||'').toUpperCase());
+  const aggTipo  = _aggregar(Q1_DEALS, d => d.tipo);
+
+  // Ciclo por canal
+  const lc = Object.keys(aggCanal).filter(k => aggCanal[k].ciclosArr.length > 0);
+  _criarOuAtualizar('chartQ1cicloCanal', lc, lc.map(k => _cicloMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => v + ' dias' });
+
+  // Ciclo por tipo
+  const lt = Object.keys(aggTipo).filter(k => aggTipo[k].ciclosArr.length > 0);
+  _criarOuAtualizar('chartQ1cicloTipo', lt, lt.map(k => _cicloMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS, { tooltipFmt: v => v + ' dias' });
+
+  // Ticket por canal (média de mensalidade)
+  const tc = Object.keys(aggCanal).filter(k => aggCanal[k].mrrTotal > 0);
+  _criarOuAtualizar('chartQ1ticketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+
+  // Ticket por tipo
+  const tt = Object.keys(aggTipo).filter(k => aggTipo[k].mrrTotal > 0);
+  _criarOuAtualizar('chartQ1ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+}
+
+// Renderiza ticket médio por canal e tipo no Q2 (live de tableRows)
+function renderQ2TicketCharts() {
+  const aggCanal = _aggregar(tableRows, r => (r.canal||'').toUpperCase());
+  const aggTipo  = _aggregar(tableRows, r => r.tipo);
+
+  const tc = Object.keys(aggCanal).filter(k => aggCanal[k].mrrTotal > 0);
+  _criarOuAtualizar('chartQ2ticketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+
+  const tt = Object.keys(aggTipo).filter(k => aggTipo[k].mrrTotal > 0);
+  _criarOuAtualizar('chartQ2ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER ANUAL 2026 — consolida Q1_DEALS + tableRows
+// ═══════════════════════════════════════════════════
+let _anualReady = false;
+
+function _getAllDeals2026() {
+  // Une Q1_DEALS (Q1) + tableRows (Q2+, ao vivo). Normaliza campos.
+  const all = [];
+  Q1_DEALS.forEach(d => all.push({
+    cliente: d.cliente, canal: (d.canal||'').toUpperCase(), tipo: d.tipo,
+    valor: parseFloat(d.valor)||0, mensalidade: parseFloat(d.mensalidade)||0,
+    ciclo: parseInt(d.ciclo)||0, mes: d.mes, quarter: 'Q1'
+  }));
+  tableRows.forEach(r => {
+    const mes = r.mes;
+    let quarter = 'Q?';
+    if (['Abr','Mai','Jun'].includes(mes)) quarter = 'Q2';
+    else if (['Jul','Ago','Set'].includes(mes)) quarter = 'Q3';
+    else if (['Out','Nov','Dez'].includes(mes)) quarter = 'Q4';
+    else if (['Jan','Fev','Mar'].includes(mes)) quarter = 'Q1';
+    all.push({
+      cliente: r.cliente, canal: (r.canal||'').toUpperCase(), tipo: r.tipo,
+      valor: parseFloat(r.valor)||0, mensalidade: parseFloat(r.mensalidade)||0,
+      ciclo: parseInt(r.ciclo)||0, mes, quarter
+    });
+  });
+  return all;
+}
+
+function renderAnual() {
+  const all = _getAllDeals2026();
+
+  // ── Cards de resumo ──
+  const totalReceita = all.reduce((s,d) => s + d.valor, 0);
+  const totalMRR     = all.reduce((s,d) => s + d.mensalidade, 0);
+  const deals        = all.length;
+  const clientesUnicos = new Set(all.map(d => (d.cliente||'').trim().toLowerCase()).filter(Boolean)).size;
+  const ciclos = all.map(d => d.ciclo).filter(c => c > 0);
+  const cicloMedio = ciclos.length ? Math.round(ciclos.reduce((a,b)=>a+b,0)/ciclos.length) : 0;
+  const ticketMedio = deals ? Math.round(totalMRR / deals) : 0;
+
+  const summary = document.getElementById('anual-summary');
+  if (summary) {
+    summary.innerHTML = `
+      <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">RECEITA TOTAL</p>
+        <p class="text-lg font-bold" style="color:var(--accent);">${fmtBRL(totalReceita)}</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
+        <p class="text-xs font-semibold mb-1" style="color:#166534;">MRR TOTAL</p>
+        <p class="text-lg font-bold" style="color:#16a34a;">${fmtBRL(totalMRR)}</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
+        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">DEALS · CLIENTES</p>
+        <p class="text-lg font-bold" style="color:#0284c7;">${deals} · ${clientesUnicos}</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
+        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">TICKET MÉDIO</p>
+        <p class="text-lg font-bold" style="color:#7c3aed;">${fmtBRL(ticketMedio)}</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#fff7ed;border-color:#fdba74;">
+        <p class="text-xs font-semibold mb-1" style="color:#9a3412;">CICLO MÉDIO</p>
+        <p class="text-lg font-bold" style="color:#ea580c;">${cicloMedio > 0 ? cicloMedio + ' dias' : '—'}</p>
+      </div>`;
+  }
+
+  // ── Gráficos ──
+  // Receita mensal
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const porMes = {};
+  meses.forEach(m => porMes[m] = 0);
+  all.forEach(d => { if (porMes[d.mes] !== undefined) porMes[d.mes] += d.valor; });
+  const mesesCom = meses.filter(m => porMes[m] > 0);
+  _criarOuAtualizar('chartAnualMensal', mesesCom, mesesCom.map(m => porMes[m]),
+    null, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+
+  // Por canal — receita
+  const aggCanal = _aggregar(all, d => d.canal);
+  const aggTipo  = _aggregar(all, d => d.tipo);
+  const labelsCanal = Object.keys(aggCanal).filter(k => k && aggCanal[k].valorTotal > 0);
+  _criarOuAtualizar('chartAnualCanal', labelsCanal,
+    labelsCanal.map(k => aggCanal[k].valorTotal),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+
+  // Ticket médio por canal
+  const tcLabels = Object.keys(aggCanal).filter(k => k && aggCanal[k].mrrTotal > 0);
+  _criarOuAtualizar('chartAnualTicketCanal', tcLabels,
+    tcLabels.map(k => _ticketMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+
+  // Ticket médio por tipo
+  const ttLabels = Object.keys(aggTipo).filter(k => k && aggTipo[k].mrrTotal > 0);
+  _criarOuAtualizar('chartAnualTicketTipo', ttLabels,
+    ttLabels.map(k => _ticketMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS, { tooltipFmt: v => 'R$ ' + v.toLocaleString('pt-BR') });
+
+  // Ciclo por canal
+  const ccLabels = Object.keys(aggCanal).filter(k => k && aggCanal[k].ciclosArr.length > 0);
+  _criarOuAtualizar('chartAnualCicloCanal', ccLabels,
+    ccLabels.map(k => _cicloMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => v + ' dias' });
+
+  // Ciclo por tipo
+  const ctLabels = Object.keys(aggTipo).filter(k => k && aggTipo[k].ciclosArr.length > 0);
+  _criarOuAtualizar('chartAnualCicloTipo', ctLabels,
+    ctLabels.map(k => _cicloMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS, { tooltipFmt: v => v + ' dias' });
+
+  // ── Tabelas ──
+  const tbodyCanal = document.getElementById('anual-canal-tbody');
+  if (tbodyCanal) {
+    tbodyCanal.innerHTML = Object.keys(aggCanal).filter(k => k).sort((a,b) => aggCanal[b].valorTotal - aggCanal[a].valorTotal).map(k => {
+      const b = aggCanal[k];
+      return `<tr>
+        <td style="text-align:left;font-weight:600;">${esc(k)}</td>
+        <td>${b.count}</td>
+        <td style="font-weight:600;color:var(--accent);">${fmtBRL(b.valorTotal)}</td>
+        <td>${fmtBRL(b.mrrTotal)}</td>
+        <td>${fmtBRL(_ticketMedio(b))}</td>
+        <td>${_cicloMedio(b) > 0 ? _cicloMedio(b) + ' d' : '—'}</td>
+      </tr>`;
+    }).join('');
+  }
+  const tbodyTipo = document.getElementById('anual-tipo-tbody');
+  if (tbodyTipo) {
+    tbodyTipo.innerHTML = Object.keys(aggTipo).filter(k => k).sort((a,b) => aggTipo[b].valorTotal - aggTipo[a].valorTotal).map(k => {
+      const b = aggTipo[k];
+      return `<tr>
+        <td style="text-align:left;font-weight:600;">${esc(k)}</td>
+        <td>${b.count}</td>
+        <td style="font-weight:600;color:var(--accent);">${fmtBRL(b.valorTotal)}</td>
+        <td>${fmtBRL(b.mrrTotal)}</td>
+        <td>${fmtBRL(_ticketMedio(b))}</td>
+        <td>${_cicloMedio(b) > 0 ? _cicloMedio(b) + ' d' : '—'}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 
 function initHistoricalCharts() {
@@ -2439,6 +2830,14 @@ function updateCicloChart() {
   charts.ciclo.data.datasets[0].data = data;
   charts.ciclo.update();
   updateCicloTipoCanalChart();
+  // Atualiza também ticket por canal/tipo do Q2 (mesmos dados)
+  if (typeof renderQ2TicketCharts === 'function' && document.getElementById('chartQ2ticketCanal')) {
+    try { renderQ2TicketCharts(); } catch(e) { log.warn('q2.ticket.render.failed', {}, e); }
+  }
+  // E o painel anual também depende de tableRows
+  if (_anualReady && typeof renderAnual === 'function') {
+    try { renderAnual(); } catch(e) { log.warn('anual.render.failed', {}, e); }
+  }
 }
 
 function updateCicloTipoCanalChart() {
