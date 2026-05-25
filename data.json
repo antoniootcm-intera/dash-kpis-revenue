@@ -996,24 +996,24 @@
       "id": "cad_init_6",
       "servico": "RPO",
       "cliente": "Ilegra",
-      "vigencia": "novembro/2026",
-      "dataInicio": "09/11",
+      "vigencia": "maio/2026",
+      "dataInicio": "09/05",
       "meses": [
         "DESALOCADO",
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
         "DESALOCAÇÃO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
         "DESALOCADO"
       ],
       "source": "csv",
-      "duracao": 6
+      "duracao": 3
     },
     {
       "id": "cad_hs_59186379620",
@@ -1157,20 +1157,6 @@
   ],
   "contratos_rows": [
     {
-      "id": "cont_cad_1778536769511_0",
-      "cliente": "ABInbev UP",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "06/07",
-      "duracao": 3,
-      "cadeiras": 2,
-      "valorRPO": 14000,
-      "valorTotal": 84000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
       "id": "cont_cad_1778536769511_1",
       "cliente": "ABInbev",
       "vigencia": "junho/2026",
@@ -1180,6 +1166,20 @@
       "cadeiras": 4,
       "valorRPO": 14000,
       "valorTotal": 336000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_0",
+      "cliente": "ABInbev UP",
+      "vigencia": "julho/2026",
+      "inicio": "",
+      "fim": "06/07",
+      "duracao": 3,
+      "cadeiras": 2,
+      "valorRPO": 14000,
+      "valorTotal": 84000,
       "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "cadeiras"
@@ -1213,11 +1213,26 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_4",
-      "cliente": "CSU UP",
-      "vigencia": "julho/2026",
+      "id": "cont_60234055077",
+      "dealId": "60234055077",
+      "cliente": "Cielo SP",
+      "vigencia": "novembro/2026",
+      "inicio": "13/05",
+      "fim": "13/11",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 102000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_cad_1778536769511_5",
+      "cliente": "CSU",
+      "vigencia": "maio/2026",
       "inicio": "",
-      "fim": "05/07",
+      "fim": "24/05",
       "duracao": 6,
       "cadeiras": 1,
       "valorRPO": 16000,
@@ -1227,11 +1242,11 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_5",
-      "cliente": "CSU",
-      "vigencia": "maio/2026",
+      "id": "cont_cad_1778536769511_4",
+      "cliente": "CSU UP",
+      "vigencia": "julho/2026",
       "inicio": "",
-      "fim": "24/05",
+      "fim": "05/07",
       "duracao": 6,
       "cadeiras": 1,
       "valorRPO": 16000,
@@ -1281,6 +1296,21 @@
       "tipoContrato": "Sem Contrato",
       "linkContrato": "",
       "source": "cadeiras"
+    },
+    {
+      "id": "cont_59186379620",
+      "dealId": "59186379620",
+      "cliente": "Doctoralia BR",
+      "vigencia": "novembro/2026",
+      "inicio": "11/05",
+      "fim": "11/11",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 96000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
+      "source": "hs"
     },
     {
       "id": "cont_cad_1778536769511_9",
@@ -1367,18 +1397,19 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_15",
-      "cliente": "Ilegra",
-      "vigencia": "novembro/2026",
-      "inicio": "",
-      "fim": "09/11",
-      "duracao": 6,
+      "id": "cont_60177802569",
+      "dealId": "60177802569",
+      "cliente": "Global",
+      "vigencia": "agosto/2026",
+      "inicio": "12/05",
+      "fim": "12/08",
+      "duracao": 3,
       "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 96000,
+      "valorRPO": 15500,
+      "valorTotal": 46500,
       "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
+      "linkContrato": "https://drive.google.com/file/d/1rW-8fOWD-m6nUTndpvXQtcU2d6_7uCCm/view?usp=sharing",
+      "source": "hs"
     },
     {
       "id": "cont_cad_1778536769511_16",
@@ -1390,6 +1421,20 @@
       "cadeiras": 1,
       "valorRPO": 15500,
       "valorTotal": 46500,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_18",
+      "cliente": "Localiza",
+      "vigencia": "agosto/2026",
+      "inicio": "",
+      "fim": "19/08",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 90000,
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "cadeiras"
@@ -1409,20 +1454,6 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_18",
-      "cliente": "Localiza",
-      "vigencia": "agosto/2026",
-      "inicio": "",
-      "fim": "19/08",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 15000,
-      "valorTotal": 90000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
       "id": "cont_cad_1778536769511_19",
       "cliente": "Renner Corp",
       "vigencia": "agosto/2026",
@@ -1437,18 +1468,77 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_20",
-      "cliente": "Riachuelo UP",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "06/07",
+      "id": "cont_60524924470",
+      "dealId": "60524924470",
+      "cliente": "Renner Corp",
+      "vigencia": "agosto/2026",
+      "inicio": "21/05",
+      "fim": "21/08",
       "duracao": 3,
       "cadeiras": 1,
       "valorRPO": 16000,
       "valorTotal": 48000,
-      "tipoContrato": "Sem Contrato",
+      "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
-      "source": "cadeiras"
+      "source": "hs"
+    },
+    {
+      "id": "cont_1779479964462",
+      "cliente": "Renner Corp UP",
+      "vigencia": "agosto/2026",
+      "inicio": "21/05",
+      "fim": "21/08",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 48000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "manual"
+    },
+    {
+      "id": "cont_60177578299",
+      "dealId": "60177578299",
+      "cliente": "Renner Varejo",
+      "vigencia": "novembro/2026",
+      "inicio": "25/05",
+      "fim": "25/11",
+      "duracao": 6,
+      "cadeiras": 2,
+      "valorRPO": 16000,
+      "valorTotal": 192000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_60486922796",
+      "dealId": "60486922796",
+      "cliente": "Renner Varejo",
+      "vigencia": "setembro/2026",
+      "inicio": "22/05",
+      "fim": "22/09",
+      "duracao": 4,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 64000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_1779479924180",
+      "cliente": "Renner Varejo Up",
+      "vigencia": "setembro/2026",
+      "inicio": "25/05",
+      "fim": "25/09",
+      "duracao": 4,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 64000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "manual"
     },
     {
       "id": "cont_cad_1778536769511_21",
@@ -1460,6 +1550,20 @@
       "cadeiras": 3,
       "valorRPO": 16000,
       "valorTotal": 240000,
+      "tipoContrato": "Sem Contrato",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_20",
+      "cliente": "Riachuelo UP",
+      "vigencia": "julho/2026",
+      "inicio": "",
+      "fim": "06/07",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 48000,
       "tipoContrato": "Sem Contrato",
       "linkContrato": "",
       "source": "cadeiras"
@@ -1519,124 +1623,6 @@
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "cadeiras"
-    },
-    {
-      "id": "cont_59186379620",
-      "dealId": "59186379620",
-      "cliente": "Doctoralia BR",
-      "vigencia": "novembro/2026",
-      "inicio": "11/05",
-      "fim": "11/11",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 96000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
-      "source": "hs"
-    },
-    {
-      "id": "cont_60177802569",
-      "dealId": "60177802569",
-      "cliente": "Global",
-      "vigencia": "agosto/2026",
-      "inicio": "12/05",
-      "fim": "12/08",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 15500,
-      "valorTotal": 46500,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "https://drive.google.com/file/d/1rW-8fOWD-m6nUTndpvXQtcU2d6_7uCCm/view?usp=sharing",
-      "source": "hs"
-    },
-    {
-      "id": "cont_60234055077",
-      "dealId": "60234055077",
-      "cliente": "Cielo SP",
-      "vigencia": "novembro/2026",
-      "inicio": "13/05",
-      "fim": "13/11",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 102000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "hs"
-    },
-    {
-      "id": "cont_60177578299",
-      "dealId": "60177578299",
-      "cliente": "Renner Varejo",
-      "vigencia": "novembro/2026",
-      "inicio": "25/05",
-      "fim": "25/11",
-      "duracao": 6,
-      "cadeiras": 2,
-      "valorRPO": 16000,
-      "valorTotal": 192000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "hs"
-    },
-    {
-      "id": "cont_1779479924180",
-      "cliente": "Renner Varejo Up",
-      "vigencia": "setembro/2026",
-      "inicio": "25/05",
-      "fim": "25/09",
-      "duracao": 4,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 64000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
-      "id": "cont_1779479964462",
-      "cliente": "Renner Corp UP",
-      "vigencia": "agosto/2026",
-      "inicio": "21/05",
-      "fim": "21/08",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 48000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
-      "id": "cont_60524924470",
-      "dealId": "60524924470",
-      "cliente": "Renner Corp",
-      "vigencia": "",
-      "inicio": "21/05",
-      "fim": "",
-      "duracao": null,
-      "cadeiras": null,
-      "valorRPO": 16000,
-      "valorTotal": 48000,
-      "tipoContrato": "",
-      "linkContrato": "",
-      "source": "hs"
-    },
-    {
-      "id": "cont_60486922796",
-      "dealId": "60486922796",
-      "cliente": "Renner Varejo",
-      "vigencia": "",
-      "inicio": "22/05",
-      "fim": "",
-      "duracao": null,
-      "cadeiras": null,
-      "valorRPO": 16000,
-      "valorTotal": 64000,
-      "tipoContrato": "",
-      "linkContrato": "",
-      "source": "hs"
     }
   ],
   "churn_rows": [
@@ -1837,6 +1823,17 @@
       "mrrPerdido": 16000,
       "contratoTotal": 48000,
       "motivo": "Performance ruim"
+    },
+    {
+      "id": "churn_1779731471467",
+      "cliente": "Ilegra",
+      "tipo": "logo",
+      "mes": "Mai",
+      "dataChurn": "25/04",
+      "cadeiras": 1,
+      "mrrPerdido": 16000,
+      "contratoTotal": 48000,
+      "motivo": "Sem volume"
     }
   ],
   "q1_deals": [
@@ -1850,7 +1847,8 @@
       "mes": "Jan",
       "alocacoes": "4",
       "tipo": "Enterprise",
-      "semana": "Sem 2"
+      "semana": "Sem 2",
+      "ciclo": 0
     },
     {
       "cliente": "Ebanx",
@@ -1862,19 +1860,21 @@
       "mes": "Jan",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": "Sem 4"
+      "semana": "Sem 4",
+      "ciclo": 0
     },
     {
       "cliente": "Flowa",
       "servico": "RPO",
-      "canal": "MKT",
+      "canal": "INB",
       "valor": 48000,
       "mensalidade": 16000,
       "data": "02/02",
       "mes": "Fev",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": "Sem 4"
+      "semana": "Sem 4",
+      "ciclo": 0
     },
     {
       "cliente": "Cielo",
@@ -1886,7 +1886,8 @@
       "mes": "Fev",
       "alocacoes": "1",
       "tipo": "Enterprise",
-      "semana": "Sem 4"
+      "semana": "Sem 4",
+      "ciclo": 0
     },
     {
       "cliente": "Ilegra",
@@ -1898,7 +1899,8 @@
       "mes": "Fev",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": "Sem 5"
+      "semana": "Sem 5",
+      "ciclo": 0
     },
     {
       "cliente": "Grupo Boticário",
@@ -1910,7 +1912,8 @@
       "mes": "Fev",
       "alocacoes": "3",
       "tipo": "Enterprise",
-      "semana": "Sem 5"
+      "semana": "Sem 5",
+      "ciclo": 0
     },
     {
       "cliente": "Localiza",
@@ -1922,7 +1925,8 @@
       "mes": "Fev",
       "alocacoes": "1",
       "tipo": "Enterprise",
-      "semana": "Sem 5"
+      "semana": "Sem 5",
+      "ciclo": 0
     },
     {
       "cliente": "Facta Tech",
@@ -1934,7 +1938,8 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": "Sem 6"
+      "semana": "Sem 6",
+      "ciclo": 0
     },
     {
       "cliente": "Ebanx Internacional*",
@@ -1946,19 +1951,21 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": "Sem 6"
+      "semana": "Sem 6",
+      "ciclo": 0
     },
     {
       "cliente": "Caffeine Army",
       "servico": "RPO",
-      "canal": "MKT",
+      "canal": "INB",
       "valor": 51000,
       "mensalidade": 17000,
       "data": "12/03",
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "SMB",
-      "semana": "Sem 8"
+      "semana": "Sem 8",
+      "ciclo": 0
     },
     {
       "cliente": "Jeitto",
@@ -1970,7 +1977,8 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "SMB",
-      "semana": "Sem 9"
+      "semana": "Sem 9",
+      "ciclo": 0
     },
     {
       "cliente": "Sanar",
@@ -1982,7 +1990,8 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "SMB",
-      "semana": "Sem 9"
+      "semana": "Sem 9",
+      "ciclo": 0
     },
     {
       "cliente": "Stellantis*",
@@ -1994,7 +2003,8 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "Enterprise",
-      "semana": "Sem 11"
+      "semana": "Sem 11",
+      "ciclo": 0
     },
     {
       "cliente": "dLocal",
@@ -2006,7 +2016,8 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "Enterprise",
-      "semana": "Sem 13"
+      "semana": "Sem 13",
+      "ciclo": 0
     },
     {
       "cliente": "Frete.com",
@@ -2018,7 +2029,8 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": "Sem 13"
+      "semana": "Sem 13",
+      "ciclo": 0
     },
     {
       "cliente": "Riachuelo",
@@ -2030,18 +2042,18 @@
       "mes": "Mar",
       "alocacoes": "1",
       "tipo": "Enterprise",
-      "semana": "Sem 13"
+      "semana": "Sem 13",
+      "ciclo": 0
     }
   ],
   "oportunidades_data": {
     "Q1": {
       "canais": {
-        "NTW": 2,
-        "MKT": 2,
+        "NTW": 3,
         "OUT": 6,
-        "INB": 9,
-        "UP": 0,
-        "REN": 2
+        "INB": 16,
+        "UP": 1,
+        "REN": 4
       },
       "tipos": {
         "Enterprise": 0,
@@ -2055,9 +2067,9 @@
         "NTW": 0,
         "MKT": 0,
         "OUT": 2,
-        "INB": 5,
+        "INB": 8,
         "UP": 0,
-        "REN": 0
+        "REN": 1
       },
       "tipos": {
         "Enterprise": 0,
@@ -2068,12 +2080,11 @@
     },
     "Mar": {
       "canais": {
-        "NTW": 2,
-        "MKT": 2,
+        "NTW": 3,
         "OUT": 4,
-        "INB": 4,
-        "UP": 0,
-        "REN": 2
+        "INB": 8,
+        "UP": 1,
+        "REN": 3
       },
       "tipos": {
         "Enterprise": 0,
@@ -2088,15 +2099,18 @@
         "MKT": 0,
         "OUT": 6,
         "INB": 2,
-        "UP": 4,
-        "REN": 4
+        "UP": 7,
+        "REN": 5
       },
       "tipos": {
         "Enterprise": 0,
         "GG": 0,
         "SMB": 0
       },
-      "manual": []
+      "manual": [
+        "canais:NTW",
+        "canais:OUT"
+      ]
     },
     "Abr": {
       "canais": {
@@ -2104,8 +2118,8 @@
         "MKT": 0,
         "OUT": 3,
         "INB": 1,
-        "UP": 0,
-        "REN": 2
+        "UP": 1,
+        "REN": 3
       },
       "tipos": {
         "Enterprise": 0,
@@ -2120,8 +2134,38 @@
         "MKT": 0,
         "OUT": 3,
         "INB": 1,
-        "UP": 4,
+        "UP": 6,
         "REN": 2
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Q4": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 1,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
+      },
+      "tipos": {
+        "Enterprise": 0,
+        "GG": 0,
+        "SMB": 0
+      },
+      "manual": []
+    },
+    "Out": {
+      "canais": {
+        "NTW": 0,
+        "OUT": 1,
+        "INB": 0,
+        "UP": 0,
+        "REN": 0
       },
       "tipos": {
         "Enterprise": 0,
@@ -2168,22 +2212,11 @@
       "ciclo": 2
     }
   },
-  "hs_deleted": [
-    "56709218725",
-    "56709733784",
-    "57447167917",
-    "57506905995",
-    "58025288319",
-    "59502615984",
-    "60076958763",
-    "56706852109",
-    "59419154613",
-    "60234055077"
-  ],
+  "hs_deleted": [],
   "okr_state": {
     "input-realizado": "1160500",
     "input-clientes": "0",
-    "input-duracao": "62",
+    "input-duracao": "60",
     "cac-gastos": "0",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
@@ -2191,5 +2224,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-25T13:31:25.749Z"
+  "snapshot_at": "2026-05-25T19:05:16.034Z"
 }
