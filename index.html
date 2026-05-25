@@ -1422,10 +1422,11 @@
           <select id="audit-status" onchange="renderAuditoria()" class="border rounded-md px-2 py-1.5 text-sm">
             <option value="">Todos os status</option>
             <option value="contou">✓ Contou</option>
+            <option value="manual_deletado">✗ Deletado manualmente</option>
             <option value="ignorado_ano_diferente">✗ Ano diferente</option>
             <option value="ignorado_sem_canal">✗ Sem canal</option>
             <option value="ignorado_sem_createdate">✗ Sem createdate</option>
-            <option value="ignorado_deletado">✗ Deletado</option>
+            <option value="ignorado_deletado">✗ Deletado (na lista hs_deleted)</option>
             <option value="ignorado_manual">✗ Célula manual</option>
           </select>
           <span id="audit-count" class="text-xs ml-auto" style="color:var(--muted);"></span>
@@ -5365,6 +5366,12 @@ try {
   if (saved && typeof saved === 'object') oportunidadesData = saved;
 } catch(e) { log.error('localstorage.read.failed', { key:'oportunidades_data' }, e); }
 
+// Restaura trilha de auditoria do último sync (sobrevive reload)
+try {
+  const rawTrilha = localStorage.getItem('last_conv_trilha');
+  if (rawTrilha) window.__lastConvImport = JSON.parse(rawTrilha);
+} catch(e) { log.warn('trilha.load.failed', {}, e); }
+
 let _conversaoMode = 'tri'; // 'tri' ou 'mes'
 let _conversaoReady = false;
 
@@ -5570,19 +5577,19 @@ async function importarOportunidadesHS() {
     deals.forEach(d => {
       const props = d.properties || {};
       const nome  = props.dealname || '(sem nome)';
-      const hint  = _hintCanal(nome); // último segmento do nome (debug)
+      const hint  = _hintCanal(nome);
+      const id    = String(d.id);
 
-      if (hsDeleted.has(String(d.id))) {
+      if (hsDeleted.has(id)) {
         ignoradosDeletados++;
-        trilha.push({ nome, hint, status:'ignorado_deletado', id:String(d.id) });
+        trilha.push({ id, nome, hint, status:'ignorado_deletado' });
         return;
       }
       const created = props.createdate;
-      if (!created) { ignoradosSemData++; trilha.push({ nome, hint, status:'ignorado_sem_createdate' }); return; }
+      if (!created) { ignoradosSemData++; trilha.push({ id, nome, hint, status:'ignorado_sem_createdate' }); return; }
       const date = new Date(created);
-      if (isNaN(date)) { ignoradosSemData++; trilha.push({ nome, hint, status:'ignorado_createdate_invalido', raw:created }); return; }
+      if (isNaN(date)) { ignoradosSemData++; trilha.push({ id, nome, hint, status:'ignorado_createdate_invalido', raw:created }); return; }
 
-      // Computa mes/quarter SEMPRE (mesmo se ano diferente ou sem canal — pra debug ficar útil)
       const mesIdx = date.getMonth();
       const qNum   = Math.floor(mesIdx / 3) + 1;
       const qKey   = 'Q' + qNum;
@@ -5591,7 +5598,7 @@ async function importarOportunidadesHS() {
 
       if (ano !== CONV_ANO) {
         ignoradosAnoErrado++;
-        trilha.push({ nome, hint, status:'ignorado_ano_diferente', createdate: created, ano, mes: mKey, quarter: qKey });
+        trilha.push({ id, nome, hint, status:'ignorado_ano_diferente', createdate: created, ano, mes: mKey, quarter: qKey });
         return;
       }
 
@@ -5599,7 +5606,7 @@ async function importarOportunidadesHS() {
       if (!canal) {
         ignoradosSemCanal++;
         if (exemplosSemCanal.length < 5) exemplosSemCanal.push(nome);
-        trilha.push({ nome, hint, status:'ignorado_sem_canal', createdate: created, ano, mes: mKey, quarter: qKey });
+        trilha.push({ id, nome, hint, status:'ignorado_sem_canal', createdate: created, ano, mes: mKey, quarter: qKey });
         return;
       }
 
@@ -5616,11 +5623,15 @@ async function importarOportunidadesHS() {
       else ignoradosManual++;
 
       trilha.push({
-        nome, hint, canal, createdate: created,
+        id, nome, hint, canal, createdate: created,
         ano, mes: mKey, quarter: qKey,
         status: contou ? 'contou' : 'ignorado_manual'
       });
     });
+
+    // Persiste trilha pra sobreviver a reloads (e permitir edição posterior)
+    try { localStorage.setItem('last_conv_trilha', JSON.stringify({ ts: new Date().toISOString(), totalDeals: deals.length, trilha })); }
+    catch(e) { log.warn('trilha.save.failed', {}, e); }
 
     // Exposto globalmente pra debug
     window.__lastConvImport = { ts: new Date().toISOString(), totalDeals: deals.length, trilha };
@@ -5674,6 +5685,91 @@ function abrirAuditoriaSync() {
   renderAuditoria();
 }
 
+// ── Helpers para mexer nos buckets de conversão a partir da trilha ──
+function _adjustConvBucket(periodKey, canal, delta) {
+  if (!periodKey || !canal) return;
+  const b = _ensureConvBucket(periodKey);
+  b.canais[canal] = Math.max(0, (b.canais[canal] || 0) + delta);
+}
+function _saveTrilha() {
+  try { localStorage.setItem('last_conv_trilha', JSON.stringify(window.__lastConvImport || {})); }
+  catch(e) { log.warn('trilha.save.failed', {}, e); }
+}
+function _quarterFromMes(mes) {
+  const idx = MESES.indexOf(mes);
+  if (idx < 0) return null;
+  return 'Q' + (Math.floor(idx / 3) + 1);
+}
+
+// Muda o mês de um deal da trilha (e o quarter recalcula sozinho).
+// Decrementa do bucket antigo e incrementa no novo.
+function updateTrilhaMes(idx, newMes) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+  const newQ = _quarterFromMes(newMes);
+  if (!newQ) return;
+
+  // Se está contando atualmente: move o bucket
+  if (t.status === 'contou' && t.canal) {
+    _adjustConvBucket(t.quarter, t.canal, -1);
+    _adjustConvBucket(t.mes,     t.canal, -1);
+    _adjustConvBucket(newQ,      t.canal, +1);
+    _adjustConvBucket(newMes,    t.canal, +1);
+  }
+  t.mes = newMes;
+  t.quarter = newQ;
+  saveOportunidadesData();
+  _saveTrilha();
+  renderAuditoria();
+  if (typeof renderConversao === 'function') renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+}
+
+// Alterna entre 'contou' ↔ 'manual_deletado'
+function toggleTrilhaDeleted(idx) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+
+  if (t.status === 'contou') {
+    // Marca como deletado: decrementa buckets, adiciona ao hsDeleted (futuros syncs ignoram)
+    if (t.canal) {
+      _adjustConvBucket(t.quarter, t.canal, -1);
+      _adjustConvBucket(t.mes,     t.canal, -1);
+    }
+    t.status = 'manual_deletado';
+    if (t.id) {
+      hsDeleted.add(String(t.id));
+      try { localStorage.setItem('hs_deleted', JSON.stringify([...hsDeleted])); } catch(_) {}
+    }
+  } else if (t.status === 'manual_deletado' || t.status === 'ignorado_deletado' || t.status === 'ignorado_manual') {
+    // Restaura: precisa de canal + mes + quarter pra incrementar
+    if (!t.canal || !t.mes || !t.quarter) {
+      alert('Não dá pra contar este deal porque falta canal, mês ou quarter. Edite o mês antes de marcar como Contou.');
+      return;
+    }
+    _adjustConvBucket(t.quarter, t.canal, +1);
+    _adjustConvBucket(t.mes,     t.canal, +1);
+    t.status = 'contou';
+    if (t.id) {
+      hsDeleted.delete(String(t.id));
+      try { localStorage.setItem('hs_deleted', JSON.stringify([...hsDeleted])); } catch(_) {}
+    }
+  } else {
+    // ano errado / sem canal / sem createdate — não dá pra simplesmente marcar como contou
+    alert('Este deal não foi importado por: ' + t.status + '. Resolva a causa primeiro (ex: ajustar canal/data no HubSpot e re-sincronizar).');
+    return;
+  }
+  saveOportunidadesData();
+  _saveTrilha();
+  renderAuditoria();
+  if (typeof renderConversao === 'function') renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+}
+
 function renderAuditoria() {
   const tbody = document.getElementById('audit-tbody');
   const countEl = document.getElementById('audit-count');
@@ -5702,6 +5798,7 @@ function renderAuditoria() {
 
   const statusLabel = {
     'contou':                   '<span class="q-badge qb-green">✓ Contou</span>',
+    'manual_deletado':          '<span class="q-badge qb-red">✗ Deletado</span>',
     'ignorado_manual':          '<span class="q-badge qb-yellow">Célula manual</span>',
     'ignorado_sem_canal':       '<span class="q-badge qb-red">Sem canal</span>',
     'ignorado_sem_createdate':  '<span class="q-badge qb-red">Sem createdate</span>',
@@ -5716,17 +5813,41 @@ function renderAuditoria() {
     catch(_) { return s; }
   };
 
+  // Localiza o índice ORIGINAL na trilha (já que filtered pode estar embaralhado)
   tbody.innerHTML = filtered.length
-    ? filtered.map(d => `
-      <tr>
-        <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}</td>
-        <td style="text-align:left;font-family:monospace;font-size:11px;color:var(--text2);">${esc(d.hint || '—')}</td>
-        <td>${d.canal || '<span style="color:#dc2626;">—</span>'}</td>
-        <td>${fmtDate(d.createdate)}</td>
-        <td>${d.mes || '—'}</td>
-        <td>${d.quarter || '—'}${d.ano && d.ano !== 2026 ? ' <span style="font-size:9px;color:#dc2626;">/'+d.ano+'</span>' : ''}</td>
-        <td>${statusLabel[d.status] || d.status}</td>
-      </tr>`).join('')
+    ? filtered.map(d => {
+        const origIdx = trilha.indexOf(d);
+        const editable = !!d.canal;
+        const isContou = d.status === 'contou';
+        const isDeleted = d.status === 'manual_deletado' || d.status === 'ignorado_deletado';
+
+        // Select de mês — editável se houver canal
+        const mesSelect = editable
+          ? `<select onchange="updateTrilhaMes(${origIdx}, this.value)"
+               class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;">
+               ${MESES.map(m => `<option ${d.mes===m?'selected':''}>${m}</option>`).join('')}
+             </select>
+             <span class="admin-only no-print" style="display:none;"></span>` // placeholder
+          : (d.mes || '—');
+
+        // Botão de toggle status — admin only
+        const toggleBtn = (isContou || isDeleted)
+          ? `<button onclick="toggleTrilhaDeleted(${origIdx})" class="admin-only no-print"
+              style="font-size:10px;padding:2px 6px;border-radius:4px;cursor:pointer;background:${isContou?'#fee2e2':'#dcfce7'};color:${isContou?'#991b1b':'#166534'};border:1px solid ${isContou?'#fecaca':'#bbf7d0'};margin-left:6px;">
+              ${isContou ? '→ Deletar' : '→ Contar'}
+            </button>`
+          : '';
+
+        return `<tr>
+          <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}</td>
+          <td style="text-align:left;font-family:monospace;font-size:11px;color:var(--text2);">${esc(d.hint || '—')}</td>
+          <td>${d.canal || '<span style="color:#dc2626;">—</span>'}</td>
+          <td>${fmtDate(d.createdate)}</td>
+          <td>${mesSelect}</td>
+          <td>${d.quarter || '—'}${d.ano && d.ano !== 2026 ? ' <span style="font-size:9px;color:#dc2626;">/'+d.ano+'</span>' : ''}</td>
+          <td>${statusLabel[d.status] || d.status}${toggleBtn}</td>
+        </tr>`;
+      }).join('')
     : '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
 }
 
