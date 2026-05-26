@@ -6,6 +6,34 @@
 <title>Dashboard de Vendas B2B — INTERA</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script>
+  // Registra o datalabels globalmente — mostra valor em todos os gráficos sem precisar passar o mouse
+  if (window.Chart && window.ChartDataLabels) {
+    Chart.register(ChartDataLabels);
+    // Defaults sensatos: cor branca, bold, esconde quando valor é 0/null/undefined
+    Chart.defaults.set('plugins.datalabels', {
+      color: '#fff',
+      font: { weight: 'bold', size: 11 },
+      anchor: 'center',
+      align: 'center',
+      formatter: (value) => {
+        if (value == null || value === '' || (typeof value === 'number' && value === 0)) return '';
+        if (typeof value === 'number') {
+          // Valor exato — sem arredondar nem cortar.
+          // Se for >= 1000 assume que é monetário e prefixa R$.
+          if (value >= 1000 || value <= -1000) {
+            return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+          }
+          // Inteiro fica inteiro; decimal mantém todas as casas significativas
+          if (Number.isInteger(value)) return value.toString();
+          return value.toLocaleString('pt-BR', { maximumFractionDigits: 4 });
+        }
+        return value;
+      }
+    });
+  }
+</script>
 <style>
   /* ── INTERA Light Theme — Roxo + Preto ─────────── */
   :root {
@@ -122,12 +150,21 @@
     cursor: default !important;
   }
 
-  /* Liberar filtros, ordenação e navegação (não editam dados) */
+  /* Liberar filtros, ordenação e navegação (não editam dados).
+     Especificidade reforçada (button.foo > button[onclick]) pra superar o bloqueio
+     genérico de button[onclick] nos botões inline de filtro. */
   body.viewer-mode .filt-dur-btn,
+  body.viewer-mode button.filt-dur-btn,
   body.viewer-mode .rfilt,
+  body.viewer-mode button.rfilt,
   body.viewer-mode .tab-btn,
+  body.viewer-mode button.tab-btn,
   body.viewer-mode .dash-sub,
+  body.viewer-mode button.dash-sub,
   body.viewer-mode .viewer-ok,
+  body.viewer-mode button.viewer-ok,
+  body.viewer-mode span.viewer-ok,
+  body.viewer-mode div.viewer-ok,
   body.viewer-mode a {
     pointer-events: auto !important;
     cursor: pointer !important;
@@ -905,6 +942,68 @@
       </div>
     </div>
 
+    <!-- Receita por Canal 2025 YTD (todos os canais, incluindo renovação) -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Canal — 2025 YTD</h3>
+      <p class="text-xs mb-4" style="color:var(--muted);">Receita total fechada em 2025 distribuída por canal. <strong>REN</strong> = renovações (receita de carteira). <strong>NTW · OUT · INB · UP</strong> = novas vendas.</p>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+        <div class="rounded-xl p-3 border text-center" style="background:#f0fdf4;border-color:#86efac;">
+          <p class="text-xs font-bold mb-1" style="color:#166534;">NTW</p>
+          <p class="text-base font-bold" style="color:#16a34a;">R$ 681.000</p>
+          <p class="text-[10px] mt-1" style="color:#94a3b8;">9,6% · 7 vendas</p>
+        </div>
+        <div class="rounded-xl p-3 border text-center" style="background:#fce7f3;border-color:#f9a8d4;">
+          <p class="text-xs font-bold mb-1" style="color:#9d174d;">OUT</p>
+          <p class="text-base font-bold" style="color:#db2777;">R$ 406.000</p>
+          <p class="text-[10px] mt-1" style="color:#94a3b8;">5,7% · 4 vendas</p>
+        </div>
+        <div class="rounded-xl p-3 border text-center" style="background:#ede9fe;border-color:#c4b5fd;">
+          <p class="text-xs font-bold mb-1" style="color:#5b21b6;">INB</p>
+          <p class="text-base font-bold" style="color:#7c3aed;">R$ 458.500</p>
+          <p class="text-[10px] mt-1" style="color:#94a3b8;">6,5% · 3 vendas</p>
+        </div>
+        <div class="rounded-xl p-3 border text-center" style="background:#fef3c7;border-color:#fbbf24;">
+          <p class="text-xs font-bold mb-1" style="color:#92400e;">UP</p>
+          <p class="text-base font-bold" style="color:#d97706;">R$ 2.504.520</p>
+          <p class="text-[10px] mt-1" style="color:#94a3b8;">35,3%</p>
+        </div>
+        <div class="rounded-xl p-3 border text-center" style="background:#dbeafe;border-color:#93c5fd;">
+          <p class="text-xs font-bold mb-1" style="color:#1e40af;">REN</p>
+          <p class="text-base font-bold" style="color:#2563eb;">R$ 3.052.500</p>
+          <p class="text-[10px] mt-1" style="color:#94a3b8;">43,0%</p>
+        </div>
+      </div>
+      <div class="relative h-64 mb-3">
+        <canvas id="chart2025canalYTD"></canvas>
+      </div>
+      <div class="rounded-lg p-3 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-bold mb-1" style="color:var(--text2);">TOTAL 2025 YTD</p>
+        <p class="text-2xl font-bold" style="color:var(--accent);">R$ 7.102.520</p>
+        <p class="text-xs mt-1" style="color:var(--muted);">14 novas vendas + R$ 2.504.520 em upsell + R$ 3.052.500 em renovação</p>
+      </div>
+
+      <!-- Detalhe trimestral REN vs UP -->
+      <div class="mt-4">
+        <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--text2);">Detalhe trimestral — Renovação vs Upsell</p>
+        <div class="overflow-x-auto">
+          <table class="hist-table">
+            <thead>
+              <tr><th></th><th>Renovação</th><th>Upsell</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="text-align:left;font-weight:600;">Q1</td><td>R$ 788.500</td><td>R$ 141.000</td><td style="font-weight:600;">R$ 929.500</td></tr>
+              <tr><td style="text-align:left;font-weight:600;">Q2</td><td>R$ 358.000</td><td>R$ 505.000</td><td style="font-weight:600;">R$ 863.000</td></tr>
+              <tr><td style="text-align:left;font-weight:600;">Q3</td><td>R$ 639.000</td><td>R$ 1.538.520</td><td style="font-weight:600;">R$ 2.177.520</td></tr>
+              <tr><td style="text-align:left;font-weight:600;">Q4</td><td>R$ 1.267.000</td><td>R$ 320.000</td><td style="font-weight:600;">R$ 1.587.000</td></tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row"><td style="text-align:left;">TOTAL</td><td>R$ 3.052.500</td><td>R$ 2.504.520</td><td style="font-weight:700;color:var(--accent);">R$ 5.557.020</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Vendas por Canal 2025 -->
     <div>
       <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Novos Clientes 2025</h3>
@@ -1395,10 +1494,16 @@
   <!-- Auditoria do último sync (admin-only) -->
   <section class="admin-only">
     <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
-      <span class="text-lg font-bold">🔍 Auditoria do último sync</span>
+      <span class="text-lg font-bold">📊 Oportunidades criadas</span>
       <div class="flex gap-2 flex-wrap">
-        <button onclick="abrirAuditoriaSync()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
+        <button id="btn-audit-toggle" onclick="toggleAuditoriaSync()" class="bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition">
           Ver deals importados
+        </button>
+        <button onclick="adicionarOportunidadeManual()" class="bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-lg hover:bg-green-600 transition" title="Criar uma oportunidade manualmente (sem vir do HubSpot). Útil para deals que não estão no CRM.">
+          ➕ Nova oportunidade
+        </button>
+        <button onclick="recalcularBucketsDaTrilha()" class="bg-yellow-400 text-blue-900 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-yellow-300 transition" title="Reconstrói os buckets de oportunidades usando a auditoria como fonte da verdade. Use se houver divergência entre auditoria e contagem por canal.">
+          🔄 Recalcular do zero
         </button>
         <button onclick="resetarDealOverrides()" class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Apaga todos os overrides manuais de mês/quarter (próximo sync usa só createdate do HubSpot)">
           🗑 Resetar overrides
@@ -1447,6 +1552,7 @@
                 <th>Createdate</th>
                 <th>Mês</th>
                 <th>Quarter</th>
+                <th>Tipo empresa</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -1783,7 +1889,11 @@ function renderQ1Deals() {
   const TIPO_OPTS = ['Enterprise','GG','SMB'];
   const MESES_OPTS = ['Jan','Fev','Mar'];
 
-  Q1_DEALS.forEach((d, i) => {
+  // Ordena por data (mais antiga em cima, mais recente embaixo) preservando o índice
+  // original para que os handlers updateQ1Field(i, ...) continuem funcionando.
+  const indexed = Q1_DEALS.map((d, i) => ({ d, i }));
+  indexed.sort((a, b) => _parseDataDDMM(a.d.data) - _parseDataDDMM(b.d.data));
+  indexed.forEach(({ d, i }) => {
     const canalCls = CANAIS_CORES[d.canal?.toUpperCase()] || '';
     const tipoCls  = { 'Enterprise':'tag-enterprise', 'GG':'tag-gg', 'SMB':'tag-smb' }[d.tipo] || '';
     const mens     = parseFloat(d.mensalidade)||0;
@@ -2463,7 +2573,8 @@ function initHistoricalCharts() {
       ]
     },
     options: { responsive:true, maintainAspectRatio:false, plugins:{
-      tooltip:{ callbacks:{ label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
+      tooltip:{ callbacks:{ label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }},
+      datalabels:{ display:false }},
       scales: darkScales() }
   });
 
@@ -2569,6 +2680,41 @@ function initHistoricalCharts() {
       plugins:{ tooltip:{ callbacks:{ label: c => c.dataset.label+': R$ '+(c.raw||0).toLocaleString('pt-BR') }},
         legend:{ position:'top', labels:{ usePointStyle:true, pointStyle:'circle', padding:16 }}},
       scales: darkScales() }
+  });
+
+  // ── 2025 YTD: Receita por Canal (todos os canais, incluindo REN) ──
+  const ctxCanalYTD = document.getElementById('chart2025canalYTD');
+  if (ctxCanalYTD) new Chart(ctxCanalYTD, {
+    type: 'bar',
+    data: {
+      labels: ['NTW','OUT','INB','UP','REN'],
+      datasets: [{
+        label: 'Receita 2025 YTD',
+        data: [681000, 406000, 458500, 2504520, 3052500],
+        backgroundColor: ['#16a34a','#db2777','#7c3aed','#d97706','#2563eb'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: c => 'R$ ' + (c.raw||0).toLocaleString('pt-BR') +
+                     ' (' + ((c.raw / 7102520) * 100).toFixed(1).replace('.', ',') + '% do total)'
+        }},
+        datalabels: {
+          color: '#fff',
+          anchor: 'center', align: 'center',
+          font: { weight: 'bold', size: 12 },
+          formatter: (v) => 'R$ ' + v.toLocaleString('pt-BR') + ' (' + ((v/7102520)*100).toFixed(1).replace('.', ',') + '%)'
+        }
+      },
+      scales: darkScales({
+        x: { ticks: { callback: v => 'R$ ' + (v/1000).toLocaleString('pt-BR') + 'k' } },
+        y: { grid: { display: false } }
+      })
+    }
   });
 
   // Render tables + canal breakdowns
@@ -2803,18 +2949,29 @@ async function publicarSnapshot() {
   btn.innerHTML = '⏳ Publicando…';
   btn.disabled = true;
 
-  const REPO  = 'antoniootcm-intera/dash-kpis-revenue';
-  const FILE  = 'data.json';
-  const API   = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
-  const AUTH  = { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' };
+  const REPO   = 'antoniootcm-intera/dash-kpis-revenue';
+  const API    = (file) => `https://api.github.com/repos/${REPO}/contents/${file}`;
+  const AUTH   = { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' };
+  const tsLabel = new Date().toLocaleString('pt-BR');
+
+  // Helper que faz GET (pra pegar SHA atual) + PUT no GitHub Contents API
+  async function pushFile(filename, contentBase64, message) {
+    const getRes  = await fetch(API(filename), { headers: AUTH });
+    const sha     = getRes.ok ? (await getRes.json()).sha : undefined;
+    const body    = { message, content: contentBase64 };
+    if (sha) body.sha = sha;
+    const putRes = await fetch(API(filename), { method: 'PUT', headers: AUTH, body: JSON.stringify(body) });
+    if (!putRes.ok) {
+      const err = await putRes.json().catch(() => ({}));
+      throw new Error(`${filename}: ${err.message || putRes.status}`);
+    }
+  }
+
+  // Encode helper (UTF-8 safe)
+  const toB64 = (str) => btoa(unescape(encodeURIComponent(str)));
 
   try {
-    // 1. Busca SHA atual do arquivo (necessário para update)
-    const getRes  = await fetch(API, { headers: AUTH });
-    const getJson = await getRes.json();
-    const sha     = getJson.sha; // undefined se arquivo não existir ainda
-
-    // 2. Monta snapshot (sem token HubSpot/GitHub)
+    // ─── 1) Publica data.json (snapshot dos dados, sem tokens) ───────────────
     const okrIds = ['input-realizado','input-clientes','input-duracao','input-retencao',
                     'nps-meta','nps-real','enps-meta','enps-real','cac-gastos','chart-meta','chart-periodo',
                     'input-meta-novos-clientes'];
@@ -2836,24 +2993,32 @@ async function publicarSnapshot() {
       snapshot_at:      new Date().toISOString()
     };
 
-    // 3. Encode para base64 (suporta UTF-8)
-    const json    = JSON.stringify(snapshot, null, 2);
-    const content = btoa(unescape(encodeURIComponent(json)));
+    btn.innerHTML = '⏳ data.json…';
+    await pushFile('data.json', toB64(JSON.stringify(snapshot, null, 2)), `snapshot ${tsLabel}`);
 
-    // 4. PUT para o GitHub
-    const body = { message: `snapshot ${new Date().toLocaleString('pt-BR')}`, content };
-    if (sha) body.sha = sha; // necessário para atualizar arquivo existente
+    // ─── 2) Publica index.html (código do dashboard) ─────────────────────────
+    // Busca o HTML local pra subir EXATAMENTE o mesmo que você está usando.
+    // Funciona quando o dash é servido via HTTP local (file:// pode falhar).
+    btn.innerHTML = '⏳ index.html…';
+    let htmlSource = null;
+    try {
+      const htmlRes = await fetch('./index.html', { cache: 'no-store' });
+      if (htmlRes.ok) htmlSource = await htmlRes.text();
+    } catch(_) {}
 
-    const putRes = await fetch(API, { method: 'PUT', headers: AUTH, body: JSON.stringify(body) });
+    if (htmlSource) {
+      // Sanitiza tokens do localStorage: limpa qualquer credencial salva no HTML
+      // (só por segurança — o index.html não deveria conter tokens, mas garantimos)
+      htmlSource = htmlSource.replace(/(localStorage\.setItem\(['"](?:hs_token|gh_token|hubspot-token)['"],\s*['"])[^'"]*(['"])/g, '$1$2');
 
-    if (putRes.ok) {
-      setStatus('✓ Publicado! Link atualiza em ~30s → antoniootcm-intera.github.io/dash-kpis-revenue/', 'green');
+      await pushFile('index.html', toB64(htmlSource), `dash update ${tsLabel}`);
+      setStatus('✓ Publicado (data.json + index.html)! Link atualiza em ~30s → antoniootcm-intera.github.io/dash-kpis-revenue/', 'green');
     } else {
-      const err = await putRes.json();
-      setStatus('✗ Erro: ' + (err.message || putRes.status), 'red');
+      // Fallback: publicou só dados. Avisa o usuário pra subir HTML via git/script.
+      setStatus('⚠ data.json publicado. index.html NÃO foi atualizado (fetch local falhou). Use ./publicar.sh do terminal pra subir o HTML.', 'orange');
     }
   } catch(e) {
-    setStatus('✗ Falha na conexão: ' + e.message, 'red');
+    setStatus('✗ Falha: ' + e.message, 'red');
   } finally {
     btn.innerHTML = orig;
     btn.disabled  = false;
@@ -2920,16 +3085,43 @@ const _voceEstaAquiPlugin = {
     ctx.lineTo(xPos, yBot);
     ctx.stroke();
 
-    // Etiqueta com a label exata do eixo X
+    // Etiqueta com a label exata do eixo X + % da meta linear atingida
     ctx.setLineDash([]);
     const labels = chart.data.labels || [];
     const lblPeriodo = labels[idx] || '';
-    const label = '📍 Você está aqui' + (lblPeriodo ? ' (' + lblPeriodo + ')' : '');
+    // Calcula % real vs meta linear até o índice atual.
+    // Convenção dos datasets: [0]=Meta Linear, [1]=Resultado Real (acumulado).
+    let pctTxt = '';
+    try {
+      const dsMeta = chart.data.datasets?.[0]?.data || [];
+      const dsReal = chart.data.datasets?.[1]?.data || [];
+      const metaAtual = parseFloat(dsMeta[idx]) || 0;
+      const realAtual = parseFloat(dsReal[idx]) || 0;
+      if (metaAtual > 0) {
+        const pct = (realAtual / metaAtual) * 100;
+        pctTxt = ' · ' + pct.toFixed(0) + '% da meta';
+      }
+    } catch(_) {}
+
+    const label = '📍 Você está aqui' + (lblPeriodo ? ' (' + lblPeriodo + ')' : '') + pctTxt;
     ctx.font = 'bold 11px sans-serif';
     const tw = ctx.measureText(label).width + 12;
     const bx = Math.min(Math.max(xPos - tw/2, chart.chartArea.left), chart.chartArea.right - tw);
     const by = yTop + 4;
-    ctx.fillStyle = '#dc2626';
+    // Cor do badge: verde se ≥100%, amarelo entre 80-99%, vermelho < 80%
+    let badgeBg = '#dc2626';
+    try {
+      const dsMeta = chart.data.datasets?.[0]?.data || [];
+      const dsReal = chart.data.datasets?.[1]?.data || [];
+      const metaAtual = parseFloat(dsMeta[idx]) || 0;
+      const realAtual = parseFloat(dsReal[idx]) || 0;
+      if (metaAtual > 0) {
+        const pct = (realAtual / metaAtual) * 100;
+        if (pct >= 100) badgeBg = '#16a34a';
+        else if (pct >= 80) badgeBg = '#d97706';
+      }
+    } catch(_) {}
+    ctx.fillStyle = badgeBg;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(bx, by, tw, 18, 4);
     else ctx.rect(bx, by, tw, 18);
@@ -2986,7 +3178,8 @@ function initCharts() {
       layout: { padding: { top: 26 } }, // espaço para a etiqueta "Você está aqui"
       plugins: {
         legend: { position: 'top', labels: { color: '#a0a0b8', boxWidth: 14 } },
-        tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits:2}) } }
+        tooltip: { callbacks: { label: ctx => 'R$ ' + ctx.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits:2}) } },
+        datalabels: { display: false } // gráfico de linha — labels em cada ponto ficam poluídos
       },
       scales: darkScales({
         y: { ticks: { color: CHART_DEFAULTS.tick, callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
@@ -3351,16 +3544,70 @@ function processDeals(deals) {
     });
   });
 
-  // Reaplicar edições manuais salvas sobre as linhas recém-carregadas do HubSpot
+  // Reaplicar edições manuais salvas sobre as linhas recém-carregadas do HubSpot.
+  // REGRA 1: se a linha tem QUALQUER override manual, ela vira "trancada" —
+  // preservamos a linha exatamente como estava em tableRows, ignorando o HubSpot.
+  // REGRA 2: novas linhas (deals que ainda não estão em tableRows) só são criadas
+  // se a data de fechamento for HOJE (ou no futuro). Deals fechados em dias anteriores
+  // que não estão no sistema NÃO são adicionados (evita reintroduzir registros antigos
+  // já deletados ou ignorados intencionalmente).
+  const tableRowsById = {};
+  tableRows.forEach(r => { if (r && r.id) tableRowsById[r.id] = r; });
+
+  // Início do dia de hoje (meia-noite) — usado pra filtrar deals novos
+  const inicioHoje = new Date();
+  inicioHoje.setHours(0, 0, 0, 0);
+
+  // Helper: extrai timestamp da data de fechamento bruta (mesma lógica do build acima)
+  const getCloseTs = (d) => {
+    const props = d.properties || {};
+    const raw = props['hs_date_entered_' + STAGE_FECHADO]
+             || props['hs_date_entered_' + STAGE_RENOVADO]
+             || props.closedate || '';
+    if (!raw) return null;
+    const dt = new Date(raw);
+    return isNaN(dt) ? null : dt;
+  };
+
+  // Mapa deal-id → close date (pra checar regra de "só hoje" pra deals novos)
+  const closeTsById = {};
+  deals.forEach(d => { closeTsById[String(d.id)] = getCloseTs(d); });
+
+  let novosIgnoradosPorData = 0;
+  const wonRowsFinal = [];
   wonRows.forEach(row => {
     const overrides = hsOverrides[row.id];
-    if (overrides) Object.assign(row, overrides);
+    const prev = tableRowsById[row.id];
+
+    if (overrides && Object.keys(overrides).length > 0 && prev) {
+      // Linha já existia e foi editada: tranca tudo, mantém como estava
+      wonRowsFinal.push({ ...prev, source: 'hs', _locked: true });
+      return;
+    }
+    if (prev) {
+      // Linha já existia sem edições: atualiza com dados frescos do HS
+      if (overrides) Object.assign(row, overrides);
+      wonRowsFinal.push(row);
+      return;
+    }
+    // DEAL NOVO (não está em tableRows): só adiciona se fechou hoje (ou futuro)
+    const closeTs = closeTsById[String(row.id)];
+    if (closeTs && closeTs >= inicioHoje) {
+      if (overrides) Object.assign(row, overrides);
+      wonRowsFinal.push(row);
+    } else {
+      novosIgnoradosPorData++;
+    }
   });
+
+  if (novosIgnoradosPorData > 0) {
+    log.info('processDeals.novos_ignorados_data_antiga', { count: novosIgnoradosPorData });
+  }
 
   // Merge: manter linhas manuais, substituir linhas do HS
   tableRows = [
     ...tableRows.filter(r => r.source !== 'hs'),
-    ...wonRows
+    ...wonRowsFinal
   ];
 
   renderTable();
@@ -3368,13 +3615,15 @@ function processDeals(deals) {
   updateFunilChart();
   rebuildLineChart();
 
-  // Auto-link: cria cadeira E contrato para cada deal ganho (se ainda não existirem)
-  wonRows.forEach(row => { linkDealToCadeira(row); linkDealToContrato(row); });
+  // Auto-link: cria cadeira E contrato APENAS para deals que entraram em tableRows
+  // (ou seja, já existiam OU fecharam hoje). Deals antigos novos são ignorados.
+  wonRowsFinal.forEach(row => { linkDealToCadeira(row); linkDealToContrato(row); });
   renderCadeiras();
   renderContratos();
 
   // Atualiza realizado apenas se não estiver travado manualmente
-  const totalWon = wonRows.reduce((s, r) => s + r.valor, 0);
+  // (usa wonRowsFinal pra refletir só o que de fato está no dashboard)
+  const totalWon = wonRowsFinal.reduce((s, r) => s + (parseFloat(r.valor)||0), 0);
   if (!realizadoLocked) {
     document.getElementById('input-realizado').value = Math.round(totalWon);
     updateOKR('receita', totalWon);
@@ -3394,14 +3643,30 @@ function filtrarCanal(canal) {
 }
 
 // ─── TABLE RENDER ────────────────────────────────
+// Helper: converte "DD/MM" (string usada em row.data) em timestamp pra ordenação.
+// Usa o ano corrente como referência. Valores vazios/inválidos vão pro final.
+function _parseDataDDMM(s) {
+  if (!s) return Infinity;
+  const m = String(s).match(/^(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?$/);
+  if (!m) return Infinity;
+  const dia = parseInt(m[1], 10);
+  const mes = parseInt(m[2], 10) - 1;
+  let ano = m[3] ? parseInt(m[3], 10) : new Date().getFullYear();
+  if (ano < 100) ano += 2000;
+  const d = new Date(ano, mes, dia);
+  return isNaN(d) ? Infinity : d.getTime();
+}
+
 function renderTable() {
   const tbody = document.getElementById('revenue-tbody');
   tbody.innerHTML = '';
 
-  // aplica filtro de canal
+  // aplica filtro de canal + ORDENA POR DATA (mais antiga em cima, mais recente embaixo)
+  const indexed = tableRows.map((r,i) => ({r,i}));
+  indexed.sort((a, b) => _parseDataDDMM(a.r.data) - _parseDataDDMM(b.r.data));
   const visibleRows = _revFilter === null
-    ? tableRows.map((r,i) => ({r,i}))
-    : tableRows.map((r,i) => ({r,i})).filter(({r}) => (r.canal||'N/D').toUpperCase() === _revFilter.toUpperCase());
+    ? indexed
+    : indexed.filter(({r}) => (r.canal||'N/D').toUpperCase() === _revFilter.toUpperCase());
 
   const rcEl = document.getElementById('rfilt-count');
   if (rcEl) rcEl.textContent = _revFilter ? `${visibleRows.length} de ${tableRows.length} negócio(s)` : '';
@@ -4520,10 +4785,50 @@ function addContrato() {
 }
 
 function removeContrato(i) {
-  if (!confirm('Remover este contrato?')) return;
+  const row = contratosRows[i];
+  if (!row) return;
+  const nome = (row.cliente || '').trim() || 'este contrato';
+  if (!confirm('Remover ' + nome + ' dos contratos ativos?\n\nIsso vai registrar automaticamente um churn na data de hoje.')) return;
+
+  // Registra churn antes de remover
+  try {
+    const hoje = new Date();
+    const mesIdx = hoje.getMonth();
+    const dataChurn = String(hoje.getDate()).padStart(2,'0') + '/' + String(mesIdx+1).padStart(2,'0');
+    const cadeiras = parseInt(row.cadeiras) || 0;
+    const mrr      = parseFloat(row.valorRPO) || 0;
+    const total    = parseFloat(row.valorTotal) || 0;
+
+    // Evita duplicar se já existir um churn pro mesmo cliente nesta data
+    const jaExiste = churnRows.some(c =>
+      (c.cliente || '').trim().toLowerCase() === nome.toLowerCase() &&
+      c.dataChurn === dataChurn
+    );
+
+    if (!jaExiste) {
+      churnRows.push({
+        id:            'churn_' + Date.now(),
+        cliente:       nome,
+        tipo:          'logo',
+        mes:           MESES_CHURN[mesIdx],
+        dataChurn:     dataChurn,
+        cadeiras:      cadeiras || 1,
+        mrrPerdido:    mrr,
+        contratoTotal: total,
+        motivo:        'Removido do controle de contratos',
+      });
+      saveChurnState();
+      log.info('churn.auto_from_contrato', { cliente: nome, mes: MESES_CHURN[mesIdx], cadeiras, mrr });
+    } else {
+      log.info('churn.skip_duplicate', { cliente: nome, dataChurn });
+    }
+  } catch(e) { log.warn('churn.auto.failed', {}, e); }
+
   contratosRows.splice(i, 1);
   renderContratos();
   saveContratosState();
+  if (typeof renderChurn === 'function') renderChurn();
+  if (typeof renderChurnChart === 'function') renderChurnChart();
 }
 
 function importarContratosDeCADEIRAS() {
@@ -4706,7 +5011,7 @@ function cycleChurnTipo(i) {
 }
 
 const TIPO_CHURN_CFG = {
-  logo:      { label:'Logo Churn', bg:'#fee2e2', color:'#991b1b' },
+  logo:      { label:'Conta Churn', bg:'#fee2e2', color:'#991b1b' },
   downgrade: { label:'Downgrade',  bg:'#fef3c7', color:'#92400e' },
 };
 
@@ -4785,7 +5090,7 @@ function renderChurn() {
           <span contenteditable="true" class="churn-cell" onblur="updateChurnCell(${i},'cliente',this.textContent.trim())">${esc(row.cliente||'')}</span>
         </td>
         <td class="px-2 py-2 text-center">
-          <span onclick="cycleChurnTipo(${i})" title="Clique para alternar Logo/Downgrade"
+          <span onclick="cycleChurnTipo(${i})" title="Clique para alternar Conta/Downgrade"
             style="display:inline-block;background:${tcfg.bg};color:${tcfg.color};font-weight:700;font-size:10px;border-radius:5px;padding:3px 8px;cursor:pointer;white-space:nowrap;">
             ${tcfg.label}
           </span>
@@ -4823,7 +5128,7 @@ function renderChurn() {
       </tr>`;
     }).join('') : `
       <tr><td colspan="8" class="px-3 py-4 text-center text-xs" style="color:var(--muted);font-style:italic;">
-        ${filter==='all' ? `Nenhum churn registrado em ${q}. Use o botão abaixo para adicionar.` : `Nenhum churn ${filter==='logo'?'Logo':'Downgrade'} em ${q}.`}
+        ${filter==='all' ? `Nenhum churn registrado em ${q}. Use o botão abaixo para adicionar.` : `Nenhum churn ${filter==='logo'?'Conta':'Downgrade'} em ${q}.`}
       </td></tr>`;
 
     // Chips de filtro
@@ -4841,7 +5146,7 @@ function renderChurn() {
             <span class="text-xs">${trimMeses[q]}</span>
           </div>
           <div class="flex gap-3 text-xs">
-            <span><strong>Logo:</strong> ${logoRows.length} contratos · ${fmtBRL(sumLogo.mrr)} MRR</span>
+            <span><strong>Conta:</strong> ${logoRows.length} contratos · ${fmtBRL(sumLogo.mrr)} MRR</span>
             <span><strong>Downgrade:</strong> ${dgRows.length} contratos · ${fmtBRL(sumDg.mrr)} MRR</span>
             <span><strong>Total:</strong> ${allRowsQ.length} contratos · ${sumAll.cad} cadeiras · ${fmtBRL(sumAll.mrr)} MRR</span>
           </div>
@@ -4849,9 +5154,9 @@ function renderChurn() {
         <!-- Filtros -->
         <div class="px-4 py-2 flex gap-2 items-center no-print" style="background:#fafafa;border-bottom:1px solid #ede9fe;">
           <span class="text-xs font-semibold" style="color:var(--text2);">Filtrar:</span>
-          <button onclick="setChurnFilter('${q}','all')"       style="${chipActive(filter==='all','#6366f1','#6366f1')}">Todos (${allRowsQ.length})</button>
-          <button onclick="setChurnFilter('${q}','logo')"      style="${chipActive(filter==='logo','#991b1b','#dc2626')}">🔴 Logo (${logoRows.length})</button>
-          <button onclick="setChurnFilter('${q}','downgrade')" style="${chipActive(filter==='downgrade','#92400e','#d97706')}">🟡 Downgrade (${dgRows.length})</button>
+          <button class="viewer-ok" onclick="setChurnFilter('${q}','all')"       style="${chipActive(filter==='all','#6366f1','#6366f1')}">Todos (${allRowsQ.length})</button>
+          <button class="viewer-ok" onclick="setChurnFilter('${q}','logo')"      style="${chipActive(filter==='logo','#991b1b','#dc2626')}">🔴 Conta (${logoRows.length})</button>
+          <button class="viewer-ok" onclick="setChurnFilter('${q}','downgrade')" style="${chipActive(filter==='downgrade','#92400e','#d97706')}">🟡 Downgrade (${dgRows.length})</button>
         </div>
         <!-- Tabela -->
         <div class="overflow-x-auto">
@@ -4947,10 +5252,10 @@ function updateChurnCards() {
           <span class="text-xs" style="color:${c.muted};">${trimMeses[q]}</span>
         </div>
 
-        <!-- Logo Churn -->
+        <!-- Conta Churn -->
         <div class="rounded-lg p-2 mb-2" style="background:rgba(220,38,38,0.08);">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold" style="color:#991b1b;">🔴 Logo Churn</span>
+            <span class="text-xs font-bold" style="color:#991b1b;">🔴 Conta Churn</span>
             <span class="text-xs" style="color:var(--text2);">${d.logo.contratos} contratos · ${d.logo.clientes.size} ${d.logo.clientes.size===1?'cliente':'clientes'}</span>
           </div>
           <div class="grid grid-cols-3 gap-1 text-xs">
@@ -5151,14 +5456,14 @@ function renderChurnSaldo(byQ) {
 
       <!-- Net New Logos -->
       <div class="rounded-lg p-3 mb-3" style="background:${positivoLogos?'rgba(22,163,74,0.1)':'rgba(220,38,38,0.1)'};border:1.5px dashed ${positivoLogos?'#86efac':'#fca5a5'};">
-        <p class="text-xs font-bold mb-1" style="color:var(--text2);">📊 NET NEW LOGOS (LOGO CHURN APENAS)</p>
+        <p class="text-xs font-bold mb-1" style="color:var(--text2);">📊 NET NEW CONTAS (CONTA CHURN APENAS)</p>
         <div class="grid grid-cols-3 gap-2 text-xs">
-          <div><span style="color:#16a34a;">Novos:</span> <span class="font-bold">${novosLogos}</span></div>
-          <div><span style="color:#dc2626;">Perdidos:</span> <span class="font-bold">${logosPerdidos}</span></div>
-          <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#16a34a':'#dc2626'};">${positivoLogos?'+':''}${netNewLogos} logos</span></div>
+          <div><span style="color:#16a34a;">Novas:</span> <span class="font-bold">${novosLogos}</span></div>
+          <div><span style="color:#dc2626;">Perdidas:</span> <span class="font-bold">${logosPerdidos}</span></div>
+          <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#16a34a':'#dc2626'};">${positivoLogos?'+':''}${netNewLogos} contas</span></div>
         </div>
         <p class="text-xs italic mt-1" style="color:var(--muted);">
-          <strong>Novo logo:</strong>
+          <strong>Nova conta:</strong>
           <br>• Nova aquisição (NTW/OUT/INB/MKT)
           <br>• Upsell <strong>UP*</strong> = nova vertente (ex: "Ebanx Internacional*")
           <br>• Renovação <strong>REN*</strong> = reativação de cliente recente
@@ -5177,7 +5482,7 @@ function renderChurnSaldo(byQ) {
           </div>
         </div>
         <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
-          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL) — Logo + Downgrade</p>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL) — Conta + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recM)}</span></div>
             <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnMRR)}</span></div>
@@ -5185,7 +5490,7 @@ function renderChurnSaldo(byQ) {
           </div>
         </div>
         <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
-          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL — Logo + Downgrade</p>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL — Conta + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recT)}</span></div>
             <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnT)}</span></div>
@@ -5217,7 +5522,7 @@ function renderChurnChart() {
     data: {
       labels,
       datasets: [
-        { label:'MRR Logo',       data: labels.map(q => byQ[q].logo.mrr),       backgroundColor:'#dc2626', stack:'mrr', borderRadius:3, yAxisID:'y' },
+        { label:'MRR Conta',      data: labels.map(q => byQ[q].logo.mrr),       backgroundColor:'#dc2626', stack:'mrr', borderRadius:3, yAxisID:'y' },
         { label:'MRR Downgrade',  data: labels.map(q => byQ[q].downgrade.mrr), backgroundColor:'#fbbf24', stack:'mrr', borderRadius:3, yAxisID:'y' },
         { label:'Cadeiras (total)', data: labels.map(q => byQ[q].cadeiras),    backgroundColor:'#a78bfa', borderColor:'#7c3aed', borderWidth:3, pointRadius:5, type:'line', yAxisID:'y2' },
       ]
@@ -5573,12 +5878,16 @@ async function importarOportunidadesHS() {
   try {
     const deals = await searchDeals(token);
 
-    // Zera apenas canais NÃO marcados como manuais
-    Object.keys(oportunidadesData).forEach(k => {
-      const b = oportunidadesData[k];
-      if (!b || !b.canais) return;
+    // Zera canais NÃO marcados como manuais, INCLUINDO períodos ainda não criados
+    // (Q1-Q4 + 12 meses) — evita resíduo de runs antigos em períodos não tocados pelo sync atual
+    const TODOS_PERIODOS = ['Q1','Q2','Q3','Q4', ...MESES];
+    TODOS_PERIODOS.forEach(k => {
+      const b = _ensureConvBucket(k);
       CONV_CANAIS.forEach(c => {
         if (!_isManual(k, 'canais', c)) b.canais[c] = 0;
+      });
+      CONV_TIPOS.forEach(tp => {
+        if (!_isManual(k, 'tipos', tp)) b.tipos[tp] = 0;
       });
     });
 
@@ -5611,9 +5920,11 @@ async function importarOportunidadesHS() {
       const ano    = date.getFullYear();
       const ov     = dealOverrides[id] || null; // override persistido (mes/quarter/canal)
 
-      // Define mês/quarter: override > derivado de createdate
+      // Define mês: override > derivado de createdate
       let mKey = (ov && ov.mes) ? ov.mes : MESES[mesIdx];
-      let qKey = (ov && ov.quarter) ? ov.quarter : ('Q' + (Math.floor(mesIdx / 3) + 1));
+      // Quarter SEMPRE derivado do mês — garante consistência (Q1+...+Q4 == Jan+...+Dez).
+      // Ignora qualquer override.quarter antigo que possa estar inconsistente.
+      let qKey = _quarterFromMes(mKey) || ('Q' + (Math.floor(mesIdx / 3) + 1));
 
       // Filtro de ano só rejeita quando NÃO houver override (override força o deal a ficar no ano corrente)
       if (ano !== CONV_ANO && !ov) {
@@ -5640,12 +5951,25 @@ async function importarOportunidadesHS() {
         _ensureConvBucket(mKey).canais[canal] = (_ensureConvBucket(mKey).canais[canal] || 0) + 1;
         contou = true;
       }
+
+      // Tipo de empresa — vem só do override manual (HubSpot não tem essa info)
+      const tipoEmp = (ov && ov.tipoEmpresa) ? ov.tipoEmpresa : '';
+      if (contou && tipoEmp && CONV_TIPOS.includes(tipoEmp)) {
+        if (!_isManual(qKey, 'tipos', tipoEmp)) {
+          _ensureConvBucket(qKey).tipos[tipoEmp] = (_ensureConvBucket(qKey).tipos[tipoEmp] || 0) + 1;
+        }
+        if (!_isManual(mKey, 'tipos', tipoEmp)) {
+          _ensureConvBucket(mKey).tipos[tipoEmp] = (_ensureConvBucket(mKey).tipos[tipoEmp] || 0) + 1;
+        }
+      }
+
       if (contou) importados++;
       else ignoradosManual++;
 
       trilha.push({
         id, nome, hint, canal, createdate: created,
         ano, mes: mKey, quarter: qKey,
+        tipoEmpresa: tipoEmp,
         status: contou ? 'contou' : 'ignorado_manual',
         overridden: !!ov, // flag visual pra mostrar na UI
       });
@@ -5704,7 +6028,29 @@ function abrirAuditoriaSync() {
   const content = document.getElementById('audit-content');
   if (!content) return;
   content.style.display = '';
+  const btn = document.getElementById('btn-audit-toggle');
+  if (btn) btn.textContent = 'Esconder deals';
   renderAuditoria();
+}
+
+// Esconde o bloco de auditoria
+function esconderAuditoriaSync() {
+  const content = document.getElementById('audit-content');
+  if (!content) return;
+  content.style.display = 'none';
+  const btn = document.getElementById('btn-audit-toggle');
+  if (btn) btn.textContent = 'Ver deals importados';
+}
+
+// Toggle: abre se estiver escondido, esconde se estiver aberto.
+// Bug anterior: style.display='' (vazio) era tratado como "escondido" e o botão sempre abria.
+// Fix: usa offsetParent === null como sinal real de "está escondido".
+function toggleAuditoriaSync() {
+  const content = document.getElementById('audit-content');
+  if (!content) return;
+  const escondido = content.offsetParent === null || content.style.display === 'none';
+  if (escondido) abrirAuditoriaSync();
+  else esconderAuditoriaSync();
 }
 
 // Atualiza o summary do bloco de auditoria a partir do estado persistido
@@ -5735,6 +6081,165 @@ function _quarterFromMes(mes) {
   const idx = MESES.indexOf(mes);
   if (idx < 0) return null;
   return 'Q' + (Math.floor(idx / 3) + 1);
+}
+
+// Cria uma oportunidade manualmente — entra na trilha como se tivesse vindo do sync.
+// Usuário escolhe nome, canal e data; mês/quarter derivados da data.
+function adicionarOportunidadeManual() {
+  if (IS_VIEWER) return;
+  const nome = prompt('Nome do deal (ex: "Cliente | Vendedor | Canal"):');
+  if (!nome || !nome.trim()) return;
+
+  const hoje = new Date();
+  const dataStr = prompt('Data de criação (DD/MM/AAAA):', String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0') + '/' + hoje.getFullYear());
+  if (!dataStr) return;
+  // Aceita DD/MM/AAAA ou DD/MM
+  const m = dataStr.trim().match(/^(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?$/);
+  if (!m) { alert('Data inválida. Use DD/MM/AAAA.'); return; }
+  let ano = m[3] ? parseInt(m[3], 10) : hoje.getFullYear();
+  if (ano < 100) ano += 2000;
+  const date = new Date(ano, parseInt(m[2],10)-1, parseInt(m[1],10));
+  if (isNaN(date)) { alert('Data inválida.'); return; }
+
+  const canalDefault = _extrairCanal(nome) || '';
+  const canal = (prompt('Canal (NTW / OUT / INB / UP / REN) — deixe vazio para definir depois:', canalDefault) || '').trim().toUpperCase();
+  if (canal && !CONV_CANAIS.includes(canal)) { alert('Canal inválido. Use: ' + CONV_CANAIS.join(', ')); return; }
+
+  const mesIdx = date.getMonth();
+  const mKey = MESES[mesIdx];
+  const qKey = 'Q' + (Math.floor(mesIdx / 3) + 1);
+
+  // Garante que window.__lastConvImport exista
+  if (!window.__lastConvImport || !Array.isArray(window.__lastConvImport.trilha)) {
+    window.__lastConvImport = { ts: new Date().toISOString(), totalDeals: 0, trilha: [] };
+  }
+
+  const id = 'manual_' + Date.now();
+  const entrada = {
+    id,
+    nome: nome.trim(),
+    hint: nome.includes('|') ? nome.split('|').pop().trim() : '',
+    canal: canal || '',
+    createdate: date.toISOString(),
+    ano: date.getFullYear(),
+    mes: mKey,
+    quarter: qKey,
+    tipoEmpresa: '',
+    status: canal ? 'contou' : 'ignorado_sem_canal',
+    overridden: true,
+    manualEntry: true, // flag pra identificar oportunidades criadas direto aqui
+  };
+
+  // Incrementa buckets se tem canal
+  if (canal && !_isManual(qKey, 'canais', canal)) {
+    _ensureConvBucket(qKey).canais[canal] = (_ensureConvBucket(qKey).canais[canal] || 0) + 1;
+  }
+  if (canal && !_isManual(mKey, 'canais', canal)) {
+    _ensureConvBucket(mKey).canais[canal] = (_ensureConvBucket(mKey).canais[canal] || 0) + 1;
+  }
+
+  // Persiste como override pra sobreviver a syncs (sync vai respeitar mes/quarter/canal)
+  dealOverrides[id] = { mes: mKey, quarter: qKey, canal: canal || undefined };
+  saveDealOverrides();
+
+  window.__lastConvImport.trilha.push(entrada);
+  window.__lastConvImport.totalDeals = (window.__lastConvImport.totalDeals || 0) + 1;
+
+  _saveTrilha();
+  saveOportunidadesData();
+  renderAuditoria();
+  if (typeof renderConversao === 'function') renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+  if (typeof _refreshAuditSummary === 'function') _refreshAuditSummary();
+
+  // Abre o painel se estiver fechado
+  const content = document.getElementById('audit-content');
+  if (content && content.style.display === 'none') abrirAuditoriaSync();
+
+  setStatus('✓ Oportunidade manual criada: ' + nome.trim(), 'green');
+}
+
+// Reconstrói os buckets de oportunidades a partir da trilha de auditoria (fonte da verdade).
+// Útil quando divergência entre auditoria e tabela de canais (ex: contagem antiga em Q1).
+function recalcularBucketsDaTrilha() {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !Array.isArray(data.trilha) || !data.trilha.length) {
+    alert('Não há trilha de auditoria. Rode "🔄 Sincronizar do HubSpot" primeiro.');
+    return;
+  }
+  if (!confirm(
+    'Recalcular os buckets de oportunidades a partir da auditoria?\n\n' +
+    '• Zera TUDO que não foi marcado como manual (🔒)\n' +
+    '• Re-conta cada deal da última auditoria pelo (canal, mes, quarter) registrados\n' +
+    '• Células manuais (amarelas) são preservadas\n\n' +
+    'Continuar?'
+  )) return;
+
+  // 1) Zera todos os períodos canônicos (não-manuais), canais E tipos
+  const TODOS_PERIODOS = ['Q1','Q2','Q3','Q4', ...MESES];
+  TODOS_PERIODOS.forEach(k => {
+    const b = _ensureConvBucket(k);
+    CONV_CANAIS.forEach(c => {
+      if (!_isManual(k, 'canais', c)) b.canais[c] = 0;
+    });
+    CONV_TIPOS.forEach(tp => {
+      if (!_isManual(k, 'tipos', tp)) b.tipos[tp] = 0;
+    });
+  });
+
+  // 2) Re-incrementa a partir da trilha. IMPORTANTE: derive quarter SEMPRE do mes
+  //    pra garantir Q1+Q2+Q3+Q4 == soma dos 12 meses (consistência matemática).
+  let recontados = 0;
+  let corrigidos = 0;
+  data.trilha.forEach(t => {
+    if (!t || t.status !== 'contou') return;
+    if (!t.canal || !t.mes) return;
+    const qDerivado = _quarterFromMes(t.mes);
+    if (!qDerivado) return;
+    // Se a trilha tinha quarter inconsistente com mes, corrige (e persiste)
+    if (t.quarter !== qDerivado) { t.quarter = qDerivado; corrigidos++; }
+
+    if (!_isManual(qDerivado, 'canais', t.canal)) {
+      _ensureConvBucket(qDerivado).canais[t.canal] = (_ensureConvBucket(qDerivado).canais[t.canal] || 0) + 1;
+    }
+    if (!_isManual(t.mes, 'canais', t.canal)) {
+      _ensureConvBucket(t.mes).canais[t.canal] = (_ensureConvBucket(t.mes).canais[t.canal] || 0) + 1;
+    }
+    // Conta também tipo de empresa, se foi atribuído manualmente
+    if (t.tipoEmpresa && CONV_TIPOS.includes(t.tipoEmpresa)) {
+      if (!_isManual(qDerivado, 'tipos', t.tipoEmpresa)) {
+        _ensureConvBucket(qDerivado).tipos[t.tipoEmpresa] = (_ensureConvBucket(qDerivado).tipos[t.tipoEmpresa] || 0) + 1;
+      }
+      if (!_isManual(t.mes, 'tipos', t.tipoEmpresa)) {
+        _ensureConvBucket(t.mes).tipos[t.tipoEmpresa] = (_ensureConvBucket(t.mes).tipos[t.tipoEmpresa] || 0) + 1;
+      }
+    }
+    recontados++;
+  });
+
+  // Se corrigiu alguma inconsistência mes/quarter na trilha, persiste
+  if (corrigidos > 0) _saveTrilha();
+
+  // Corrige também dealOverrides inconsistentes (mes não bate com quarter salvo)
+  let overridesCorrigidos = 0;
+  Object.keys(dealOverrides).forEach(id => {
+    const ov = dealOverrides[id];
+    if (ov && ov.mes) {
+      const qFix = _quarterFromMes(ov.mes);
+      if (qFix && ov.quarter !== qFix) {
+        ov.quarter = qFix;
+        overridesCorrigidos++;
+      }
+    }
+  });
+  if (overridesCorrigidos > 0) saveDealOverrides();
+
+  saveOportunidadesData();
+  renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+  log.info('conv.recalc.from_trilha', { recontados, totalTrilha: data.trilha.length, corrigidos });
+  setStatus('✓ Buckets recalculados · ' + recontados + ' deals · ' + corrigidos + ' inconsistências mes/quarter corrigidas', 'green');
 }
 
 // Limpa todos os overrides persistidos de deal (próximo sync vai usar só createdate do HubSpot)
@@ -5835,6 +6340,12 @@ function updateTrilhaCanal(idx, newCanal) {
   const t = data.trilha[idx];
   if (!newCanal || !CONV_CANAIS.includes(newCanal)) return;
 
+  // Garante que quarter está consistente com mes (regra: Q deriva sempre do mês)
+  if (t.mes) {
+    const qFix = _quarterFromMes(t.mes);
+    if (qFix) t.quarter = qFix;
+  }
+
   // Se já estava contando: ajusta buckets (troca canal antigo pelo novo)
   if (t.status === 'contou' && t.canal && t.mes && t.quarter) {
     _adjustConvBucket(t.quarter, t.canal, -1);
@@ -5915,6 +6426,60 @@ function updateTrilhaDate(idx, newDateStr) {
   if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
 }
 
+// Define tipo de empresa (Enterprise/GG/SMB) manualmente.
+// Ajusta os buckets de tipos em mes+quarter (mesma lógica de canal).
+function updateTrilhaTipo(idx, newTipo) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+  const tipoVal = newTipo || ''; // '' = remover atribuição
+
+  // Garante quarter consistente com mes
+  if (t.mes) {
+    const qFix = _quarterFromMes(t.mes);
+    if (qFix) t.quarter = qFix;
+  }
+
+  // Helper local pra mexer no bucket de tipos
+  const adjTipo = (periodKey, tipo, delta) => {
+    if (!periodKey || !tipo) return;
+    const b = _ensureConvBucket(periodKey);
+    b.tipos[tipo] = Math.max(0, (b.tipos[tipo] || 0) + delta);
+  };
+
+  const tipoAntigo = t.tipoEmpresa || '';
+  // Só mexe nos buckets se o deal conta E tem mes/quarter
+  const ativo = t.status === 'contou' && t.mes && t.quarter;
+
+  if (ativo && tipoAntigo && tipoAntigo !== tipoVal) {
+    // Tira do bucket do tipo antigo
+    if (!_isManual(t.quarter, 'tipos', tipoAntigo)) adjTipo(t.quarter, tipoAntigo, -1);
+    if (!_isManual(t.mes,     'tipos', tipoAntigo)) adjTipo(t.mes,     tipoAntigo, -1);
+  }
+  if (ativo && tipoVal && tipoVal !== tipoAntigo) {
+    if (!_isManual(t.quarter, 'tipos', tipoVal)) adjTipo(t.quarter, tipoVal, +1);
+    if (!_isManual(t.mes,     'tipos', tipoVal)) adjTipo(t.mes,     tipoVal, +1);
+  }
+
+  t.tipoEmpresa = tipoVal;
+
+  // Persiste override (sobrevive a re-syncs)
+  if (t.id) {
+    if (!dealOverrides[t.id]) dealOverrides[t.id] = {};
+    if (tipoVal) dealOverrides[t.id].tipoEmpresa = tipoVal;
+    else delete dealOverrides[t.id].tipoEmpresa;
+    saveDealOverrides();
+  }
+  t.overridden = true;
+
+  saveOportunidadesData();
+  _saveTrilha();
+  renderAuditoria();
+  if (typeof renderConversao === 'function') renderConversao();
+  if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
+}
+
 function renderAuditoria() {
   const tbody = document.getElementById('audit-tbody');
   const countEl = document.getElementById('audit-count');
@@ -5925,6 +6490,15 @@ function renderAuditoria() {
   const fCanal   = document.getElementById('audit-canal')?.value || '';
   const fQuarter = document.getElementById('audit-quarter')?.value || '';
   const fStatus  = document.getElementById('audit-status')?.value || '';
+
+  // Ordena por createdate (mais antiga em cima, mais recente embaixo);
+  // entradas sem data vão pro fim
+  const _ts = (d) => {
+    if (!d || !d.createdate) return Infinity;
+    const t = new Date(d.createdate).getTime();
+    return isNaN(t) ? Infinity : t;
+  };
+  trilha.sort((a, b) => _ts(a) - _ts(b));
 
   const filtered = trilha.filter(d => {
     if (qSearch && !(d.nome||'').toLowerCase().includes(qSearch)) return false;
@@ -5937,7 +6511,7 @@ function renderAuditoria() {
   if (countEl) countEl.textContent = filtered.length + ' de ' + trilha.length + ' deals';
 
   if (!trilha.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
     return;
   }
 
@@ -6003,10 +6577,18 @@ function renderAuditoria() {
           <td>${dateCell}</td>
           <td>${mesSelect}</td>
           <td>${d.quarter || '—'}${d.ano && d.ano !== 2026 ? ' <span style="font-size:9px;color:#dc2626;">/'+d.ano+'</span>' : ''}</td>
+          <td>${(() => {
+            const tipoAtual = d.tipoEmpresa || '';
+            return `<select onchange="updateTrilhaTipo(${origIdx}, this.value)"
+                     class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;${!tipoAtual?'background:#fef3c7;':''}">
+                     <option value="" ${!tipoAtual?'selected':''}>—</option>
+                     ${CONV_TIPOS.map(tp => `<option ${tipoAtual===tp?'selected':''}>${tp}</option>`).join('')}
+                   </select>`;
+          })()}</td>
           <td>${statusLabel[d.status] || d.status}${toggleBtn}</td>
         </tr>`;
       }).join('')
-    : '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
+    : '<tr><td colspan="8" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
 }
 
 function renderConversao() {
