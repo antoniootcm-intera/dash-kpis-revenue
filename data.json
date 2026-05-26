@@ -3,7 +3,7 @@
     {
       "id": "manual_1778359129728",
       "cliente": "AbInBev",
-      "servico": "RPO",
+      "servico": "Staffing",
       "canal": "UP",
       "valor": 84000,
       "mensalidade": 14000,
@@ -2404,6 +2404,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "churn",
-  "snapshot_at": "2026-05-25T21:15:02.091Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-05-26T01:11:41.329Z"
 }
