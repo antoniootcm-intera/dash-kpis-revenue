@@ -1323,20 +1323,6 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_8",
-      "cliente": "Doctoralia",
-      "vigencia": "novembro/2026",
-      "inicio": "",
-      "fim": "11/11",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 96000,
-      "tipoContrato": "Sem Contrato",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
       "id": "cont_59186379620",
       "dealId": "59186379620",
       "cliente": "Doctoralia BR",
@@ -1652,7 +1638,7 @@
     {
       "id": "cont_60236781075",
       "dealId": "60236781075",
-      "cliente": "Cielo CO- Mari - Up",
+      "cliente": "Cielo CO",
       "vigencia": "novembro/2026",
       "inicio": "31/05",
       "fim": "31/11",
@@ -1874,6 +1860,17 @@
       "mrrPerdido": 16000,
       "contratoTotal": 48000,
       "motivo": "Sem volume"
+    },
+    {
+      "id": "churn_1779798498515",
+      "cliente": "Doctoralia",
+      "tipo": "logo",
+      "mes": "Mai",
+      "dataChurn": "26/05",
+      "cadeiras": 1,
+      "mrrPerdido": 16000,
+      "contratoTotal": 96000,
+      "motivo": "Removido do controle de contratos"
     }
   ],
   "q1_deals": [
@@ -2405,5 +2402,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-26T01:19:20.922Z"
+  "snapshot_at": "2026-05-28T18:44:00.382Z"
 }
