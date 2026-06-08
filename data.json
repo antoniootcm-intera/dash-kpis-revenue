@@ -32,7 +32,7 @@
     },
     {
       "id": "manual_1778359356294",
-      "cliente": "Renner Corp",
+      "cliente": "Renner Corp*",
       "servico": "RPO",
       "canal": "REN",
       "valor": 48000,
@@ -118,7 +118,8 @@
       "semana": 6,
       "ciclo": 18,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
     },
     {
       "id": "60177802569",
@@ -133,7 +134,8 @@
       "semana": 6,
       "ciclo": 15,
       "source": "hs",
-      "mensalidade": 15500
+      "mensalidade": 15500,
+      "_locked": true
     },
     {
       "id": "60177578299",
@@ -148,7 +150,8 @@
       "semana": 8,
       "ciclo": 9,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
     },
     {
       "id": "60236781075",
@@ -163,7 +166,8 @@
       "semana": 8,
       "ciclo": 18,
       "source": "hs",
-      "mensalidade": 17000
+      "mensalidade": 17000,
+      "_locked": true
     },
     {
       "id": "60524924470",
@@ -178,7 +182,8 @@
       "semana": 8,
       "ciclo": 7,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
     },
     {
       "id": "60486922796",
@@ -193,7 +198,39 @@
       "semana": 8,
       "ciclo": 2,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
+    },
+    {
+      "id": "60646073890",
+      "cliente": "Riachuelo ",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 240000,
+      "data": "03/06",
+      "mes": "Jun",
+      "alocacoes": "3",
+      "tipo": "Enterprise",
+      "semana": 9,
+      "ciclo": 35,
+      "source": "hs",
+      "mensalidade": 16000,
+      "_locked": true
+    },
+    {
+      "id": "60715092874",
+      "cliente": "AB-Inbev",
+      "servico": "Staffing",
+      "canal": "REN",
+      "valor": 420000,
+      "data": "08/06",
+      "mes": "Jun",
+      "alocacoes": "6",
+      "tipo": "Enterprise",
+      "semana": 10,
+      "ciclo": 10,
+      "source": "hs",
+      "mensalidade": 14000
     }
   ],
   "cadeiras_rows": [
@@ -417,11 +454,11 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
         "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
         "DESALOCADO",
         "DESALOCADO"
       ],
@@ -440,11 +477,11 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
         "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
         "DESALOCADO",
         "DESALOCADO"
       ],
@@ -463,11 +500,11 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO",
         "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
         "DESALOCADO",
         "DESALOCADO"
       ],
@@ -820,7 +857,8 @@
         "DESALOCADO",
         "DESALOCADO"
       ],
-      "source": "manual"
+      "source": "manual",
+      "duracao": 3
     },
     {
       "id": "cad_hs_60524924470",
@@ -843,7 +881,8 @@
         "DESALOCADO",
         "DESALOCADO"
       ],
-      "source": "hs"
+      "source": "hs",
+      "duracao": 3
     },
     {
       "id": "cad_init_12",
@@ -913,7 +952,8 @@
         "DESALOCADO"
       ],
       "source": "hs",
-      "mais5": false
+      "mais5": false,
+      "duracao": 4
     },
     {
       "id": "cad_init_4",
@@ -1075,7 +1115,8 @@
         "DESALOCAÇÃO",
         "DESALOCADO"
       ],
-      "source": "hs"
+      "source": "hs",
+      "duracao": 6
     },
     {
       "id": "cad_1779388285376",
@@ -1097,13 +1138,14 @@
         "DESALOCAÇÃO",
         "DESALOCADO"
       ],
-      "source": "manual"
+      "source": "manual",
+      "duracao": 6
     },
     {
       "id": "cad_hs_60234055077",
       "dealId": "60234055077",
       "servico": "RPO",
-      "cliente": "Cielo - Mariana - UP",
+      "cliente": "Cielo SP",
       "vigencia": "dezembro/2026",
       "dataInicio": "31/05",
       "meses": [
@@ -1116,8 +1158,8 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "ATIVO",
         "DESALOCAÇÃO",
+        "DESALOCADO",
         "DESALOCADO"
       ],
       "source": "hs",
@@ -1174,7 +1216,7 @@
       "dealId": "60236781075",
       "servico": "RPO",
       "cliente": "Cielo CO",
-      "vigencia": "",
+      "vigencia": "novembro/2026",
       "dataInicio": "31/05",
       "meses": [
         "DESALOCADO",
@@ -1192,9 +1234,69 @@
       ],
       "source": "hs",
       "duracao": 6
+    },
+    {
+      "id": "cad_hs_60646073890",
+      "dealId": "60646073890",
+      "servico": "RPO",
+      "cliente": "Riachuelo ",
+      "vigencia": "",
+      "dataInicio": "30/06",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
+    },
+    {
+      "id": "cad_hs_60715092874",
+      "dealId": "60715092874",
+      "servico": "RPO",
+      "cliente": "AB-Inbev",
+      "vigencia": "",
+      "dataInicio": "08/06",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
+    {
+      "id": "cont_cad_1778536769511_14",
+      "cliente": "Frete.com",
+      "vigencia": "maio/2026",
+      "inicio": "",
+      "fim": "31/05",
+      "duracao": 2,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 34000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
     {
       "id": "cont_cad_1778536769511_1",
       "cliente": "ABInbev",
@@ -1205,20 +1307,6 @@
       "cadeiras": 4,
       "valorRPO": 14000,
       "valorTotal": 336000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_0",
-      "cliente": "ABInbev UP",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "06/07",
-      "duracao": 3,
-      "cadeiras": 2,
-      "valorRPO": 14000,
-      "valorTotal": 84000,
       "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "cadeiras"
@@ -1238,45 +1326,44 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_3",
-      "cliente": "Cielo",
-      "vigencia": "maio/2027",
+      "id": "cont_cad_1778536769511_10",
+      "cliente": "Ebanx Internacional",
+      "vigencia": "junho/2026",
       "inicio": "",
-      "fim": "10/05",
-      "duracao": 12,
+      "fim": "04/06",
+      "duracao": 3,
       "cadeiras": 1,
       "valorRPO": 17000,
-      "valorTotal": 204000,
-      "tipoContrato": "Ordem de Compra",
+      "valorTotal": 51000,
+      "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "cadeiras"
     },
     {
-      "id": "cont_60234055077",
-      "dealId": "60234055077",
-      "cliente": "Cielo SP",
-      "vigencia": "novembro/2026",
-      "inicio": "13/05",
-      "fim": "13/11",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 102000,
-      "tipoContrato": "Ordem de Compra",
+      "id": "cont_cad_1778536769511_21",
+      "cliente": "Riachuelo",
+      "vigencia": "junho/2026",
+      "inicio": "",
+      "fim": "09/06",
+      "duracao": 5,
+      "cadeiras": 3,
+      "valorRPO": 16000,
+      "valorTotal": 240000,
+      "tipoContrato": "Sem Contrato",
       "linkContrato": "",
-      "source": "hs"
+      "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_5",
-      "cliente": "CSU",
-      "vigencia": "maio/2026",
+      "id": "cont_cad_1778536769511_0",
+      "cliente": "ABInbev UP",
+      "vigencia": "julho/2026",
       "inicio": "",
-      "fim": "24/05",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 96000,
-      "tipoContrato": "Sem Contrato",
+      "fim": "06/07",
+      "duracao": 3,
+      "cadeiras": 2,
+      "valorRPO": 14000,
+      "valorTotal": 84000,
+      "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "cadeiras"
     },
@@ -1295,20 +1382,6 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_cad_1778536769511_6",
-      "cliente": "Deloitte",
-      "vigencia": "outubro/2026",
-      "inicio": "",
-      "fim": "23/10",
-      "duracao": 12,
-      "cadeiras": 1,
-      "valorRPO": 15000,
-      "valorTotal": 180000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
       "id": "cont_cad_1778536769511_7",
       "cliente": "dLocal",
       "vigencia": "julho/2026",
@@ -1323,19 +1396,46 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_59186379620",
-      "dealId": "59186379620",
-      "cliente": "Doctoralia BR",
-      "vigencia": "novembro/2026",
-      "inicio": "11/05",
-      "fim": "11/11",
-      "duracao": 6,
+      "id": "cont_cad_1778536769511_16",
+      "cliente": "Jeitto",
+      "vigencia": "julho/2026",
+      "inicio": "",
+      "fim": "15/07",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 15500,
+      "valorTotal": 46500,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_20",
+      "cliente": "Riachuelo UP",
+      "vigencia": "julho/2026",
+      "inicio": "",
+      "fim": "06/07",
+      "duracao": 3,
       "cadeiras": 1,
       "valorRPO": 16000,
-      "valorTotal": 96000,
+      "valorTotal": 48000,
+      "tipoContrato": "Sem Contrato",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_22",
+      "cliente": "RNP",
+      "vigencia": "julho/2026",
+      "inicio": "",
+      "fim": "06/07",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 14000,
+      "valorTotal": 78000,
       "tipoContrato": "Contrato Assinado",
-      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
-      "source": "hs"
+      "linkContrato": "",
+      "source": "cadeiras"
     },
     {
       "id": "cont_cad_1778536769511_9",
@@ -1347,76 +1447,6 @@
       "cadeiras": 1,
       "valorRPO": 17000,
       "valorTotal": 102000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_10",
-      "cliente": "Ebanx Internacional",
-      "vigencia": "junho/2026",
-      "inicio": "",
-      "fim": "04/06",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 51000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_11",
-      "cliente": "Facta Promotora",
-      "vigencia": "março/2027",
-      "inicio": "",
-      "fim": "14/03",
-      "duracao": 12,
-      "cadeiras": 1,
-      "valorRPO": 15000,
-      "valorTotal": 180000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_12",
-      "cliente": "Facta Tech",
-      "vigencia": "setembro/2026",
-      "inicio": "",
-      "fim": "02/09",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 15000,
-      "valorTotal": 90000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_13",
-      "cliente": "Flowa",
-      "vigencia": "maio/2026",
-      "inicio": "",
-      "fim": "09/05",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 48000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_14",
-      "cliente": "Frete.com",
-      "vigencia": "maio/2026",
-      "inicio": "",
-      "fim": "31/05",
-      "duracao": 2,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 34000,
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "cadeiras"
@@ -1437,20 +1467,6 @@
       "source": "hs"
     },
     {
-      "id": "cont_cad_1778536769511_16",
-      "cliente": "Jeitto",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "15/07",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 15500,
-      "valorTotal": 46500,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
       "id": "cont_cad_1778536769511_18",
       "cliente": "Localiza",
       "vigencia": "agosto/2026",
@@ -1461,20 +1477,6 @@
       "valorRPO": 15000,
       "valorTotal": 90000,
       "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_17",
-      "cliente": "Localiza UP",
-      "vigencia": "outubro/2026",
-      "inicio": "",
-      "fim": "23/10",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 15000,
-      "valorTotal": 90000,
-      "tipoContrato": "Sem Contrato",
       "linkContrato": "",
       "source": "cadeiras"
     },
@@ -1522,19 +1524,32 @@
       "source": "manual"
     },
     {
-      "id": "cont_60177578299",
-      "dealId": "60177578299",
-      "cliente": "Renner Varejo",
-      "vigencia": "novembro/2026",
-      "inicio": "25/05",
-      "fim": "25/11",
-      "duracao": 6,
-      "cadeiras": 2,
-      "valorRPO": 16000,
-      "valorTotal": 192000,
-      "tipoContrato": "Ordem de Compra",
+      "id": "cont_cad_1778536769511_23",
+      "cliente": "Stefanini",
+      "vigencia": "agosto/2026",
+      "inicio": "",
+      "fim": "29/08",
+      "duracao": 12,
+      "cadeiras": 1,
+      "valorRPO": 14960,
+      "valorTotal": 179520,
+      "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
-      "source": "hs"
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_12",
+      "cliente": "Facta Tech",
+      "vigencia": "setembro/2026",
+      "inicio": "",
+      "fim": "02/09",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 90000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "cadeiras"
     },
     {
       "id": "cont_60486922796",
@@ -1552,62 +1567,6 @@
       "source": "hs"
     },
     {
-      "id": "cont_cad_1778536769511_21",
-      "cliente": "Riachuelo",
-      "vigencia": "junho/2026",
-      "inicio": "",
-      "fim": "09/06",
-      "duracao": 5,
-      "cadeiras": 3,
-      "valorRPO": 16000,
-      "valorTotal": 240000,
-      "tipoContrato": "Sem Contrato",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_20",
-      "cliente": "Riachuelo UP",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "06/07",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 48000,
-      "tipoContrato": "Sem Contrato",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_22",
-      "cliente": "RNP",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "06/07",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 14000,
-      "valorTotal": 78000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_23",
-      "cliente": "Stefanini",
-      "vigencia": "agosto/2026",
-      "inicio": "",
-      "fim": "29/08",
-      "duracao": 12,
-      "cadeiras": 1,
-      "valorRPO": 14960,
-      "valorTotal": 179520,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
       "id": "cont_cad_1778536769511_24",
       "cliente": "Stellantis",
       "vigencia": "setembro/2026",
@@ -1618,6 +1577,34 @@
       "valorRPO": 16000,
       "valorTotal": 96000,
       "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_6",
+      "cliente": "Deloitte",
+      "vigencia": "outubro/2026",
+      "inicio": "",
+      "fim": "23/10",
+      "duracao": 12,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 180000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_17",
+      "cliente": "Localiza UP",
+      "vigencia": "outubro/2026",
+      "inicio": "",
+      "fim": "23/10",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 90000,
+      "tipoContrato": "Sem Contrato",
       "linkContrato": "",
       "source": "cadeiras"
     },
@@ -1636,6 +1623,51 @@
       "source": "cadeiras"
     },
     {
+      "id": "cont_60234055077",
+      "dealId": "60234055077",
+      "cliente": "Cielo SP",
+      "vigencia": "novembro/2026",
+      "inicio": "13/05",
+      "fim": "13/11",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 102000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_59186379620",
+      "dealId": "59186379620",
+      "cliente": "Doctoralia BR",
+      "vigencia": "novembro/2026",
+      "inicio": "11/05",
+      "fim": "11/11",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 96000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
+      "source": "hs"
+    },
+    {
+      "id": "cont_60177578299",
+      "dealId": "60177578299",
+      "cliente": "Renner Varejo",
+      "vigencia": "novembro/2026",
+      "inicio": "25/05",
+      "fim": "25/11",
+      "duracao": 6,
+      "cadeiras": 2,
+      "valorRPO": 16000,
+      "valorTotal": 192000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
       "id": "cont_60236781075",
       "dealId": "60236781075",
       "cliente": "Cielo CO",
@@ -1647,6 +1679,64 @@
       "valorRPO": 17000,
       "valorTotal": 102000,
       "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_cad_1778536769511_11",
+      "cliente": "Facta Promotora",
+      "vigencia": "março/2027",
+      "inicio": "",
+      "fim": "14/03",
+      "duracao": 12,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 180000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_cad_1778536769511_3",
+      "cliente": "Cielo NE",
+      "vigencia": "maio/2027",
+      "inicio": "",
+      "fim": "10/05",
+      "duracao": 12,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 204000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "cadeiras"
+    },
+    {
+      "id": "cont_60646073890",
+      "dealId": "60646073890",
+      "cliente": "Riachuelo ",
+      "vigencia": "",
+      "inicio": "30/06",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": 16000,
+      "valorTotal": 240000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_60715092874",
+      "dealId": "60715092874",
+      "cliente": "AB-Inbev",
+      "vigencia": "",
+      "inicio": "08/06",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 420000,
+      "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
     }
@@ -1862,14 +1952,25 @@
       "motivo": "Sem volume"
     },
     {
-      "id": "churn_1779798498515",
-      "cliente": "Doctoralia",
+      "id": "churn_1780001241876",
+      "cliente": "CSU",
       "tipo": "logo",
       "mes": "Mai",
-      "dataChurn": "26/05",
+      "dataChurn": "28/05",
       "cadeiras": 1,
       "mrrPerdido": 16000,
       "contratoTotal": 96000,
+      "motivo": "Removido do controle de contratos"
+    },
+    {
+      "id": "churn_1780939936761",
+      "cliente": "Riachuelo - Johnny - Ren",
+      "tipo": "logo",
+      "mes": "Jun",
+      "dataChurn": "08/06",
+      "cadeiras": 1,
+      "mrrPerdido": 0,
+      "contratoTotal": 240000,
       "motivo": "Removido do controle de contratos"
     }
   ],
@@ -2377,6 +2478,23 @@
       "data": "25/05",
       "semana": 8,
       "mes": "Mai"
+    },
+    "60646073890": {
+      "cliente": "Riachuelo ",
+      "canal": "REN",
+      "mensalidade": 16000,
+      "alocacoes": "3",
+      "tipo": "Enterprise",
+      "semana": 9,
+      "data": "03/06",
+      "mes": "Jun"
+    },
+    "60715092874": {
+      "mensalidade": 14000,
+      "servico": "Staffing",
+      "alocacoes": "6",
+      "tipo": "Enterprise",
+      "canal": "REN"
     }
   },
   "hs_deleted": [
@@ -2391,16 +2509,201 @@
     "57506905995",
     "57447167917"
   ],
+  "cac_state": {
+    "midia": [
+      {
+        "id": "m1",
+        "nome": "Meta ads",
+        "meses": {
+          "Jan": 2011.1,
+          "Fev": 1228.95,
+          "Mar": 0,
+          "Abr": 0,
+          "Mai": 0,
+          "Jun": 0,
+          "Jul": 0,
+          "Ago": 0,
+          "Set": 0,
+          "Out": 0,
+          "Nov": 0,
+          "Dez": 0
+        },
+        "obs": "2 leads (Jan) · 6 leads (Fev)"
+      },
+      {
+        "id": "m2",
+        "nome": "Google ads",
+        "meses": {
+          "Jan": 5944.71,
+          "Fev": 8083.7,
+          "Mar": 6542.71,
+          "Abr": 6889.61,
+          "Mai": 0,
+          "Jun": 0,
+          "Jul": 0,
+          "Ago": 0,
+          "Set": 0,
+          "Out": 0,
+          "Nov": 0,
+          "Dez": 0
+        },
+        "obs": "4 / 2 / 9 / 12 conversões"
+      },
+      {
+        "id": "m3",
+        "nome": "LinkedIn ads",
+        "meses": {
+          "Jan": 761.09,
+          "Fev": 931.35,
+          "Mar": 0,
+          "Abr": 0,
+          "Mai": 0,
+          "Jun": 0,
+          "Jul": 0,
+          "Ago": 0,
+          "Set": 0,
+          "Out": 0,
+          "Nov": 0,
+          "Dez": 0
+        },
+        "obs": "0 conversões"
+      },
+      {
+        "id": "m4",
+        "nome": "V4",
+        "meses": {
+          "Jan": 6500,
+          "Fev": 6500,
+          "Mar": 6500,
+          "Abr": 6500,
+          "Mai": 2500,
+          "Jun": 0,
+          "Jul": 0,
+          "Ago": 0,
+          "Set": 0,
+          "Out": 0,
+          "Nov": 0,
+          "Dez": 0
+        },
+        "obs": ""
+      }
+    ],
+    "fixos": [
+      {
+        "id": "f1",
+        "nome": "Fixo Dani",
+        "valorMensal": 5100,
+        "meses": 5,
+        "mesInicio": "Jan",
+        "obs": ""
+      },
+      {
+        "id": "f2",
+        "nome": "Fixo João",
+        "valorMensal": 3500,
+        "meses": 2,
+        "mesInicio": "Abr",
+        "obs": "",
+        "mesFim": "Mai"
+      },
+      {
+        "id": "f3",
+        "nome": "Fixo Dani LDR",
+        "valorMensal": 3100,
+        "meses": 2,
+        "mesInicio": "Abr",
+        "obs": "",
+        "mesFim": "Mai"
+      },
+      {
+        "id": "f4",
+        "nome": "Fixo Marçal",
+        "valorMensal": 10000,
+        "meses": 5,
+        "mesInicio": "Jan",
+        "obs": ""
+      },
+      {
+        "id": "f5",
+        "nome": "Fixo Ary",
+        "valorMensal": 4000,
+        "meses": 5,
+        "mesInicio": "Jan",
+        "obs": ""
+      }
+    ],
+    "ferramentas": [
+      {
+        "id": "t1",
+        "nome": "HubSpot",
+        "valorMensal": 4398.11,
+        "meses": 5,
+        "mesInicio": "Jan",
+        "obs": "Cotação USD × 5 meses"
+      },
+      {
+        "id": "t2",
+        "nome": "Tl;dv",
+        "valorMensal": 199.67,
+        "meses": 5,
+        "mesInicio": "Jan",
+        "obs": ""
+      },
+      {
+        "id": "t3",
+        "nome": "Sales Navigator",
+        "valorMensal": 225,
+        "meses": 2,
+        "mesInicio": "Jan",
+        "obs": ""
+      },
+      {
+        "id": "t4",
+        "nome": "Apollo",
+        "valorMensal": 500,
+        "meses": 2,
+        "mesInicio": "Jan",
+        "obs": ""
+      },
+      {
+        "id": "t5",
+        "nome": "Meetz",
+        "valorMensal": 4990,
+        "meses": 2,
+        "mesInicio": "Jan",
+        "obs": ""
+      }
+    ],
+    "novosClientes": 9,
+    "comissoesTri": {
+      "Q1": {
+        "renovacao": 11947.5,
+        "aquisicao": 15600
+      },
+      "Q2": {
+        "renovacao": 27555,
+        "aquisicao": 11340
+      },
+      "Q3": {
+        "renovacao": 0,
+        "aquisicao": 0
+      },
+      "Q4": {
+        "renovacao": 0,
+        "aquisicao": 0
+      }
+    }
+  },
   "okr_state": {
-    "input-realizado": "1262500",
+    "input-realizado": "1922500",
     "input-clientes": "0",
-    "input-duracao": "60",
-    "cac-gastos": "0",
+    "input-duracao": "58",
+    "cac-gastos": "115380.17",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-05-28T18:44:00.382Z"
+  "snapshot_at": "2026-06-08T19:05:42.354Z"
 }
