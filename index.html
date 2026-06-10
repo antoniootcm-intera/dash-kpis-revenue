@@ -312,6 +312,10 @@
       <input id="gh-token" type="password" placeholder="GitHub Token (para publicar)"
         class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-52 focus:outline-none focus:ring-2 focus:ring-blue-400"
         oninput="localStorage.setItem('gh_token', this.value)" />
+      <button onclick="definirSenhaViewer()" class="admin-only text-sm px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1"
+        style="background:#fff;color:#4f46e5;border:1px solid #c7d2fe;" title="Define/troca a senha de acesso ao dashboard no cloud (GitHub Pages)">
+        🔐 Senha viewer
+      </button>
       <button onclick="publicarSnapshot()" id="btn-publicar"
         class="text-sm px-4 py-1.5 rounded-lg font-semibold transition text-white flex items-center gap-1"
         style="background:var(--accent);" title="Publica direto no GitHub Pages — sem terminal">
@@ -1482,8 +1486,11 @@
         <button onclick="importarOportunidadesHS()" class="admin-only bg-white text-blue-700 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-blue-50 transition" title="Puxa oportunidades por canal a partir do pipeline RPO Vendas e Renovação no HubSpot">
           🔄 Sincronizar do HubSpot
         </button>
-        <button onclick="resetManualOportunidades()" class="admin-only bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Remove proteções manuais (próximo sync vai sobrescrever)">
-          🔓 Resetar manual
+        <button onclick="resetManualOportunidades()" class="admin-only bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Remove proteções manuais de oportunidades (próximo sync vai sobrescrever)">
+          🔓 Resetar oport. manuais
+        </button>
+        <button onclick="resetFechadosManual()" class="admin-only bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Remove edições manuais de Negócios Fechados (volta a contar dos deals automaticamente)">
+          🔓 Resetar fechados manuais
         </button>
       </div>
     </div>
@@ -1793,6 +1800,115 @@
 <script>
 // ─── VIEWER MODE ────────────────────────────────
 const IS_VIEWER = !['localhost','127.0.0.1'].includes(location.hostname);
+
+// ─── VIEWER PASSWORD GATE (cloud apenas) ─────────────────────────────
+// Hash SHA-256 da senha. Carregado de data.json (campo viewer_password_hash).
+// Comparação é client-side — não é fortaleza, mas evita acesso casual via URL.
+let _viewerPasswordHash = '';
+
+async function _sha256Hex(text) {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// Mostra o overlay de login. Esconde o body atrás até o desbloqueio.
+function _showViewerLoginGate() {
+  if (document.getElementById('viewer-login-gate')) return;
+  const gate = document.createElement('div');
+  gate.id = 'viewer-login-gate';
+  gate.innerHTML = `
+    <style>
+      #viewer-login-gate {
+        position: fixed; inset: 0; background: linear-gradient(135deg,#1e3a8a 0%, #312e81 100%);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 99999; font-family: -apple-system,BlinkMacSystemFont,sans-serif;
+      }
+      #viewer-login-gate .gate-card {
+        background: #fff; border-radius: 16px; padding: 36px 32px; width: 360px; max-width: 90vw;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      }
+      #viewer-login-gate h1 { margin: 0 0 6px 0; color: #1e3a8a; font-size: 20px; font-weight: 700; }
+      #viewer-login-gate p { margin: 0 0 20px 0; color: #6b7280; font-size: 13px; }
+      #viewer-login-gate input {
+        width: 100%; padding: 10px 14px; font-size: 15px; border: 1px solid #d1d5db;
+        border-radius: 8px; outline: none; box-sizing: border-box;
+      }
+      #viewer-login-gate input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+      #viewer-login-gate button {
+        width: 100%; margin-top: 14px; padding: 10px; font-size: 14px; font-weight: 600;
+        color: #fff; background: #6366f1; border: none; border-radius: 8px; cursor: pointer;
+        transition: background .15s;
+      }
+      #viewer-login-gate button:hover { background: #4f46e5; }
+      #viewer-login-gate .gate-err { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 16px; }
+      #viewer-login-gate .gate-logo { font-size: 28px; margin-bottom: 12px; }
+    </style>
+    <div class="gate-card">
+      <div class="gate-logo">🔐</div>
+      <h1>Dashboard INTERA</h1>
+      <p>Este painel contém dados sensíveis. Digite a senha de acesso.</p>
+      <input id="viewer-pw-input" type="password" placeholder="Senha" autocomplete="current-password" autofocus />
+      <button id="viewer-pw-btn">Entrar</button>
+      <div id="viewer-pw-err" class="gate-err"></div>
+    </div>
+  `;
+  document.body.appendChild(gate);
+  // Esconde o resto da página
+  document.body.style.overflow = 'hidden';
+
+  const input = document.getElementById('viewer-pw-input');
+  const btn   = document.getElementById('viewer-pw-btn');
+  const err   = document.getElementById('viewer-pw-err');
+
+  const tentar = async () => {
+    const pw = input.value || '';
+    if (!pw) { err.textContent = 'Digite a senha.'; return; }
+    btn.disabled = true; btn.textContent = '⏳ Verificando…';
+    const hash = await _sha256Hex(pw);
+    if (hash === _viewerPasswordHash) {
+      sessionStorage.setItem('viewer_unlocked', '1');
+      gate.remove();
+      document.body.style.overflow = '';
+    } else {
+      btn.disabled = false; btn.textContent = 'Entrar';
+      err.textContent = 'Senha incorreta.';
+      input.value = ''; input.focus();
+    }
+  };
+  btn.addEventListener('click', tentar);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') tentar(); });
+}
+
+// Verifica se deve mostrar o gate; chamada após carregar data.json (que tem o hash).
+async function _initViewerGate() {
+  if (!IS_VIEWER) return;
+  if (!_viewerPasswordHash) return; // sem senha configurada, não gateia
+  if (sessionStorage.getItem('viewer_unlocked') === '1') return; // já desbloqueado nessa sessão
+  _showViewerLoginGate();
+}
+
+// Admin: define ou troca a senha. Hash vai pro snapshot (cloud) no próximo Publicar.
+async function definirSenhaViewer() {
+  if (IS_VIEWER) return;
+  const pw = prompt('Nova senha do viewer (cloud):\n\nDeixe vazio para REMOVER a senha (acesso livre).');
+  if (pw === null) return; // cancelou
+  if (!pw.trim()) {
+    if (!confirm('Remover a senha do viewer? Qualquer pessoa com o link poderá acessar.')) return;
+    _viewerPasswordHash = '';
+    localStorage.removeItem('viewer_password_hash');
+    setStatus('🔓 Senha do viewer removida. Clique em Publicar pra subir essa mudança.', 'orange');
+    return;
+  }
+  if (pw.length < 4) { alert('Use pelo menos 4 caracteres.'); return; }
+  const hash = await _sha256Hex(pw);
+  _viewerPasswordHash = hash;
+  localStorage.setItem('viewer_password_hash', hash);
+  setStatus('🔐 Senha definida. Clique em Publicar pra subir essa mudança ao cloud.', 'green');
+}
+
+// Restaura hash do localStorage no admin (no boot)
+try { _viewerPasswordHash = localStorage.getItem('viewer_password_hash') || ''; } catch(_) {}
 
 // ─── LOGGER ─────────────────────────────────────
 // Log estruturado em JSON · sanitiza tokens/secrets · notifica visualmente só no admin
@@ -2973,6 +3089,11 @@ let realizadoLocked = localStorage.getItem('realizado_locked') === 'true';
 window.addEventListener('DOMContentLoaded', () => {
   if (IS_VIEWER) {
     document.body.classList.add('viewer-mode');
+    // Mostra um gate "fechado" imediatamente — evita flash de conteúdo enquanto data.json carrega.
+    // Se data.json não tiver hash, o gate é removido logo em seguida.
+    if (sessionStorage.getItem('viewer_unlocked') !== '1') {
+      _showViewerLoginGate();
+    }
     fetch('./data.json')
       .then(r => { if (!r.ok) throw new Error('no data'); return r.json(); })
       .then(d => {
@@ -2985,6 +3106,12 @@ window.addEventListener('DOMContentLoaded', () => {
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
         if (d.cac_state && typeof d.cac_state === 'object') { cacState = d.cac_state; saveCacState(); }
+        _viewerPasswordHash = (typeof d.viewer_password_hash === 'string') ? d.viewer_password_hash : '';
+        // Se o snapshot NÃO tem hash configurado, remove o gate (acesso livre)
+        if (!_viewerPasswordHash) {
+          const g = document.getElementById('viewer-login-gate');
+          if (g) { g.remove(); document.body.style.overflow = ''; }
+        }
         if (d.realizado_locked !== undefined) realizadoLocked = d.realizado_locked;
         cadeirasRows.forEach(r => autoCompletarMeses(r));
         initCharts();
@@ -3205,6 +3332,7 @@ async function publicarSnapshot() {
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
       cac_state:        cacState,
+      viewer_password_hash: _viewerPasswordHash || '',
       okr_state:        okrState,
       realizado_locked: realizadoLocked,
       active_tab:       localStorage.getItem('active_tab') || 'dashboard',
@@ -6580,9 +6708,30 @@ function updateOportunidade(key, dim, val, num) {
   if (IS_VIEWER) return;
   const bucket = _ensureConvBucket(key);
   bucket[dim][val] = Math.max(0, parseInt(num) || 0);
-  // Marca como editado manualmente (protege em sincs futuros)
+  // Marca como editado manualmente (vira "baseline" — syncs futuros só somam deals novos)
   const mKey = dim + ':' + val;
   if (!bucket.manual.includes(mKey)) bucket.manual.push(mKey);
+
+  // ABSORVE os deals atuais da trilha como parte do baseline.
+  // Próximos syncs só somam deals cujo ID NÃO está em syncedIds — ou seja, deals novos.
+  if (!bucket.syncedIds) bucket.syncedIds = {};
+  if (!Array.isArray(bucket.syncedIds[mKey])) bucket.syncedIds[mKey] = [];
+  try {
+    const trilha = (window.__lastConvImport && window.__lastConvImport.trilha) || [];
+    const seen = new Set(bucket.syncedIds[mKey]);
+    trilha.forEach(t => {
+      if (!t || !t.id || t.status !== 'contou') return;
+      // Verifica se o deal pertence à célula (key, dim, val)
+      if (dim === 'canais' && String(t.canal||'').toUpperCase() !== String(val).toUpperCase()) return;
+      if (dim === 'tipos'  && (t.tipoEmpresa||'') !== val) return;
+      // Período: pode ser quarter (Q1..Q4) ou mês (Jan..Dez)
+      if (CONV_MESES_POR_Q[key]) { if (t.quarter !== key) return; }
+      else                       { if (t.mes !== key)     return; }
+      const sid = String(t.id);
+      if (!seen.has(sid)) { seen.add(sid); bucket.syncedIds[mKey].push(sid); }
+    });
+  } catch(_) {}
+
   saveOportunidadesData();
   renderConversao();
   _refreshConvMirrors();
@@ -6599,9 +6748,13 @@ function _refreshConvMirrors() {
 
 // Limpa todas as marcações manuais (usado em "Resetar manual" se quiser)
 function resetManualOportunidades() {
-  if (!confirm('Limpar todas as marcações manuais? Próximo sync do HubSpot vai sobrescrever os números editados.')) return;
+  if (!confirm('Limpar todas as marcações manuais? Próximo sync do HubSpot vai sobrescrever os números editados (e zera o baseline).')) return;
   Object.keys(oportunidadesData).forEach(k => {
-    if (oportunidadesData[k]) oportunidadesData[k].manual = [];
+    if (oportunidadesData[k]) {
+      oportunidadesData[k].manual = [];
+      // Limpa também os IDs absorvidos no baseline — sync volta a contar tudo do zero
+      delete oportunidadesData[k].syncedIds;
+    }
   });
   saveOportunidadesData();
   renderConversao();
@@ -6611,6 +6764,22 @@ function resetManualOportunidades() {
 // Conta deals fechados para um período (Q1/Q2/.. ou mês 'Jan'/'Fev'...)
 // Filtros opcionais por canal ou tipo
 function getFechadosCount(key, filtroDim, filtroVal) {
+  // 1) Override manual tem precedência absoluta. Permite editar a contagem na aba Conversão.
+  const bucket = oportunidadesData[key];
+  if (bucket && bucket.fechadosManual) {
+    const fm = bucket.fechadosManual;
+    if (!filtroDim) {
+      // Total: usa __total se setado, senão soma canais
+      if (fm.__total != null) return parseInt(fm.__total) || 0;
+    } else {
+      const dimBucket = fm[filtroDim];
+      if (dimBucket && dimBucket[filtroVal] != null) {
+        return parseInt(dimBucket[filtroVal]) || 0;
+      }
+    }
+  }
+
+  // 2) Caso não haja override → calcula dos deals (comportamento original)
   let meses;
   if (CONV_MESES_POR_Q[key]) {
     meses = CONV_MESES_POR_Q[key]; // trimestre
@@ -6641,6 +6810,56 @@ function getFechadosCount(key, filtroDim, filtroVal) {
     });
   }
   return count;
+}
+
+// Verifica se uma célula de "fechados" foi editada manualmente
+function _isFechadoManual(key, dim, val) {
+  const bucket = oportunidadesData[key];
+  if (!bucket || !bucket.fechadosManual) return false;
+  if (!dim) return bucket.fechadosManual.__total != null;
+  const dimBucket = bucket.fechadosManual[dim];
+  return !!(dimBucket && dimBucket[val] != null);
+}
+
+// Edita o número de fechados manualmente. Vazio = remove override e volta a derivar dos deals.
+function updateFechado(key, dim, val, num) {
+  if (IS_VIEWER) return;
+  const bucket = _ensureConvBucket(key);
+  if (!bucket.fechadosManual) bucket.fechadosManual = {};
+
+  // String vazia / "—" → remove override
+  const raw = String(num).trim();
+  if (raw === '' || raw === '—') {
+    if (dim) {
+      if (bucket.fechadosManual[dim]) delete bucket.fechadosManual[dim][val];
+    } else {
+      delete bucket.fechadosManual.__total;
+    }
+  } else {
+    const n = Math.max(0, parseInt(raw) || 0);
+    if (dim) {
+      if (!bucket.fechadosManual[dim]) bucket.fechadosManual[dim] = {};
+      bucket.fechadosManual[dim][val] = n;
+    } else {
+      bucket.fechadosManual.__total = n;
+    }
+  }
+
+  saveOportunidadesData();
+  renderConversao();
+  _refreshConvMirrors();
+}
+
+// Limpa todos os overrides de fechados (volta a derivar dos deals)
+function resetFechadosManual() {
+  if (IS_VIEWER) return;
+  if (!confirm('Limpar todas as edições manuais de "Negócios fechados"?\n\nAs contagens voltam a vir automaticamente dos deals (Q1_DEALS + tableRows).')) return;
+  Object.keys(oportunidadesData).forEach(k => {
+    if (oportunidadesData[k]) delete oportunidadesData[k].fechadosManual;
+  });
+  saveOportunidadesData();
+  renderConversao();
+  _refreshConvMirrors();
 }
 
 function _pctConv(fechados, oport) {
@@ -6786,24 +7005,49 @@ async function importarOportunidadesHS() {
       }
 
       let contou = false;
-      if (!_isManual(qKey, 'canais', canal)) {
-        _ensureConvBucket(qKey).canais[canal] = (_ensureConvBucket(qKey).canais[canal] || 0) + 1;
-        contou = true;
-      }
-      if (!_isManual(mKey, 'canais', canal)) {
-        _ensureConvBucket(mKey).canais[canal] = (_ensureConvBucket(mKey).canais[canal] || 0) + 1;
-        contou = true;
-      }
+      const mKeyCanal = 'canais:' + canal;
+      const idStr = String(id);
+
+      // Helper: incrementa o bucket de (período, canal) respeitando o baseline manual.
+      // Se a célula está marcada manual, só conta deals cujo id ainda não foi absorvido (syncedIds).
+      const incrementarCanal = (periodo) => {
+        const b = _ensureConvBucket(periodo);
+        if (_isManual(periodo, 'canais', canal)) {
+          // Modo baseline: só soma se o deal é genuinamente novo
+          if (!b.syncedIds) b.syncedIds = {};
+          if (!Array.isArray(b.syncedIds[mKeyCanal])) b.syncedIds[mKeyCanal] = [];
+          if (b.syncedIds[mKeyCanal].includes(idStr)) return false; // já contado
+          b.canais[canal] = (b.canais[canal] || 0) + 1;
+          b.syncedIds[mKeyCanal].push(idStr);
+          return true;
+        }
+        // Modo automático normal (não-manual): incrementa direto
+        b.canais[canal] = (b.canais[canal] || 0) + 1;
+        return true;
+      };
+
+      if (incrementarCanal(qKey)) contou = true;
+      if (incrementarCanal(mKey)) contou = true;
 
       // Tipo de empresa — vem só do override manual (HubSpot não tem essa info)
       const tipoEmp = (ov && ov.tipoEmpresa) ? ov.tipoEmpresa : '';
       if (contou && tipoEmp && CONV_TIPOS.includes(tipoEmp)) {
-        if (!_isManual(qKey, 'tipos', tipoEmp)) {
-          _ensureConvBucket(qKey).tipos[tipoEmp] = (_ensureConvBucket(qKey).tipos[tipoEmp] || 0) + 1;
-        }
-        if (!_isManual(mKey, 'tipos', tipoEmp)) {
-          _ensureConvBucket(mKey).tipos[tipoEmp] = (_ensureConvBucket(mKey).tipos[tipoEmp] || 0) + 1;
-        }
+        const mKeyTipo = 'tipos:' + tipoEmp;
+        const incrementarTipo = (periodo) => {
+          const b = _ensureConvBucket(periodo);
+          if (_isManual(periodo, 'tipos', tipoEmp)) {
+            // Baseline manual: só soma deals novos (não absorvidos)
+            if (!b.syncedIds) b.syncedIds = {};
+            if (!Array.isArray(b.syncedIds[mKeyTipo])) b.syncedIds[mKeyTipo] = [];
+            if (b.syncedIds[mKeyTipo].includes(idStr)) return;
+            b.tipos[tipoEmp] = (b.tipos[tipoEmp] || 0) + 1;
+            b.syncedIds[mKeyTipo].push(idStr);
+            return;
+          }
+          b.tipos[tipoEmp] = (b.tipos[tipoEmp] || 0) + 1;
+        };
+        incrementarTipo(qKey);
+        incrementarTipo(mKey);
       }
 
       if (contou) importados++;
@@ -7482,13 +7726,17 @@ function _renderConvBloco(key) {
     const fech  = getFechadosCount(key, 'canais', c);
     const conv  = _pctConv(fech, oport);
     const manual = _isManual(key, 'canais', c);
+    const fechManual = _isFechadoManual(key, 'canais', c);
     return `<tr>
       <td style="text-align:left;font-weight:600;">${c}</td>
       <td>
         <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','canais','${c}',this.textContent)" style="${manual?'background:#fef3c7;':''}">${oport}</span>
-        ${manual ? '<span title="Valor editado manualmente — protegido contra sync" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+        ${manual ? '<span title="Baseline manual — syncs futuros somam APENAS deals novos por cima desse valor" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
       </td>
-      <td style="font-weight:600;color:var(--accent);">${fech}</td>
+      <td>
+        <span contenteditable="true" class="churn-cell" onblur="updateFechado('${key}','canais','${c}',this.textContent)" style="font-weight:600;color:var(--accent);${fechManual?'background:#fef3c7;':''}" title="Edite à mão para sobrescrever a contagem automática dos deals. Deixe vazio para voltar ao automático.">${fech}</span>
+        ${fechManual ? '<span title="Editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+      </td>
       <td>${_convBadge(conv)}</td>
     </tr>`;
   }).join('');
@@ -7500,13 +7748,17 @@ function _renderConvBloco(key) {
     const fech  = getFechadosCount(key, 'tipos', t);
     const conv  = _pctConv(fech, oport);
     const manual = _isManual(key, 'tipos', t);
+    const fechManual = _isFechadoManual(key, 'tipos', t);
     return `<tr>
       <td style="text-align:left;font-weight:600;">${t}</td>
       <td>
         <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','tipos','${t}',this.textContent)" style="${manual?'background:#fef3c7;':''}">${oport}</span>
         ${manual ? '<span title="Valor editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
       </td>
-      <td style="font-weight:600;color:var(--accent);">${fech}</td>
+      <td>
+        <span contenteditable="true" class="churn-cell" onblur="updateFechado('${key}','tipos','${t}',this.textContent)" style="font-weight:600;color:var(--accent);${fechManual?'background:#fef3c7;':''}" title="Edite à mão para sobrescrever a contagem automática. Vazio = volta ao automático.">${fech}</span>
+        ${fechManual ? '<span title="Editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+      </td>
       <td>${_convBadge(conv)}</td>
     </tr>`;
   }).join('');
@@ -7595,8 +7847,69 @@ function _renderConvBloco(key) {
           </p>
         </div>
 
+        ${isQuarter ? `
+        <!-- Detalhe mensal expansível -->
+        <details class="rounded-lg border border-gray-200" style="background:#fafafa;">
+          <summary class="cursor-pointer px-3 py-2 font-semibold text-sm select-none" style="color:var(--text2);">
+            📅 Detalhe mês a mês — ${CONV_MESES_POR_Q[key].join(' · ')}
+            <span class="text-xs ml-2" style="color:var(--muted);">(clique para expandir)</span>
+          </summary>
+          <div class="p-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+            ${CONV_MESES_POR_Q[key].map(m => _renderConvBlocoMensalCompacto(m)).join('')}
+          </div>
+        </details>` : ''}
+
       </div>
     </section>`;
+}
+
+// Versão compacta do bloco de conversão para um único mês — usada como detalhamento
+// dentro dos cards trimestrais. Reaproveita updateOportunidade/updateFechado.
+function _renderConvBlocoMensalCompacto(mKey) {
+  const bucket = oportunidadesData[mKey] || { canais:{}, tipos:{}, manual:[] };
+  const totalOportM = CONV_CANAIS.reduce((s,c) => s + (bucket.canais[c]||0), 0);
+  const totalFechM  = getFechadosCount(mKey);
+  const convM       = _pctConv(totalFechM, totalOportM);
+
+  const linhas = CONV_CANAIS.map(c => {
+    const oport = bucket.canais[c] || 0;
+    const fech  = getFechadosCount(mKey, 'canais', c);
+    const conv  = _pctConv(fech, oport);
+    const manualO = _isManual(mKey, 'canais', c);
+    const manualF = _isFechadoManual(mKey, 'canais', c);
+    return `<tr>
+      <td style="text-align:left;font-weight:600;font-size:11px;padding:3px 6px;">${c}</td>
+      <td style="padding:3px 6px;">
+        <span contenteditable="true" class="churn-cell" style="font-size:11px;${manualO?'background:#fef3c7;':''}"
+          onblur="updateOportunidade('${mKey}','canais','${c}',this.textContent)">${oport}</span>
+        ${manualO?'<span title="Baseline manual" style="font-size:9px;color:#92400e;">🔒</span>':''}
+      </td>
+      <td style="padding:3px 6px;">
+        <span contenteditable="true" class="churn-cell" style="font-size:11px;font-weight:600;color:var(--accent);${manualF?'background:#fef3c7;':''}"
+          onblur="updateFechado('${mKey}','canais','${c}',this.textContent)">${fech}</span>
+        ${manualF?'<span title="Editado manualmente" style="font-size:9px;color:#92400e;">🔒</span>':''}
+      </td>
+      <td style="padding:3px 6px;font-size:10px;">${_convBadge(conv)}</td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="rounded-md bg-white border border-gray-200 p-2">
+    <div class="flex items-center justify-between mb-1 px-1">
+      <strong style="font-size:12px;color:var(--text);">${mKey}</strong>
+      <span style="font-size:10px;color:var(--muted);">${totalOportM} opt · ${totalFechM} fech · ${convM===null?'—':convM.toFixed(0)+'%'}</span>
+    </div>
+    <table class="w-full" style="font-size:11px;">
+      <thead>
+        <tr style="border-bottom:1px solid #e5e7eb;">
+          <th style="text-align:left;padding:3px 6px;font-weight:600;color:var(--text2);">Canal</th>
+          <th style="padding:3px 6px;font-weight:600;color:var(--text2);">Opt</th>
+          <th style="padding:3px 6px;font-weight:600;color:var(--text2);">Fech</th>
+          <th style="padding:3px 6px;font-weight:600;color:var(--text2);">Conv</th>
+        </tr>
+      </thead>
+      <tbody>${linhas}</tbody>
+    </table>
+  </div>`;
 }
 
 // ─── LOAD SAVED CADEIRAS STATE ───────────────────
