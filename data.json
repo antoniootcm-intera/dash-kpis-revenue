@@ -218,6 +218,21 @@
       "_locked": true
     },
     {
+      "id": "60694972556",
+      "cliente": "Ebanx",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 51000,
+      "data": "10/06",
+      "mes": "Jun",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 11,
+      "ciclo": 13,
+      "source": "hs",
+      "mensalidade": 17000
+    },
+    {
       "id": "60715092874",
       "cliente": "AB-Inbev",
       "servico": "Staffing",
@@ -230,7 +245,8 @@
       "semana": 10,
       "ciclo": 10,
       "source": "hs",
-      "mensalidade": 14000
+      "mensalidade": 14000,
+      "_locked": true
     }
   ],
   "cadeiras_rows": [
@@ -1280,6 +1296,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_60694972556",
+      "dealId": "60694972556",
+      "servico": "RPO",
+      "cliente": "Ebanx",
+      "vigencia": "",
+      "dataInicio": "10/06",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1739,6 +1778,21 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
+    },
+    {
+      "id": "cont_60694972556",
+      "dealId": "60694972556",
+      "cliente": "Ebanx",
+      "vigencia": "",
+      "inicio": "10/06",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 51000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "churn_rows": [
@@ -2187,8 +2241,8 @@
   "oportunidades_data": {
     "Q1": {
       "canais": {
-        "NTW": 2,
-        "OUT": 6,
+        "NTW": 10,
+        "OUT": 14,
         "INB": 15,
         "UP": 0,
         "REN": 2
@@ -2198,7 +2252,15 @@
         "GG": 0,
         "SMB": 0
       },
-      "manual": []
+      "manual": [
+        "canais:OUT",
+        "canais:NTW"
+      ],
+      "fechadosManual": {
+        "canais": {
+          "OUT": 2
+        }
+      }
     },
     "Fev": {
       "canais": {
@@ -2495,6 +2557,12 @@
       "alocacoes": "6",
       "tipo": "Enterprise",
       "canal": "REN"
+    },
+    "60694972556": {
+      "canal": "REN",
+      "mensalidade": 17000,
+      "alocacoes": "1",
+      "tipo": "GG"
     }
   },
   "hs_deleted": [
@@ -2694,16 +2762,17 @@
       }
     }
   },
+  "viewer_password_hash": "323af34cd5ffeacc472b4608c2b68209d27552024511649cfe5fb4ed1bcd99ce",
   "okr_state": {
-    "input-realizado": "1922500",
+    "input-realizado": "1973500",
     "input-clientes": "0",
-    "input-duracao": "58",
+    "input-duracao": "57",
     "cac-gastos": "115380.17",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-06-08T19:05:42.354Z"
+  "active_tab": "conversao",
+  "snapshot_at": "2026-06-10T16:22:43.847Z"
 }
