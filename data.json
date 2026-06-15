@@ -262,7 +262,8 @@
       "semana": 11,
       "ciclo": 49,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
     }
   ],
   "cadeiras_rows": [
@@ -2295,42 +2296,93 @@
   "oportunidades_data": {
     "Q1": {
       "canais": {
-        "NTW": 10,
-        "OUT": 14,
+        "NTW": 12,
+        "OUT": 20,
         "INB": 15,
-        "UP": 0,
-        "REN": 2
+        "UP": 5,
+        "REN": 13
       },
       "tipos": {
-        "Enterprise": 0,
-        "GG": 0,
-        "SMB": 0
+        "Enterprise": 5,
+        "GG": 6,
+        "SMB": 14
       },
       "manual": [
         "canais:OUT",
-        "canais:NTW"
+        "canais:NTW",
+        "canais:REN",
+        "canais:UP"
       ],
       "fechadosManual": {
         "canais": {
           "OUT": 2
         }
+      },
+      "syncedIds": {
+        "canais:OUT": [
+          "56709607985",
+          "57055760310",
+          "57610441816",
+          "57619537200",
+          "58025318205",
+          "58295309928"
+        ],
+        "canais:NTW": [
+          "57347085133",
+          "57851504181"
+        ],
+        "canais:REN": [
+          "58025421722",
+          "58630504795"
+        ],
+        "canais:UP": []
       }
     },
     "Fev": {
       "canais": {
-        "NTW": 0,
+        "NTW": 3,
         "MKT": 0,
-        "OUT": 2,
-        "INB": 8,
-        "UP": 0,
+        "OUT": 1,
+        "INB": 6,
+        "UP": 1,
         "REN": 0
       },
       "tipos": {
-        "Enterprise": 0,
-        "GG": 0,
-        "SMB": 0
+        "Enterprise": 2,
+        "GG": 4,
+        "SMB": 4
       },
-      "manual": []
+      "manual": [
+        "canais:NTW",
+        "canais:OUT",
+        "canais:INB",
+        "canais:UP"
+      ],
+      "syncedIds": {
+        "canais:NTW": [],
+        "canais:OUT": [
+          "56709607985",
+          "57055760310"
+        ],
+        "canais:INB": [
+          "56645855861",
+          "56646091520",
+          "56706795056",
+          "56707040787",
+          "56709485884",
+          "56709486378",
+          "56709734927",
+          "56896834738"
+        ],
+        "canais:UP": []
+      },
+      "fechadosManual": {
+        "canais": {
+          "NTW": 1,
+          "OUT": 0,
+          "INB": 0
+        }
+      }
     },
     "Mar": {
       "canais": {
@@ -2341,30 +2393,46 @@
         "REN": 2
       },
       "tipos": {
-        "Enterprise": 0,
-        "GG": 0,
-        "SMB": 0
+        "Enterprise": 3,
+        "GG": 2,
+        "SMB": 10
       },
       "manual": []
     },
     "Q2": {
       "canais": {
-        "NTW": 2,
+        "NTW": 4,
         "MKT": 0,
-        "OUT": 6,
+        "OUT": 14,
         "INB": 2,
-        "UP": 4,
-        "REN": 4
+        "UP": 5,
+        "REN": 10
       },
       "tipos": {
-        "Enterprise": 0,
-        "GG": 0,
-        "SMB": 0
+        "Enterprise": 5,
+        "GG": 11,
+        "SMB": 2
       },
       "manual": [
         "canais:NTW",
         "canais:OUT"
-      ]
+      ],
+      "syncedIds": {
+        "canais:OUT": [
+          "60177377682",
+          "59184917932",
+          "59186379620",
+          "60035535286",
+          "60076928529",
+          "60177879370",
+          "60423757584",
+          "60641856935"
+        ],
+        "canais:NTW": [
+          "60182272322",
+          "60177802569"
+        ]
+      }
     },
     "Abr": {
       "canais": {
@@ -2376,8 +2444,8 @@
         "REN": 2
       },
       "tipos": {
-        "Enterprise": 0,
-        "GG": 0,
+        "Enterprise": 1,
+        "GG": 5,
         "SMB": 0
       },
       "manual": []
@@ -2386,15 +2454,15 @@
       "canais": {
         "NTW": 2,
         "MKT": 0,
-        "OUT": 3,
+        "OUT": 5,
         "INB": 1,
         "UP": 4,
-        "REN": 2
+        "REN": 6
       },
       "tipos": {
-        "Enterprise": 0,
-        "GG": 0,
-        "SMB": 0
+        "Enterprise": 4,
+        "GG": 6,
+        "SMB": 2
       },
       "manual": []
     },
@@ -2445,10 +2513,10 @@
     },
     "Jan": {
       "canais": {
-        "NTW": 0,
-        "OUT": 0,
-        "INB": 0,
-        "UP": 0,
+        "NTW": 1,
+        "OUT": 4,
+        "INB": 16,
+        "UP": 2,
         "REN": 0
       },
       "tipos": {
@@ -2456,15 +2524,26 @@
         "GG": 0,
         "SMB": 0
       },
-      "manual": []
+      "manual": [
+        "canais:NTW",
+        "canais:OUT",
+        "canais:INB",
+        "canais:UP"
+      ],
+      "syncedIds": {
+        "canais:NTW": [],
+        "canais:OUT": [],
+        "canais:INB": [],
+        "canais:UP": []
+      }
     },
     "Jun": {
       "canais": {
         "NTW": 0,
         "OUT": 0,
         "INB": 0,
-        "UP": 0,
-        "REN": 0
+        "UP": 1,
+        "REN": 2
       },
       "tipos": {
         "Enterprise": 0,
@@ -2838,6 +2917,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-06-15T02:11:13.599Z"
+  "active_tab": "conversao",
+  "snapshot_at": "2026-06-15T15:02:38.261Z"
 }
