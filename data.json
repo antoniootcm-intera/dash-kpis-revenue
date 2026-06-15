@@ -1407,58 +1407,16 @@
       "id": "cont_60715092874",
       "dealId": "60715092874",
       "cliente": "AB-Inbev",
-      "vigencia": "",
+      "vigencia": "novembro/2026",
       "inicio": "08/06",
-      "fim": "",
-      "duracao": null,
-      "cadeiras": null,
-      "valorRPO": null,
+      "fim": "08/11",
+      "duracao": 5,
+      "cadeiras": 6,
+      "valorRPO": 14000,
       "valorTotal": 420000,
-      "tipoContrato": "",
+      "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "hs"
-    },
-    {
-      "id": "cont_cad_1778536769511_1",
-      "cliente": "ABInbev",
-      "vigencia": "junho/2026",
-      "inicio": "",
-      "fim": "05/06",
-      "duracao": 6,
-      "cadeiras": 4,
-      "valorRPO": 14000,
-      "valorTotal": 336000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_0",
-      "cliente": "ABInbev UP",
-      "vigencia": "julho/2026",
-      "inicio": "",
-      "fim": "06/07",
-      "duracao": 3,
-      "cadeiras": 2,
-      "valorRPO": 14000,
-      "valorTotal": 84000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "cadeiras"
-    },
-    {
-      "id": "cont_cad_1778536769511_2",
-      "cliente": "Caffeine Army",
-      "vigencia": "junho/2026",
-      "inicio": "",
-      "fim": "12/06",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 51000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "cadeiras"
     },
     {
       "id": "cont_60236781075",
@@ -1576,26 +1534,11 @@
       "source": "cadeiras"
     },
     {
-      "id": "cont_60694972556",
-      "dealId": "60694972556",
-      "cliente": "Ebanx",
-      "vigencia": "",
-      "inicio": "10/06",
-      "fim": "",
-      "duracao": null,
-      "cadeiras": null,
-      "valorRPO": null,
-      "valorTotal": 51000,
-      "tipoContrato": "",
-      "linkContrato": "",
-      "source": "hs"
-    },
-    {
       "id": "cont_cad_1778536769511_10",
       "cliente": "Ebanx Internacional",
-      "vigencia": "junho/2026",
+      "vigencia": "setembro/2026",
       "inicio": "",
-      "fim": "04/06",
+      "fim": "04/09",
       "duracao": 3,
       "cadeiras": 1,
       "valorRPO": 17000,
@@ -1815,7 +1758,7 @@
       "cadeiras": null,
       "valorRPO": 16000,
       "valorTotal": 240000,
-      "tipoContrato": "",
+      "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "hs"
     },
@@ -1882,11 +1825,11 @@
       "vigencia": "",
       "inicio": "31/07",
       "fim": "",
-      "duracao": null,
+      "duracao": 6,
       "cadeiras": null,
-      "valorRPO": null,
-      "valorTotal": null,
-      "tipoContrato": "",
+      "valorRPO": 16000,
+      "valorTotal": 96000,
+      "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "hs"
     },
@@ -1899,9 +1842,9 @@
       "fim": "",
       "duracao": null,
       "cadeiras": null,
-      "valorRPO": null,
+      "valorRPO": 16000,
       "valorTotal": 64000,
-      "tipoContrato": "",
+      "tipoContrato": "Sem Contrato",
       "linkContrato": "",
       "source": "hs"
     }
@@ -2125,17 +2068,6 @@
       "cadeiras": 1,
       "mrrPerdido": 16000,
       "contratoTotal": 96000,
-      "motivo": "Removido do controle de contratos"
-    },
-    {
-      "id": "churn_1780939936761",
-      "cliente": "Riachuelo - Johnny - Ren",
-      "tipo": "logo",
-      "mes": "Jun",
-      "dataChurn": "08/06",
-      "cadeiras": 1,
-      "mrrPerdido": 0,
-      "contratoTotal": 240000,
       "motivo": "Removido do controle de contratos"
     }
   ],
@@ -2979,6 +2911,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-06-15T18:32:15.587Z"
+  "active_tab": "churn",
+  "snapshot_at": "2026-06-15T19:08:48.962Z"
 }
