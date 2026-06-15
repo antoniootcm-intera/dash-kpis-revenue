@@ -267,7 +267,7 @@
     },
     {
       "id": "61111846200",
-      "cliente": "Deloitte",
+      "cliente": "Deloitte projeto*",
       "servico": "RPO",
       "canal": "Up",
       "valor": 64000,
@@ -1285,98 +1285,6 @@
       ],
       "source": "hs",
       "duracao": 6
-    },
-    {
-      "id": "cad_hs_60646073890",
-      "dealId": "60646073890",
-      "servico": "RPO",
-      "cliente": "Riachuelo ",
-      "vigencia": "",
-      "dataInicio": "30/06",
-      "meses": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "ATIVO",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      "source": "hs"
-    },
-    {
-      "id": "cad_hs_60715092874",
-      "dealId": "60715092874",
-      "servico": "RPO",
-      "cliente": "AB-Inbev",
-      "vigencia": "",
-      "dataInicio": "08/06",
-      "meses": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "ATIVO",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      "source": "hs"
-    },
-    {
-      "id": "cad_hs_60694972556",
-      "dealId": "60694972556",
-      "servico": "RPO",
-      "cliente": "Ebanx",
-      "vigencia": "",
-      "dataInicio": "10/06",
-      "meses": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "ATIVO",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      "source": "hs"
-    },
-    {
-      "id": "cad_hs_61052851828",
-      "dealId": "61052851828",
-      "servico": "RPO",
-      "cliente": "Caffeine Army - Mac - Ren",
-      "vigencia": "",
-      "dataInicio": "31/07",
-      "meses": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "ATIVO",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      "source": "hs"
     },
     {
       "id": "cad_hs_61111846200",
@@ -2700,7 +2608,8 @@
       "mensalidade": 16000,
       "alocacoes": "4",
       "tipo": "Enterprise",
-      "ciclo": 4
+      "ciclo": 4,
+      "cliente": "Deloitte projeto*"
     }
   },
   "hs_deleted": [
@@ -2904,13 +2813,13 @@
   "okr_state": {
     "input-realizado": "2133500",
     "input-clientes": "0",
-    "input-duracao": "54",
+    "input-duracao": "59",
     "cac-gastos": "115380.17",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "churn",
-  "snapshot_at": "2026-06-15T19:08:48.962Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-06-15T19:18:07.976Z"
 }
