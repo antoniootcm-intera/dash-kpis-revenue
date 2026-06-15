@@ -818,6 +818,162 @@
       </div>
     </div>
 
+    <!-- Receita da Casa (Renovação + Upsell) por mês -->
+    <div>
+      <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">🏠 Receita da Casa (Renovação + Upsell) — Mensal</h3>
+      <p class="text-xs mb-3" style="color:var(--muted);">Faturamento e quantidade de vendas por mês, somando deals dos canais <strong>REN</strong> + <strong>UP</strong>.</p>
+      <div class="relative h-72"><canvas id="chartCasaMensal"></canvas></div>
+      <!-- Tabela mês a mês -->
+      <div class="overflow-x-auto mt-4">
+        <table class="hist-table text-sm">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Mês</th>
+              <th>Renovações (qntd)</th>
+              <th>Upsells (qntd)</th>
+              <th>Total (qntd)</th>
+              <th>Faturamento</th>
+              <th>% do ano</th>
+            </tr>
+          </thead>
+          <tbody id="anual-casa-mensal-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td style="text-align:left;font-weight:700;">TOTAL</td>
+              <td id="anual-casa-mensal-tot-ren">0</td>
+              <td id="anual-casa-mensal-tot-up">0</td>
+              <td id="anual-casa-mensal-tot-qntd">0</td>
+              <td id="anual-casa-mensal-tot-fat" style="font-weight:700;color:var(--accent);">R$ 0</td>
+              <td style="font-weight:700;">100%</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Receita da Casa por Canal (REN vs UP) por Quarter -->
+    <div>
+      <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">🏠 Receita da Casa por Canal — Trimestral</h3>
+      <p class="text-xs mb-3" style="color:var(--muted);">Divisão de faturamento entre <strong>Renovação</strong> e <strong>Upsell</strong>, agrupado por trimestre.</p>
+      <div class="relative h-72"><canvas id="chartCasaCanalTri"></canvas></div>
+      <!-- Tabela Q1/Q2/Q3/Q4 -->
+      <div class="overflow-x-auto mt-4">
+        <table class="hist-table text-sm">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Quarter</th>
+              <th>Renovação</th>
+              <th>Upsell</th>
+              <th>Total</th>
+              <th>% do ano</th>
+              <th>Split REN / UP</th>
+            </tr>
+          </thead>
+          <tbody id="anual-casa-tri-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td style="text-align:left;font-weight:700;">TOTAL ANO</td>
+              <td id="anual-casa-tri-tot-ren" style="font-weight:600;">R$ 0</td>
+              <td id="anual-casa-tri-tot-up" style="font-weight:600;">R$ 0</td>
+              <td id="anual-casa-tri-tot-all" style="font-weight:700;color:var(--accent);">R$ 0</td>
+              <td style="font-weight:700;">100%</td>
+              <td id="anual-casa-tri-tot-split" style="font-weight:600;">—</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Aquisição vs Casa — Mensal -->
+    <div>
+      <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">⚖️ Aquisição vs Receita da Casa — Mensal</h3>
+      <p class="text-xs mb-3" style="color:var(--muted);">
+        <strong>Aquisição</strong> = novas vendas (NTW + OUT + INB).
+        <strong>Casa</strong> = renovações + upsells (REN + UP).
+      </p>
+      <div class="relative h-72"><canvas id="chartAquisicaoCasaMensal"></canvas></div>
+      <div class="overflow-x-auto mt-4">
+        <table class="hist-table text-sm">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Mês</th>
+              <th colspan="3" style="background:#dbeafe;">Aquisição (NTW+OUT+INB)</th>
+              <th colspan="3" style="background:#fef3c7;">Casa (REN+UP)</th>
+              <th>Total fat.</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th style="background:#eff6ff;">Qntd</th>
+              <th style="background:#eff6ff;">Faturamento</th>
+              <th style="background:#eff6ff;">%</th>
+              <th style="background:#fffbeb;">Qntd</th>
+              <th style="background:#fffbeb;">Faturamento</th>
+              <th style="background:#fffbeb;">%</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="anual-aqcasa-mensal-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td style="text-align:left;font-weight:700;">TOTAL</td>
+              <td id="aqcasa-mes-tot-aq-q">0</td>
+              <td id="aqcasa-mes-tot-aq-f" style="font-weight:700;">R$ 0</td>
+              <td id="aqcasa-mes-tot-aq-p" style="font-weight:700;">0%</td>
+              <td id="aqcasa-mes-tot-ca-q">0</td>
+              <td id="aqcasa-mes-tot-ca-f" style="font-weight:700;">R$ 0</td>
+              <td id="aqcasa-mes-tot-ca-p" style="font-weight:700;">0%</td>
+              <td id="aqcasa-mes-tot-all" style="font-weight:700;color:var(--accent);">R$ 0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Aquisição vs Casa — Trimestral -->
+    <div>
+      <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">⚖️ Aquisição vs Receita da Casa — Trimestral</h3>
+      <p class="text-xs mb-3" style="color:var(--muted);">Visão consolidada Q1/Q2/Q3/Q4 do faturamento de novas vendas vs casa.</p>
+      <div class="relative h-72"><canvas id="chartAquisicaoCasaTri"></canvas></div>
+      <div class="overflow-x-auto mt-4">
+        <table class="hist-table text-sm">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Quarter</th>
+              <th colspan="3" style="background:#dbeafe;">Aquisição</th>
+              <th colspan="3" style="background:#fef3c7;">Casa</th>
+              <th>Total fat.</th>
+              <th>Split Aq/Casa</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th style="background:#eff6ff;">Qntd</th>
+              <th style="background:#eff6ff;">Faturamento</th>
+              <th style="background:#eff6ff;">%</th>
+              <th style="background:#fffbeb;">Qntd</th>
+              <th style="background:#fffbeb;">Faturamento</th>
+              <th style="background:#fffbeb;">%</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="anual-aqcasa-tri-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td style="text-align:left;font-weight:700;">TOTAL ANO</td>
+              <td id="aqcasa-tri-tot-aq-q">0</td>
+              <td id="aqcasa-tri-tot-aq-f" style="font-weight:700;">R$ 0</td>
+              <td id="aqcasa-tri-tot-aq-p" style="font-weight:700;">0%</td>
+              <td id="aqcasa-tri-tot-ca-q">0</td>
+              <td id="aqcasa-tri-tot-ca-f" style="font-weight:700;">R$ 0</td>
+              <td id="aqcasa-tri-tot-ca-p" style="font-weight:700;">0%</td>
+              <td id="aqcasa-tri-tot-all" style="font-weight:700;color:var(--accent);">R$ 0</td>
+              <td id="aqcasa-tri-tot-split"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
     <!-- Tabela de breakdown -->
     <div>
       <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Detalhamento por Canal — 2026 YTD</h3>
@@ -2868,6 +3024,387 @@ function renderAnual() {
 
   // Conversão YTD (agregado de Q1+Q2+Q3+Q4)
   renderConvAnual('conv-summary-anual');
+
+  // ════════════════════════════════════════════════
+  //  Receita da Casa (REN + UP) — mensal + trimestral
+  // ════════════════════════════════════════════════
+  const isRen = (c) => ['REN','RENOVAÇÃO','RENOVACAO'].includes(String(c||'').toUpperCase());
+  const isUp  = (c) => ['UP','UPSELL'].includes(String(c||'').toUpperCase());
+  const isCasa = (c) => isRen(c) || isUp(c);
+
+  // Filtra deals da casa
+  const dealsCasa = all.filter(d => isCasa(d.canal));
+
+  // ── Mensal (REN + UP juntos) ──
+  const mesesFull = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const mensalCasa = {};
+  mesesFull.forEach(m => mensalCasa[m] = { ren: 0, up: 0, qntd: 0, fat: 0 });
+  dealsCasa.forEach(d => {
+    const b = mensalCasa[d.mes];
+    if (!b) return;
+    if (isRen(d.canal)) b.ren += 1;
+    if (isUp(d.canal))  b.up  += 1;
+    b.qntd += 1;
+    b.fat  += parseFloat(d.valor) || 0;
+  });
+  // Só mostra meses com dados (e respeita a ordem cronológica)
+  const mesesComCasa = mesesFull.filter(m => mensalCasa[m].qntd > 0 || mensalCasa[m].fat > 0);
+
+  // Chart: bar (fat) + line (qntd) com 2 eixos Y
+  const ctxCasaM = document.getElementById('chartCasaMensal');
+  if (ctxCasaM) {
+    if (charts.casaMensal) charts.casaMensal.destroy();
+    charts.casaMensal = new Chart(ctxCasaM, {
+      type: 'bar',
+      data: {
+        labels: mesesComCasa,
+        datasets: [
+          {
+            label: 'Faturamento (R$)',
+            data: mesesComCasa.map(m => mensalCasa[m].fat),
+            backgroundColor: '#2563eb',
+            borderRadius: 6,
+            yAxisID: 'y',
+            order: 2,
+          },
+          {
+            label: 'Quantidade de vendas',
+            data: mesesComCasa.map(m => mensalCasa[m].qntd),
+            type: 'line',
+            borderColor: '#f59e0b',
+            backgroundColor: '#f59e0b',
+            borderWidth: 3,
+            pointRadius: 5,
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 2,
+            tension: 0.3,
+            yAxisID: 'y1',
+            order: 1,
+          },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                if (ctx.dataset.yAxisID === 'y1') return 'Vendas: ' + ctx.parsed.y;
+                return 'Faturamento: R$ ' + ctx.parsed.y.toLocaleString('pt-BR');
+              }
+            }
+          },
+          datalabels: {
+            color: '#fff', font: { weight: 'bold', size: 10 },
+            formatter: (v, ctx) => {
+              if (ctx.dataset.yAxisID === 'y1') return v > 0 ? v : '';
+              if (!v) return '';
+              // Barra de faturamento: mostra R$ e % do ano
+              const total = ctx.dataset.data.reduce((a,b) => a + (parseFloat(b)||0), 0);
+              const pct = total > 0 ? (v / total) * 100 : 0;
+              return 'R$ ' + (v/1000).toFixed(0) + 'k\n' + pct.toFixed(1).replace('.', ',') + '%';
+            },
+            anchor: 'center', align: 'center',
+          },
+        },
+        scales: {
+          y:  { position: 'left',  beginAtZero: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' }, title: { display: true, text: 'Faturamento' } },
+          y1: { position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, ticks: { stepSize: 1 }, title: { display: true, text: 'Vendas' } },
+        }
+      }
+    });
+  }
+
+  // Tabela mensal — total do ano primeiro pra calcular %
+  const totFatAno = mesesComCasa.reduce((s, m) => s + mensalCasa[m].fat, 0);
+  const tbodyCasaM = document.getElementById('anual-casa-mensal-tbody');
+  if (tbodyCasaM) {
+    let totRen = 0, totUp = 0, totQ = 0, totF = 0;
+    tbodyCasaM.innerHTML = mesesComCasa.map(m => {
+      const b = mensalCasa[m];
+      totRen += b.ren; totUp += b.up; totQ += b.qntd; totF += b.fat;
+      const pctAno = totFatAno > 0 ? (b.fat / totFatAno) * 100 : 0;
+      return `<tr>
+        <td style="text-align:left;font-weight:600;">${m}</td>
+        <td>${b.ren}</td>
+        <td>${b.up}</td>
+        <td style="font-weight:600;">${b.qntd}</td>
+        <td style="font-weight:600;color:var(--accent);">${fmtBRL(b.fat)}</td>
+        <td style="font-weight:600;color:#7c3aed;">${pctAno.toFixed(1).replace('.', ',')}%</td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Sem deals de REN/UP no ano.</td></tr>';
+    document.getElementById('anual-casa-mensal-tot-ren').textContent = totRen;
+    document.getElementById('anual-casa-mensal-tot-up').textContent  = totUp;
+    document.getElementById('anual-casa-mensal-tot-qntd').textContent = totQ;
+    document.getElementById('anual-casa-mensal-tot-fat').textContent = fmtBRL(totF);
+  }
+
+  // ── Trimestral (REN vs UP separados) ──
+  const Qs = ['Q1','Q2','Q3','Q4'];
+  const MESES_Q = { Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'], Q3:['Jul','Ago','Set'], Q4:['Out','Nov','Dez'] };
+  const triCasa = {};
+  Qs.forEach(q => triCasa[q] = { ren: 0, up: 0 });
+  dealsCasa.forEach(d => {
+    const q = Qs.find(qk => MESES_Q[qk].includes(d.mes));
+    if (!q) return;
+    if (isRen(d.canal)) triCasa[q].ren += (parseFloat(d.valor) || 0);
+    if (isUp(d.canal))  triCasa[q].up  += (parseFloat(d.valor) || 0);
+  });
+
+  const ctxCasaT = document.getElementById('chartCasaCanalTri');
+  if (ctxCasaT) {
+    if (charts.casaTri) charts.casaTri.destroy();
+    charts.casaTri = new Chart(ctxCasaT, {
+      type: 'bar',
+      data: {
+        labels: Qs,
+        datasets: [
+          { label: 'Renovação', data: Qs.map(q => triCasa[q].ren), backgroundColor: '#60a5fa', borderRadius: 6 },
+          { label: 'Upsell',    data: Qs.map(q => triCasa[q].up),  backgroundColor: '#1e3a8a', borderRadius: 6 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: { label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }
+          },
+          datalabels: {
+            color: '#fff', font: { weight: 'bold', size: 10 },
+            formatter: (v, ctx) => {
+              if (!v || v <= 0) return '';
+              // % do ano = valor / soma de todas as séries
+              const all = ctx.chart.data.datasets.flatMap(ds => ds.data || []);
+              const total = all.reduce((a,b) => a + (parseFloat(b)||0), 0);
+              const pct = total > 0 ? (v / total) * 100 : 0;
+              return 'R$ ' + v.toLocaleString('pt-BR') + ' (' + pct.toFixed(1).replace('.', ',') + '%)';
+            },
+            anchor: 'center', align: 'center',
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // Tabela trimestral REN vs UP — calcula totais ANTES pra usar nas %
+  const totAnoRen = Qs.reduce((s, q) => s + triCasa[q].ren, 0);
+  const totAnoUp  = Qs.reduce((s, q) => s + triCasa[q].up,  0);
+  const totAnoAll = totAnoRen + totAnoUp;
+
+  const tbodyCasaT = document.getElementById('anual-casa-tri-tbody');
+  if (tbodyCasaT) {
+    tbodyCasaT.innerHTML = Qs.map(q => {
+      const b = triCasa[q];
+      const sub = b.ren + b.up;
+      const pctAno    = totAnoAll > 0 ? (sub / totAnoAll) * 100 : 0;
+      const pctRenDoQ = sub > 0 ? (b.ren / sub) * 100 : 0;
+      const pctUpDoQ  = sub > 0 ? (b.up  / sub) * 100 : 0;
+      const splitTxt  = sub > 0
+        ? `<span style="color:#60a5fa;">${pctRenDoQ.toFixed(0)}% REN</span> · <span style="color:#1e3a8a;">${pctUpDoQ.toFixed(0)}% UP</span>`
+        : '—';
+      return `<tr>
+        <td style="text-align:left;font-weight:600;">${q}</td>
+        <td>${fmtBRL(b.ren)}</td>
+        <td>${fmtBRL(b.up)}</td>
+        <td style="font-weight:600;color:var(--accent);">${fmtBRL(sub)}</td>
+        <td style="font-weight:600;color:#7c3aed;">${pctAno.toFixed(1).replace('.', ',')}%</td>
+        <td style="font-size:11px;">${splitTxt}</td>
+      </tr>`;
+    }).join('');
+    document.getElementById('anual-casa-tri-tot-ren').textContent = fmtBRL(totAnoRen);
+    document.getElementById('anual-casa-tri-tot-up').textContent  = fmtBRL(totAnoUp);
+    document.getElementById('anual-casa-tri-tot-all').textContent = fmtBRL(totAnoAll);
+    const splitTotal = totAnoAll > 0
+      ? `<span style="color:#60a5fa;">${(totAnoRen/totAnoAll*100).toFixed(0)}% REN</span> · <span style="color:#1e3a8a;">${(totAnoUp/totAnoAll*100).toFixed(0)}% UP</span>`
+      : '—';
+    document.getElementById('anual-casa-tri-tot-split').innerHTML = splitTotal;
+  }
+
+  // ════════════════════════════════════════════════
+  //  Aquisição vs Casa — mensal + trimestral
+  // ════════════════════════════════════════════════
+  const isAquisicao = (c) => ['NTW','OUT','INB','MKT'].includes(String(c||'').toUpperCase());
+
+  // ── Mensal ──
+  const aqCasaMes = {};
+  mesesFull.forEach(m => aqCasaMes[m] = { aqQ:0, aqF:0, caQ:0, caF:0 });
+  all.forEach(d => {
+    const b = aqCasaMes[d.mes];
+    if (!b) return;
+    const v = parseFloat(d.valor) || 0;
+    if (isAquisicao(d.canal)) { b.aqQ += 1; b.aqF += v; }
+    else if (isCasa(d.canal)) { b.caQ += 1; b.caF += v; }
+  });
+  const mesesComAqCasa = mesesFull.filter(m => aqCasaMes[m].aqQ > 0 || aqCasaMes[m].caQ > 0);
+
+  const ctxAqCasaM = document.getElementById('chartAquisicaoCasaMensal');
+  if (ctxAqCasaM) {
+    if (charts.aqCasaMensal) charts.aqCasaMensal.destroy();
+    charts.aqCasaMensal = new Chart(ctxAqCasaM, {
+      type: 'bar',
+      data: {
+        labels: mesesComAqCasa,
+        datasets: [
+          { label: 'Aquisição (NTW+OUT+INB)', data: mesesComAqCasa.map(m => aqCasaMes[m].aqF), backgroundColor: '#2563eb', borderRadius: 6 },
+          { label: 'Casa (REN+UP)',            data: mesesComAqCasa.map(m => aqCasaMes[m].caF), backgroundColor: '#f59e0b', borderRadius: 6 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { callbacks: { label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') } },
+          datalabels: {
+            color: '#fff', font: { weight: 'bold', size: 10 },
+            formatter: (v, ctx) => {
+              if (!v || v <= 0) return '';
+              const all = ctx.chart.data.datasets.flatMap(ds => ds.data || []);
+              const total = all.reduce((a,b) => a + (parseFloat(b)||0), 0);
+              const pct = total > 0 ? (v / total) * 100 : 0;
+              return 'R$ ' + (v/1000).toFixed(0) + 'k\n' + pct.toFixed(1).replace('.', ',') + '%';
+            },
+            anchor: 'center', align: 'center',
+          }
+        },
+        scales: {
+          y: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // Tabela mensal Aq vs Casa
+  const tbodyAqCasaM = document.getElementById('anual-aqcasa-mensal-tbody');
+  if (tbodyAqCasaM) {
+    let tAqQ=0, tAqF=0, tCaQ=0, tCaF=0;
+    mesesComAqCasa.forEach(m => { const b = aqCasaMes[m]; tAqQ+=b.aqQ; tAqF+=b.aqF; tCaQ+=b.caQ; tCaF+=b.caF; });
+    const tTotAll = tAqF + tCaF;
+    tbodyAqCasaM.innerHTML = mesesComAqCasa.map(m => {
+      const b = aqCasaMes[m];
+      const totM = b.aqF + b.caF;
+      const pctAq = totM > 0 ? (b.aqF / totM) * 100 : 0;
+      const pctCa = totM > 0 ? (b.caF / totM) * 100 : 0;
+      return `<tr>
+        <td style="text-align:left;font-weight:600;">${m}</td>
+        <td>${b.aqQ}</td>
+        <td>${fmtBRL(b.aqF)}</td>
+        <td style="color:#2563eb;font-weight:600;">${pctAq.toFixed(1).replace('.', ',')}%</td>
+        <td>${b.caQ}</td>
+        <td>${fmtBRL(b.caF)}</td>
+        <td style="color:#d97706;font-weight:600;">${pctCa.toFixed(1).replace('.', ',')}%</td>
+        <td style="font-weight:700;color:var(--accent);">${fmtBRL(totM)}</td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Sem deals no ano.</td></tr>';
+
+    const pctAqTot = tTotAll > 0 ? (tAqF / tTotAll) * 100 : 0;
+    const pctCaTot = tTotAll > 0 ? (tCaF / tTotAll) * 100 : 0;
+    document.getElementById('aqcasa-mes-tot-aq-q').textContent = tAqQ;
+    document.getElementById('aqcasa-mes-tot-aq-f').textContent = fmtBRL(tAqF);
+    document.getElementById('aqcasa-mes-tot-aq-p').textContent = pctAqTot.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('aqcasa-mes-tot-ca-q').textContent = tCaQ;
+    document.getElementById('aqcasa-mes-tot-ca-f').textContent = fmtBRL(tCaF);
+    document.getElementById('aqcasa-mes-tot-ca-p').textContent = pctCaTot.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('aqcasa-mes-tot-all').textContent  = fmtBRL(tTotAll);
+  }
+
+  // ── Trimestral ──
+  const aqCasaTri = {};
+  Qs.forEach(q => aqCasaTri[q] = { aqQ:0, aqF:0, caQ:0, caF:0 });
+  all.forEach(d => {
+    const q = Qs.find(qk => MESES_Q[qk].includes(d.mes));
+    if (!q) return;
+    const v = parseFloat(d.valor) || 0;
+    if (isAquisicao(d.canal)) { aqCasaTri[q].aqQ += 1; aqCasaTri[q].aqF += v; }
+    else if (isCasa(d.canal)) { aqCasaTri[q].caQ += 1; aqCasaTri[q].caF += v; }
+  });
+
+  const ctxAqCasaT = document.getElementById('chartAquisicaoCasaTri');
+  if (ctxAqCasaT) {
+    if (charts.aqCasaTri) charts.aqCasaTri.destroy();
+    charts.aqCasaTri = new Chart(ctxAqCasaT, {
+      type: 'bar',
+      data: {
+        labels: Qs,
+        datasets: [
+          { label: 'Aquisição (NTW+OUT+INB)', data: Qs.map(q => aqCasaTri[q].aqF), backgroundColor: '#2563eb', borderRadius: 6 },
+          { label: 'Casa (REN+UP)',            data: Qs.map(q => aqCasaTri[q].caF), backgroundColor: '#f59e0b', borderRadius: 6 },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: { callbacks: { label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') } },
+          datalabels: {
+            color: '#fff', font: { weight: 'bold', size: 10 },
+            formatter: (v, ctx) => {
+              if (!v || v <= 0) return '';
+              const all = ctx.chart.data.datasets.flatMap(ds => ds.data || []);
+              const total = all.reduce((a,b) => a + (parseFloat(b)||0), 0);
+              const pct = total > 0 ? (v / total) * 100 : 0;
+              return 'R$ ' + v.toLocaleString('pt-BR') + ' (' + pct.toFixed(1).replace('.', ',') + '%)';
+            },
+            anchor: 'center', align: 'center',
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // Tabela trimestral Aq vs Casa
+  const tAqF_t = Qs.reduce((s,q) => s + aqCasaTri[q].aqF, 0);
+  const tCaF_t = Qs.reduce((s,q) => s + aqCasaTri[q].caF, 0);
+  const tAqQ_t = Qs.reduce((s,q) => s + aqCasaTri[q].aqQ, 0);
+  const tCaQ_t = Qs.reduce((s,q) => s + aqCasaTri[q].caQ, 0);
+  const tTotAll_t = tAqF_t + tCaF_t;
+
+  const tbodyAqCasaT = document.getElementById('anual-aqcasa-tri-tbody');
+  if (tbodyAqCasaT) {
+    tbodyAqCasaT.innerHTML = Qs.map(q => {
+      const b = aqCasaTri[q];
+      const totQ = b.aqF + b.caF;
+      const pctAq = totQ > 0 ? (b.aqF / totQ) * 100 : 0;
+      const pctCa = totQ > 0 ? (b.caF / totQ) * 100 : 0;
+      const split = totQ > 0
+        ? `<span style="color:#2563eb;">${pctAq.toFixed(0)}% Aq</span> · <span style="color:#d97706;">${pctCa.toFixed(0)}% Casa</span>`
+        : '—';
+      return `<tr>
+        <td style="text-align:left;font-weight:600;">${q}</td>
+        <td>${b.aqQ}</td>
+        <td>${fmtBRL(b.aqF)}</td>
+        <td style="color:#2563eb;font-weight:600;">${pctAq.toFixed(1).replace('.', ',')}%</td>
+        <td>${b.caQ}</td>
+        <td>${fmtBRL(b.caF)}</td>
+        <td style="color:#d97706;font-weight:600;">${pctCa.toFixed(1).replace('.', ',')}%</td>
+        <td style="font-weight:700;color:var(--accent);">${fmtBRL(totQ)}</td>
+        <td style="font-size:11px;">${split}</td>
+      </tr>`;
+    }).join('');
+
+    const pctAqTotAno = tTotAll_t > 0 ? (tAqF_t / tTotAll_t) * 100 : 0;
+    const pctCaTotAno = tTotAll_t > 0 ? (tCaF_t / tTotAll_t) * 100 : 0;
+    document.getElementById('aqcasa-tri-tot-aq-q').textContent = tAqQ_t;
+    document.getElementById('aqcasa-tri-tot-aq-f').textContent = fmtBRL(tAqF_t);
+    document.getElementById('aqcasa-tri-tot-aq-p').textContent = pctAqTotAno.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('aqcasa-tri-tot-ca-q').textContent = tCaQ_t;
+    document.getElementById('aqcasa-tri-tot-ca-f').textContent = fmtBRL(tCaF_t);
+    document.getElementById('aqcasa-tri-tot-ca-p').textContent = pctCaTotAno.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('aqcasa-tri-tot-all').textContent  = fmtBRL(tTotAll_t);
+    document.getElementById('aqcasa-tri-tot-split').innerHTML = tTotAll_t > 0
+      ? `<span style="color:#2563eb;">${pctAqTotAno.toFixed(0)}% Aq</span> · <span style="color:#d97706;">${pctCaTotAno.toFixed(0)}% Casa</span>`
+      : '—';
+  }
 }
 
 function initHistoricalCharts() {
