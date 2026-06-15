@@ -833,7 +833,6 @@
               <th>Upsells (qntd)</th>
               <th>Total (qntd)</th>
               <th>Faturamento</th>
-              <th>% do ano</th>
             </tr>
           </thead>
           <tbody id="anual-casa-mensal-tbody"></tbody>
@@ -844,7 +843,6 @@
               <td id="anual-casa-mensal-tot-up">0</td>
               <td id="anual-casa-mensal-tot-qntd">0</td>
               <td id="anual-casa-mensal-tot-fat" style="font-weight:700;color:var(--accent);">R$ 0</td>
-              <td style="font-weight:700;">100%</td>
             </tr>
           </tfoot>
         </table>
@@ -854,8 +852,29 @@
     <!-- Receita da Casa por Canal (REN vs UP) por Quarter -->
     <div>
       <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">🏠 Receita da Casa por Canal — Trimestral</h3>
-      <p class="text-xs mb-3" style="color:var(--muted);">Divisão de faturamento entre <strong>Renovação</strong> e <strong>Upsell</strong>, agrupado por trimestre.</p>
-      <div class="relative h-72"><canvas id="chartCasaCanalTri"></canvas></div>
+      <p class="text-xs mb-3" style="color:var(--muted);">Divisão de faturamento entre <strong>Renovação</strong> e <strong>Upsell</strong>, um quarter por card (100% empilhado).</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q1</h4>
+          <p class="text-center text-xs italic mb-1" id="casa-q1-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartCasaQ1"></canvas></div>
+        </div>
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q2</h4>
+          <p class="text-center text-xs italic mb-1" id="casa-q2-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartCasaQ2"></canvas></div>
+        </div>
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q3</h4>
+          <p class="text-center text-xs italic mb-1" id="casa-q3-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartCasaQ3"></canvas></div>
+        </div>
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q4</h4>
+          <p class="text-center text-xs italic mb-1" id="casa-q4-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartCasaQ4"></canvas></div>
+        </div>
+      </div>
       <!-- Tabela Q1/Q2/Q3/Q4 -->
       <div class="overflow-x-auto mt-4">
         <table class="hist-table text-sm">
@@ -865,8 +884,7 @@
               <th>Renovação</th>
               <th>Upsell</th>
               <th>Total</th>
-              <th>% do ano</th>
-              <th>Split REN / UP</th>
+              <th>Split REN / UP (% intra-Q)</th>
             </tr>
           </thead>
           <tbody id="anual-casa-tri-tbody"></tbody>
@@ -876,7 +894,6 @@
               <td id="anual-casa-tri-tot-ren" style="font-weight:600;">R$ 0</td>
               <td id="anual-casa-tri-tot-up" style="font-weight:600;">R$ 0</td>
               <td id="anual-casa-tri-tot-all" style="font-weight:700;color:var(--accent);">R$ 0</td>
-              <td style="font-weight:700;">100%</td>
               <td id="anual-casa-tri-tot-split" style="font-weight:600;">—</td>
             </tr>
           </tfoot>
@@ -897,18 +914,16 @@
           <thead>
             <tr>
               <th style="text-align:left;">Mês</th>
-              <th colspan="3" style="background:#dbeafe;">Aquisição (NTW+OUT+INB)</th>
-              <th colspan="3" style="background:#fef3c7;">Casa (REN+UP)</th>
+              <th colspan="2" style="background:#dbeafe;">Aquisição (NTW+OUT+INB)</th>
+              <th colspan="2" style="background:#fef3c7;">Casa (REN+UP)</th>
               <th>Total fat.</th>
             </tr>
             <tr>
               <th></th>
               <th style="background:#eff6ff;">Qntd</th>
               <th style="background:#eff6ff;">Faturamento</th>
-              <th style="background:#eff6ff;">%</th>
               <th style="background:#fffbeb;">Qntd</th>
               <th style="background:#fffbeb;">Faturamento</th>
-              <th style="background:#fffbeb;">%</th>
               <th></th>
             </tr>
           </thead>
@@ -918,10 +933,8 @@
               <td style="text-align:left;font-weight:700;">TOTAL</td>
               <td id="aqcasa-mes-tot-aq-q">0</td>
               <td id="aqcasa-mes-tot-aq-f" style="font-weight:700;">R$ 0</td>
-              <td id="aqcasa-mes-tot-aq-p" style="font-weight:700;">0%</td>
               <td id="aqcasa-mes-tot-ca-q">0</td>
               <td id="aqcasa-mes-tot-ca-f" style="font-weight:700;">R$ 0</td>
-              <td id="aqcasa-mes-tot-ca-p" style="font-weight:700;">0%</td>
               <td id="aqcasa-mes-tot-all" style="font-weight:700;color:var(--accent);">R$ 0</td>
             </tr>
           </tfoot>
@@ -932,8 +945,29 @@
     <!-- Aquisição vs Casa — Trimestral -->
     <div>
       <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">⚖️ Aquisição vs Receita da Casa — Trimestral</h3>
-      <p class="text-xs mb-3" style="color:var(--muted);">Visão consolidada Q1/Q2/Q3/Q4 do faturamento de novas vendas vs casa.</p>
-      <div class="relative h-72"><canvas id="chartAquisicaoCasaTri"></canvas></div>
+      <p class="text-xs mb-3" style="color:var(--muted);">Divisão entre <strong>Aquisição</strong> (NTW+OUT+INB) e <strong>Casa</strong> (REN+UP), um quarter por card (100% empilhado).</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q1</h4>
+          <p class="text-center text-xs italic mb-1" id="aqcasa-q1-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartAqCasaQ1"></canvas></div>
+        </div>
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q2</h4>
+          <p class="text-center text-xs italic mb-1" id="aqcasa-q2-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartAqCasaQ2"></canvas></div>
+        </div>
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q3</h4>
+          <p class="text-center text-xs italic mb-1" id="aqcasa-q3-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartAqCasaQ3"></canvas></div>
+        </div>
+        <div class="rounded-xl border p-3" style="border-color:#e5e7eb;">
+          <h4 class="text-center text-base font-bold" style="color:var(--text);">Q4</h4>
+          <p class="text-center text-xs italic mb-1" id="aqcasa-q4-meta" style="color:var(--muted);"></p>
+          <div class="relative h-72"><canvas id="chartAqCasaQ4"></canvas></div>
+        </div>
+      </div>
       <div class="overflow-x-auto mt-4">
         <table class="hist-table text-sm">
           <thead>
@@ -2909,6 +2943,61 @@ function _getAllDeals2026() {
   return all;
 }
 
+// Cria um chart 100% empilhado vertical, com R$ exato dentro de cada segmento.
+// Cada item: { label, value, color }. A barra inteira sempre vai a 100%.
+function _renderQStackChart(canvas, items) {
+  const total = items.reduce((s, it) => s + (parseFloat(it.value) || 0), 0);
+  // Se não há dados, gera um placeholder visual cinza
+  const labels = ['Faturamento Total'];
+  const datasets = items.map(it => ({
+    label: it.label,
+    data: [ total > 0 ? ((parseFloat(it.value) || 0) / total) * 100 : 0 ],
+    backgroundColor: it.color,
+    _absValue: parseFloat(it.value) || 0, // valor original em R$ pra usar no datalabel
+    borderWidth: 0,
+  }));
+
+  return new Chart(canvas, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, padding: 10, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const abs = ctx.dataset._absValue || 0;
+              const pct = ctx.parsed.y || 0;
+              return ctx.dataset.label + ': R$ ' + abs.toLocaleString('pt-BR') + ' (' + pct.toFixed(1) + '%)';
+            }
+          }
+        },
+        datalabels: {
+          color: '#fff', font: { weight: 'bold', size: 11 },
+          formatter: (v, ctx) => {
+            const abs = ctx.dataset._absValue || 0;
+            if (!abs || abs <= 0) return '';
+            const pct = ctx.parsed.y || 0;
+            // Duas linhas: R$ exato + % do total
+            return 'R$ ' + abs.toLocaleString('pt-BR') + '\n' + pct.toFixed(1).replace('.', ',') + '%';
+          },
+          anchor: 'center', align: 'center',
+          textAlign: 'center',
+        }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: {
+          stacked: true, beginAtZero: true, max: 100,
+          ticks: { callback: v => v + '%', font: { size: 10 } },
+          grid: { color: 'rgba(0,0,0,0.06)' }
+        }
+      }
+    }
+  });
+}
+
 function renderAnual() {
   const all = _getAllDeals2026();
 
@@ -3096,14 +3185,11 @@ function renderAnual() {
             }
           },
           datalabels: {
-            color: '#fff', font: { weight: 'bold', size: 10 },
+            color: '#fff', font: { weight: 'bold', size: 11 },
             formatter: (v, ctx) => {
               if (ctx.dataset.yAxisID === 'y1') return v > 0 ? v : '';
               if (!v) return '';
-              // Barra de faturamento: mostra R$ e % do ano
-              const total = ctx.dataset.data.reduce((a,b) => a + (parseFloat(b)||0), 0);
-              const pct = total > 0 ? (v / total) * 100 : 0;
-              return 'R$ ' + (v/1000).toFixed(0) + 'k\n' + pct.toFixed(1).replace('.', ',') + '%';
+              return 'R$ ' + (v/1000).toFixed(0) + 'k';
             },
             anchor: 'center', align: 'center',
           },
@@ -3116,24 +3202,21 @@ function renderAnual() {
     });
   }
 
-  // Tabela mensal — total do ano primeiro pra calcular %
-  const totFatAno = mesesComCasa.reduce((s, m) => s + mensalCasa[m].fat, 0);
+  // Tabela mensal (sem coluna de % — usuário pediu)
   const tbodyCasaM = document.getElementById('anual-casa-mensal-tbody');
   if (tbodyCasaM) {
     let totRen = 0, totUp = 0, totQ = 0, totF = 0;
     tbodyCasaM.innerHTML = mesesComCasa.map(m => {
       const b = mensalCasa[m];
       totRen += b.ren; totUp += b.up; totQ += b.qntd; totF += b.fat;
-      const pctAno = totFatAno > 0 ? (b.fat / totFatAno) * 100 : 0;
       return `<tr>
         <td style="text-align:left;font-weight:600;">${m}</td>
         <td>${b.ren}</td>
         <td>${b.up}</td>
         <td style="font-weight:600;">${b.qntd}</td>
         <td style="font-weight:600;color:var(--accent);">${fmtBRL(b.fat)}</td>
-        <td style="font-weight:600;color:#7c3aed;">${pctAno.toFixed(1).replace('.', ',')}%</td>
       </tr>`;
-    }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Sem deals de REN/UP no ano.</td></tr>';
+    }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Sem deals de REN/UP no ano.</td></tr>';
     document.getElementById('anual-casa-mensal-tot-ren').textContent = totRen;
     document.getElementById('anual-casa-mensal-tot-up').textContent  = totUp;
     document.getElementById('anual-casa-mensal-tot-qntd').textContent = totQ;
@@ -3152,45 +3235,24 @@ function renderAnual() {
     if (isUp(d.canal))  triCasa[q].up  += (parseFloat(d.valor) || 0);
   });
 
-  const ctxCasaT = document.getElementById('chartCasaCanalTri');
-  if (ctxCasaT) {
-    if (charts.casaTri) charts.casaTri.destroy();
-    charts.casaTri = new Chart(ctxCasaT, {
-      type: 'bar',
-      data: {
-        labels: Qs,
-        datasets: [
-          { label: 'Renovação', data: Qs.map(q => triCasa[q].ren), backgroundColor: '#60a5fa', borderRadius: 6 },
-          { label: 'Upsell',    data: Qs.map(q => triCasa[q].up),  backgroundColor: '#1e3a8a', borderRadius: 6 },
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-        plugins: {
-          legend: { position: 'top' },
-          tooltip: {
-            callbacks: { label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') }
-          },
-          datalabels: {
-            color: '#fff', font: { weight: 'bold', size: 10 },
-            formatter: (v, ctx) => {
-              if (!v || v <= 0) return '';
-              // % do ano = valor / soma de todas as séries
-              const all = ctx.chart.data.datasets.flatMap(ds => ds.data || []);
-              const total = all.reduce((a,b) => a + (parseFloat(b)||0), 0);
-              const pct = total > 0 ? (v / total) * 100 : 0;
-              return 'R$ ' + v.toLocaleString('pt-BR') + ' (' + pct.toFixed(1).replace('.', ',') + '%)';
-            },
-            anchor: 'center', align: 'center',
-          }
-        },
-        scales: {
-          x: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
-          y: { grid: { display: false } }
-        }
-      }
-    });
-  }
+  // 4 mini-charts 100% empilhados — um por Q. Helper compartilhado.
+  Qs.forEach(q => {
+    const ctx = document.getElementById('chartCasa' + q);
+    if (!ctx) return;
+    const chartKey = 'casa' + q;
+    if (charts[chartKey]) charts[chartKey].destroy();
+    charts[chartKey] = _renderQStackChart(
+      ctx,
+      [
+        { label:'Renovação', value: triCasa[q].ren, color:'#1e3a8a' },
+        { label:'Upsell',    value: triCasa[q].up,  color:'#60a5fa' },
+      ]
+    );
+    // Subtítulo: total do Q
+    const total = triCasa[q].ren + triCasa[q].up;
+    const meta = document.getElementById('casa-' + q.toLowerCase() + '-meta');
+    if (meta) meta.textContent = total > 0 ? 'Total ' + fmtBRL(total) : 'Sem dados';
+  });
 
   // Tabela trimestral REN vs UP — calcula totais ANTES pra usar nas %
   const totAnoRen = Qs.reduce((s, q) => s + triCasa[q].ren, 0);
@@ -3202,7 +3264,6 @@ function renderAnual() {
     tbodyCasaT.innerHTML = Qs.map(q => {
       const b = triCasa[q];
       const sub = b.ren + b.up;
-      const pctAno    = totAnoAll > 0 ? (sub / totAnoAll) * 100 : 0;
       const pctRenDoQ = sub > 0 ? (b.ren / sub) * 100 : 0;
       const pctUpDoQ  = sub > 0 ? (b.up  / sub) * 100 : 0;
       const splitTxt  = sub > 0
@@ -3213,7 +3274,6 @@ function renderAnual() {
         <td>${fmtBRL(b.ren)}</td>
         <td>${fmtBRL(b.up)}</td>
         <td style="font-weight:600;color:var(--accent);">${fmtBRL(sub)}</td>
-        <td style="font-weight:600;color:#7c3aed;">${pctAno.toFixed(1).replace('.', ',')}%</td>
         <td style="font-size:11px;">${splitTxt}</td>
       </tr>`;
     }).join('');
@@ -3261,14 +3321,8 @@ function renderAnual() {
           legend: { position: 'top' },
           tooltip: { callbacks: { label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') } },
           datalabels: {
-            color: '#fff', font: { weight: 'bold', size: 10 },
-            formatter: (v, ctx) => {
-              if (!v || v <= 0) return '';
-              const all = ctx.chart.data.datasets.flatMap(ds => ds.data || []);
-              const total = all.reduce((a,b) => a + (parseFloat(b)||0), 0);
-              const pct = total > 0 ? (v / total) * 100 : 0;
-              return 'R$ ' + (v/1000).toFixed(0) + 'k\n' + pct.toFixed(1).replace('.', ',') + '%';
-            },
+            color: '#fff', font: { weight: 'bold', size: 11 },
+            formatter: (v) => v > 0 ? 'R$ ' + (v/1000).toFixed(0) + 'k' : '',
             anchor: 'center', align: 'center',
           }
         },
@@ -3280,7 +3334,7 @@ function renderAnual() {
     });
   }
 
-  // Tabela mensal Aq vs Casa
+  // Tabela mensal Aq vs Casa (sem colunas % — usuário pediu)
   const tbodyAqCasaM = document.getElementById('anual-aqcasa-mensal-tbody');
   if (tbodyAqCasaM) {
     let tAqQ=0, tAqF=0, tCaQ=0, tCaF=0;
@@ -3289,28 +3343,20 @@ function renderAnual() {
     tbodyAqCasaM.innerHTML = mesesComAqCasa.map(m => {
       const b = aqCasaMes[m];
       const totM = b.aqF + b.caF;
-      const pctAq = totM > 0 ? (b.aqF / totM) * 100 : 0;
-      const pctCa = totM > 0 ? (b.caF / totM) * 100 : 0;
       return `<tr>
         <td style="text-align:left;font-weight:600;">${m}</td>
         <td>${b.aqQ}</td>
         <td>${fmtBRL(b.aqF)}</td>
-        <td style="color:#2563eb;font-weight:600;">${pctAq.toFixed(1).replace('.', ',')}%</td>
         <td>${b.caQ}</td>
         <td>${fmtBRL(b.caF)}</td>
-        <td style="color:#d97706;font-weight:600;">${pctCa.toFixed(1).replace('.', ',')}%</td>
         <td style="font-weight:700;color:var(--accent);">${fmtBRL(totM)}</td>
       </tr>`;
-    }).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Sem deals no ano.</td></tr>';
+    }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Sem deals no ano.</td></tr>';
 
-    const pctAqTot = tTotAll > 0 ? (tAqF / tTotAll) * 100 : 0;
-    const pctCaTot = tTotAll > 0 ? (tCaF / tTotAll) * 100 : 0;
     document.getElementById('aqcasa-mes-tot-aq-q').textContent = tAqQ;
     document.getElementById('aqcasa-mes-tot-aq-f').textContent = fmtBRL(tAqF);
-    document.getElementById('aqcasa-mes-tot-aq-p').textContent = pctAqTot.toFixed(1).replace('.', ',') + '%';
     document.getElementById('aqcasa-mes-tot-ca-q').textContent = tCaQ;
     document.getElementById('aqcasa-mes-tot-ca-f').textContent = fmtBRL(tCaF);
-    document.getElementById('aqcasa-mes-tot-ca-p').textContent = pctCaTot.toFixed(1).replace('.', ',') + '%';
     document.getElementById('aqcasa-mes-tot-all').textContent  = fmtBRL(tTotAll);
   }
 
@@ -3325,42 +3371,23 @@ function renderAnual() {
     else if (isCasa(d.canal)) { aqCasaTri[q].caQ += 1; aqCasaTri[q].caF += v; }
   });
 
-  const ctxAqCasaT = document.getElementById('chartAquisicaoCasaTri');
-  if (ctxAqCasaT) {
-    if (charts.aqCasaTri) charts.aqCasaTri.destroy();
-    charts.aqCasaTri = new Chart(ctxAqCasaT, {
-      type: 'bar',
-      data: {
-        labels: Qs,
-        datasets: [
-          { label: 'Aquisição (NTW+OUT+INB)', data: Qs.map(q => aqCasaTri[q].aqF), backgroundColor: '#2563eb', borderRadius: 6 },
-          { label: 'Casa (REN+UP)',            data: Qs.map(q => aqCasaTri[q].caF), backgroundColor: '#f59e0b', borderRadius: 6 },
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-        plugins: {
-          legend: { position: 'top' },
-          tooltip: { callbacks: { label: c => c.dataset.label + ': R$ ' + (c.raw||0).toLocaleString('pt-BR') } },
-          datalabels: {
-            color: '#fff', font: { weight: 'bold', size: 10 },
-            formatter: (v, ctx) => {
-              if (!v || v <= 0) return '';
-              const all = ctx.chart.data.datasets.flatMap(ds => ds.data || []);
-              const total = all.reduce((a,b) => a + (parseFloat(b)||0), 0);
-              const pct = total > 0 ? (v / total) * 100 : 0;
-              return 'R$ ' + v.toLocaleString('pt-BR') + ' (' + pct.toFixed(1).replace('.', ',') + '%)';
-            },
-            anchor: 'center', align: 'center',
-          }
-        },
-        scales: {
-          x: { beginAtZero: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
-          y: { grid: { display: false } }
-        }
-      }
-    });
-  }
+  // 4 mini-charts Aquisição vs Casa, 100% empilhados (um por Q)
+  Qs.forEach(q => {
+    const ctx = document.getElementById('chartAqCasa' + q);
+    if (!ctx) return;
+    const chartKey = 'aqCasa' + q;
+    if (charts[chartKey]) charts[chartKey].destroy();
+    charts[chartKey] = _renderQStackChart(
+      ctx,
+      [
+        { label:'Aquisição', value: aqCasaTri[q].aqF, color:'#1e3a8a' },
+        { label:'Casa',      value: aqCasaTri[q].caF, color:'#60a5fa' },
+      ]
+    );
+    const total = aqCasaTri[q].aqF + aqCasaTri[q].caF;
+    const meta = document.getElementById('aqcasa-' + q.toLowerCase() + '-meta');
+    if (meta) meta.textContent = total > 0 ? 'Total ' + fmtBRL(total) : 'Sem dados';
+  });
 
   // Tabela trimestral Aq vs Casa
   const tAqF_t = Qs.reduce((s,q) => s + aqCasaTri[q].aqF, 0);
@@ -4501,6 +4528,12 @@ function processDeals(deals) {
     const mes  = MESES[closeDate.getMonth()];
     const semana = getSemana(closeDate);
 
+    // Data de criação — usada pra filtrar conversão (só conta se aberto e fechado no mesmo período)
+    const createRaw = props.createdate || '';
+    const createDate = createRaw ? new Date(createRaw) : null;
+    const mesCreate = (createDate && !isNaN(createDate)) ? MESES[createDate.getMonth()] : '';
+    const anoCreate = (createDate && !isNaN(createDate)) ? createDate.getFullYear() : null;
+
     // Tipo de empresa (heurística: busca na razão social se quiser, por ora deixa N/D)
     wonRows.push({
       id: d.id,
@@ -4514,6 +4547,9 @@ function processDeals(deals) {
       tipo: 'N/D',
       semana,
       ciclo,
+      createdate: createRaw,
+      mesCreate,
+      anoCreate,
       source: 'hs'
     });
   });
@@ -7205,6 +7241,14 @@ function saveDealOverrides() {
 let _conversaoMode = 'tri'; // 'tri' ou 'mes'
 let _conversaoReady = false;
 
+// Estado de abertura dos `<details>` mês-a-mês na aba Conversão (persiste após edição)
+let _convDetailOpenState = {};
+try { _convDetailOpenState = JSON.parse(localStorage.getItem('conv_detail_open') || '{}'); } catch(_) {}
+function _toggleConvDetail(key, isOpen) {
+  _convDetailOpenState[key] = !!isOpen;
+  try { localStorage.setItem('conv_detail_open', JSON.stringify(_convDetailOpenState)); } catch(_) {}
+}
+
 const CONV_CANAIS = ['NTW','OUT','INB','UP','REN']; // MKT foi unificado em INB
 const CONV_TIPOS  = ['Enterprise','GG','SMB'];
 const CONV_MESES_POR_Q = {
@@ -7328,11 +7372,21 @@ function getFechadosCount(key, filtroDim, filtroVal) {
   const usaQ1 = meses.some(m => Q1_MESES.includes(m));
   const usaTb = meses.some(m => !Q1_MESES.includes(m));
 
+  // REGRA: só conta deals que foram ABERTOS E FECHADOS no mesmo período.
+  // Se mesCreate/anoCreate não estiver setado (deal manual antigo, Q1_DEALS), assume mesmo período (compat).
+  const ANO_CONV = (typeof CONV_ANO !== 'undefined') ? CONV_ANO : 2026;
+  const mesmoPeriodo = (d) => {
+    if (!d.mesCreate) return true; // sem dado de criação → não filtra (compat)
+    if (d.anoCreate != null && d.anoCreate !== ANO_CONV) return false; // criado em ano diferente
+    return meses.includes(d.mesCreate); // mês/Q de criação tem que estar dentro do período
+  };
+
   let count = 0;
 
   if (usaQ1) {
     (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
       if (!meses.includes(d.mes)) return;
+      if (!mesmoPeriodo(d)) return;
       if (filtroDim === 'canais' && (d.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
       if (filtroDim === 'tipos'  && d.tipo  !== filtroVal) return;
       count++;
@@ -7341,6 +7395,7 @@ function getFechadosCount(key, filtroDim, filtroVal) {
   if (usaTb) {
     tableRows.forEach(r => {
       if (!meses.includes(r.mes)) return;
+      if (!mesmoPeriodo(r)) return;
       if (filtroDim === 'canais' && (r.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
       if (filtroDim === 'tipos'  && r.tipo  !== filtroVal) return;
       count++;
@@ -8385,8 +8440,10 @@ function _renderConvBloco(key) {
         </div>
 
         ${isQuarter ? `
-        <!-- Detalhe mensal expansível -->
-        <details class="rounded-lg border border-gray-200" style="background:#fafafa;">
+        <!-- Detalhe mensal expansível — estado de abertura persiste após edições -->
+        <details class="rounded-lg border border-gray-200" style="background:#fafafa;"
+                 ${_convDetailOpenState[key] ? 'open' : ''}
+                 ontoggle="_toggleConvDetail('${key}', this.open)">
           <summary class="cursor-pointer px-3 py-2 font-semibold text-sm select-none" style="color:var(--text2);">
             📅 Detalhe mês a mês — ${CONV_MESES_POR_Q[key].join(' · ')}
             <span class="text-xs ml-2" style="color:var(--muted);">(clique para expandir)</span>
@@ -8395,6 +8452,11 @@ function _renderConvBloco(key) {
             ${CONV_MESES_POR_Q[key].map(m => _renderConvBlocoMensalCompacto(m)).join('')}
           </div>
         </details>` : ''}
+
+        <!-- Nota: regra de conversão (deals abertos e fechados no mesmo período) -->
+        <p class="text-xs italic mt-2 p-3 rounded-lg" style="color:var(--text2);background:#fffbeb;border:1px solid #fde68a;">
+          ⚠️ <strong>Atenção:</strong> o número de fechamentos nesta aba pode ser diferente da contagem de "deals fechados no mês/trimestre" em outras abas, pois aqui consideramos <strong>apenas deals que foram abertos E fechados no mesmo período</strong>. Ex: um deal aberto em 2025 e fechado em Jan/2026 NÃO entra na conversão de 2026.
+        </p>
 
       </div>
     </section>`;
