@@ -264,6 +264,24 @@
       "source": "hs",
       "mensalidade": 16000,
       "_locked": true
+    },
+    {
+      "id": "61111846200",
+      "cliente": "Deloitte",
+      "servico": "RPO",
+      "canal": "Up",
+      "valor": 64000,
+      "data": "15/06",
+      "mes": "Jun",
+      "alocacoes": "4",
+      "tipo": "Enterprise",
+      "semana": 11,
+      "ciclo": 4,
+      "createdate": "2026-06-15T17:11:58.383Z",
+      "mesCreate": "Jun",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 16000
     }
   ],
   "cadeiras_rows": [
@@ -1359,6 +1377,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_61111846200",
+      "dealId": "61111846200",
+      "servico": "RPO",
+      "cliente": "Deloitte",
+      "vigencia": "",
+      "dataInicio": "15/06",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1845,6 +1886,21 @@
       "cadeiras": null,
       "valorRPO": null,
       "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_61111846200",
+      "dealId": "61111846200",
+      "cliente": "Deloitte",
+      "vigencia": "",
+      "inicio": "15/06",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 64000,
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
@@ -2707,6 +2763,12 @@
       "alocacoes": "1",
       "tipo": "GG",
       "canal": "UP"
+    },
+    "61111846200": {
+      "mensalidade": 16000,
+      "alocacoes": "4",
+      "tipo": "Enterprise",
+      "ciclo": 4
     }
   },
   "hs_deleted": [
@@ -2908,15 +2970,15 @@
   },
   "viewer_password_hash": "323af34cd5ffeacc472b4608c2b68209d27552024511649cfe5fb4ed1bcd99ce",
   "okr_state": {
-    "input-realizado": "2069500",
+    "input-realizado": "2133500",
     "input-clientes": "0",
-    "input-duracao": "55",
+    "input-duracao": "54",
     "cac-gastos": "115380.17",
     "chart-meta": "2100000",
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "conversao",
-  "snapshot_at": "2026-06-15T15:02:38.261Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-06-15T18:32:15.587Z"
 }
