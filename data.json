@@ -2142,21 +2142,18 @@
   "oportunidades_data": {
     "Q1": {
       "canais": {
-        "NTW": 12,
-        "OUT": 20,
+        "NTW": 5,
+        "OUT": 11,
         "INB": 34,
         "UP": 5,
-        "REN": 14
+        "REN": 4
       },
       "tipos": {
         "Enterprise": 9,
-        "GG": 14,
-        "SMB": 31
+        "GG": 15,
+        "SMB": 30
       },
       "manual": [
-        "canais:OUT",
-        "canais:NTW",
-        "canais:REN",
         "canais:UP"
       ],
       "fechadosManual": {
@@ -2165,63 +2162,24 @@
         }
       },
       "syncedIds": {
-        "canais:OUT": [
-          "56709607985",
-          "57055760310",
-          "57610441816",
-          "57619537200",
-          "58025318205",
-          "58295309928"
-        ],
-        "canais:NTW": [
-          "57347085133",
-          "57851504181"
-        ],
-        "canais:REN": [
-          "58025421722",
-          "58630504795"
-        ],
         "canais:UP": []
       }
     },
     "Fev": {
       "canais": {
-        "NTW": 4,
+        "NTW": 2,
         "MKT": 0,
-        "OUT": 0,
-        "INB": 3,
-        "UP": 1,
+        "OUT": 2,
+        "INB": 9,
+        "UP": 0,
         "REN": 0
       },
       "tipos": {
-        "Enterprise": 2,
-        "GG": 5,
-        "SMB": 8
+        "Enterprise": 3,
+        "GG": 3,
+        "SMB": 7
       },
-      "manual": [
-        "canais:NTW",
-        "canais:OUT",
-        "canais:INB",
-        "canais:UP"
-      ],
-      "syncedIds": {
-        "canais:NTW": [],
-        "canais:OUT": [
-          "56709607985",
-          "57055760310"
-        ],
-        "canais:INB": [
-          "56645855861",
-          "56646091520",
-          "56706795056",
-          "56707040787",
-          "56709485884",
-          "56709486378",
-          "56709734927",
-          "56896834738"
-        ],
-        "canais:UP": []
-      },
+      "manual": [],
       "fechadosManual": {
         "canais": {
           "NTW": 1,
@@ -2239,46 +2197,27 @@
         "REN": 4
       },
       "tipos": {
-        "Enterprise": 5,
-        "GG": 4,
-        "SMB": 13
+        "Enterprise": 4,
+        "GG": 6,
+        "SMB": 12
       },
       "manual": []
     },
     "Q2": {
       "canais": {
-        "NTW": 4,
+        "NTW": 3,
         "MKT": 0,
-        "OUT": 14,
+        "OUT": 9,
         "INB": 2,
         "UP": 5,
         "REN": 8
       },
       "tipos": {
         "Enterprise": 8,
-        "GG": 17,
+        "GG": 15,
         "SMB": 4
       },
-      "manual": [
-        "canais:NTW",
-        "canais:OUT"
-      ],
-      "syncedIds": {
-        "canais:OUT": [
-          "60177377682",
-          "59184917932",
-          "59186379620",
-          "60035535286",
-          "60076928529",
-          "60177879370",
-          "60423757584",
-          "60641856935"
-        ],
-        "canais:NTW": [
-          "60182272322",
-          "60177802569"
-        ]
-      }
+      "manual": []
     },
     "Abr": {
       "canais": {
@@ -2291,7 +2230,7 @@
       },
       "tipos": {
         "Enterprise": 1,
-        "GG": 6,
+        "GG": 7,
         "SMB": 1
       },
       "manual": []
@@ -2307,7 +2246,7 @@
       },
       "tipos": {
         "Enterprise": 6,
-        "GG": 10,
+        "GG": 8,
         "SMB": 2
       },
       "manual": []
@@ -2359,29 +2298,18 @@
     },
     "Jan": {
       "canais": {
-        "NTW": 1,
-        "OUT": 5,
-        "INB": 18,
-        "UP": 2,
+        "NTW": 0,
+        "OUT": 4,
+        "INB": 15,
+        "UP": 0,
         "REN": 0
       },
       "tipos": {
         "Enterprise": 2,
-        "GG": 5,
-        "SMB": 10
+        "GG": 6,
+        "SMB": 11
       },
-      "manual": [
-        "canais:NTW",
-        "canais:OUT",
-        "canais:INB",
-        "canais:UP"
-      ],
-      "syncedIds": {
-        "canais:NTW": [],
-        "canais:OUT": [],
-        "canais:INB": [],
-        "canais:UP": []
-      }
+      "manual": []
     },
     "Jun": {
       "canais": {
@@ -2393,7 +2321,7 @@
       },
       "tipos": {
         "Enterprise": 1,
-        "GG": 1,
+        "GG": 0,
         "SMB": 1
       },
       "manual": []
@@ -2771,6 +2699,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-06-18T14:25:46.655Z"
+  "active_tab": "aquisicao",
+  "snapshot_at": "2026-06-18T20:13:21.493Z"
 }
