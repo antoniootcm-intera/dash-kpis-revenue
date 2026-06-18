@@ -351,6 +351,7 @@
     <button id="tab-cadeiras"  class="tab-btn" onclick="switchTab('cadeiras')">🪑 Controle de Cadeiras</button>
     <button id="tab-contratos" class="tab-btn" onclick="switchTab('contratos')">📋 Controle de Contratos</button>
     <button id="tab-conversao" class="tab-btn" onclick="switchTab('conversao')">📊 Conversão</button>
+    <button id="tab-aquisicao" class="tab-btn" onclick="switchTab('aquisicao')">🚀 Aquisição</button>
     <button id="tab-churn"     class="tab-btn" onclick="switchTab('churn')">📉 Churn</button>
     <button id="tab-cac"       class="tab-btn" onclick="switchTab('cac')">💰 CAC</button>
   </div>
@@ -1738,6 +1739,9 @@
         <button onclick="recalcularBucketsDaTrilha()" class="bg-yellow-400 text-blue-900 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-yellow-300 transition" title="Reconstrói os buckets de oportunidades usando a auditoria como fonte da verdade. Use se houver divergência entre auditoria e contagem por canal.">
           🔄 Recalcular do zero
         </button>
+        <button onclick="recalcularBucketsDaTrilha(true)" class="bg-red-100 text-red-800 text-sm font-semibold px-3 py-1 rounded-lg hover:bg-red-200 transition border border-red-300" title="MODO FORÇA — recalcula tudo IGNORANDO os cadeados (células manuais). Use só agora, depois que você reorganizou a auditoria toda na mão.">
+          🔓 Recalcular ignorando cadeados
+        </button>
         <button onclick="resetarDealOverrides()" class="bg-blue-800 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-900 transition" title="Apaga todos os overrides manuais de mês/quarter (próximo sync usa só createdate do HubSpot)">
           🗑 Resetar overrides
         </button>
@@ -1747,6 +1751,26 @@
       <div id="audit-summary" class="text-xs" style="color:var(--muted);">
         Rode "🔄 Sincronizar do HubSpot" e depois clique em <strong>Ver deals importados</strong> para inspecionar onde cada deal caiu (canal, mês, quarter).
       </div>
+
+      <!-- Funil de Conversão por Canal — SEMPRE VISÍVEL -->
+      <div class="mt-4 rounded-xl border border-gray-200 p-4" style="background:#FAFAFA;">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <h4 class="text-sm font-bold" style="color:var(--text);">🔻 Funil de Conversão por Canal — 2026</h4>
+          <div class="admin-only flex gap-2">
+            <button onclick="(function(){const r=sincronizarFechadosNaTrilha();setStatus('🔄 Auto-sync: '+r.criadas+' ops criadas, '+r.marcadas+' marcadas como fechadas','green');renderAuditoria();renderFunilCanais();})()"
+              class="text-xs px-3 py-1 rounded-lg font-semibold transition"
+              style="background:#D4A017;color:#fff;border:none;cursor:pointer;"
+              title="Cria oportunidades automáticas pra todo deal fechado em 2026 (Q1+Q2) que ainda não tem oportunidade equivalente na trilha (mesmo nome + canal)">
+              🔄 Sincronizar fechados → ops
+            </button>
+          </div>
+        </div>
+        <p class="text-xs italic mb-3" style="color:var(--muted);">
+          Cada canal mostra: oportunidades criadas → SQL/proposta enviada → fechadas. A conversão final compara o número de fechadas com o de oportunidades criadas dentro de 2026.
+        </p>
+        <div id="conv-funil-canais"></div>
+      </div>
+
       <div id="audit-content" style="display:none;" class="mt-4 space-y-3">
         <!-- Filtros -->
         <div class="flex flex-wrap items-center gap-2">
@@ -1798,25 +1822,6 @@
           <strong>Sufixo do nome</strong> = última parte depois de "|" — se o canal saiu errado, esse texto te dá a dica do que precisa ser ajustado no HubSpot ou na regra de canal.<br>
           <strong>SQL?</strong> = se foi enviada proposta a esse lead. <strong>Fechado?</strong> = se virou venda. Conversão considera APENAS oportunidades criadas E fechadas em 2026.
         </p>
-
-        <!-- Funil de Conversão por Canal -->
-        <div class="mt-6 rounded-xl border border-gray-200 p-4" style="background:#FAFAFA;">
-          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <h4 class="text-sm font-bold" style="color:var(--text);">🔻 Funil de Conversão por Canal — 2026</h4>
-            <div class="admin-only flex gap-2">
-              <button onclick="(function(){const r=sincronizarFechadosNaTrilha();setStatus('🔄 Auto-sync: '+r.criadas+' ops criadas, '+r.marcadas+' marcadas como fechadas','green');renderAuditoria();})()"
-                class="text-xs px-3 py-1 rounded-lg font-semibold transition"
-                style="background:#D4A017;color:#fff;border:none;cursor:pointer;"
-                title="Cria oportunidades automáticas pra todo deal fechado em 2026 (Q1+Q2) que ainda não tem oportunidade equivalente na trilha (mesmo nome + canal)">
-                🔄 Sincronizar fechados → ops
-              </button>
-            </div>
-          </div>
-          <p class="text-xs italic mb-3" style="color:var(--muted);">
-            Cada canal mostra: oportunidades criadas → SQL/proposta enviada → fechadas. A conversão final compara o número de fechadas com o de oportunidades criadas dentro de 2026.
-          </p>
-          <div id="conv-funil-canais"></div>
-        </div>
       </div>
     </div>
   </section>
@@ -1825,6 +1830,77 @@
   <div id="conv-container" class="space-y-6"></div>
 
 </div><!-- /panel-conversao -->
+
+<!-- ═════════════════════════════════════════════════
+     PANEL: AQUISIÇÃO — detalhamento por canal de NOVAS VENDAS
+     ═════════════════════════════════════════════════ -->
+<div id="panel-aquisicao" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <span class="text-lg font-bold">🚀 Aquisição — Detalhamento por Canal</span>
+        <p class="text-xs mt-1" style="color:#bfdbfe;">Novas vendas (NTW · OUT · INB) por trimestre e semestre</p>
+      </div>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-6">
+
+      <!-- Cards resumo (3): Q1, Q2, S1 -->
+      <div id="aq-cards-resumo" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+      <!-- Tabela detalhada -->
+      <div>
+        <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">Detalhe por canal</h3>
+        <p class="text-xs mb-3" style="color:var(--muted);">
+          Quantidade de vendas, faturamento, ticket médio e % de participação por canal — Q1, Q2 e S1
+        </p>
+        <div class="overflow-x-auto">
+          <table class="hist-table text-sm">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Canal</th>
+                <th style="background:#F3E5FF;">Q1 Qntd</th>
+                <th style="background:#F3E5FF;">Q1 Receita</th>
+                <th style="background:#F3E5FF;">Q1 %</th>
+                <th style="background:#FAEDC8;">Q2 Qntd</th>
+                <th style="background:#FAEDC8;">Q2 Receita</th>
+                <th style="background:#FAEDC8;">Q2 %</th>
+                <th>S1 Qntd</th>
+                <th>S1 Receita</th>
+                <th>S1 %</th>
+                <th>Ticket Médio</th>
+                <th style="min-width:160px;">Distribuição S1</th>
+              </tr>
+            </thead>
+            <tbody id="aq-canal-tbody"></tbody>
+            <tfoot>
+              <tr class="total-row" id="aq-canal-tfoot"></tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Detalhe mês a mês -->
+      <div>
+        <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">Aquisição mês a mês</h3>
+        <p class="text-xs mb-3" style="color:var(--muted);">Por mês, separado por canal (apenas NTW/OUT/INB)</p>
+        <div class="overflow-x-auto">
+          <table class="hist-table text-sm">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Canal</th>
+                <th>Jan</th><th>Fev</th><th>Mar</th>
+                <th>Abr</th><th>Mai</th><th>Jun</th>
+                <th>Total S1 (qntd)</th>
+                <th>Total S1 (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="aq-mensal-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</div><!-- /panel-aquisicao -->
 
 <!-- ═════════ PANEL: CAC (Custo de Aquisição de Clientes) ═════════ -->
 <div id="panel-cac" style="display:none" class="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
@@ -5157,7 +5233,7 @@ try {
 //  TAB NAVIGATION
 // ════════════════════════════════════════════════
 function switchTab(tab) {
-  ['dashboard','cadeiras','contratos','churn','conversao','cac'].forEach(t => {
+  ['dashboard','cadeiras','contratos','churn','conversao','cac','aquisicao'].forEach(t => {
     const panel = document.getElementById('panel-' + t);
     if (panel) panel.style.display = tab === t ? '' : 'none';
     const btn = document.getElementById('tab-' + t);
@@ -5174,6 +5250,9 @@ function switchTab(tab) {
       try { _refreshAuditSummary(); } catch(e) {}
       try { renderFunilCanais(); } catch(e) {}
     }, 60);
+  }
+  if (tab === 'aquisicao') {
+    setTimeout(() => { try { renderAquisicaoCanal(); } catch(e) {} }, 50);
   }
   if (tab === 'cac') {
     setTimeout(() => { try { renderCAC(); } catch(e) {} }, 50);
@@ -8097,31 +8176,45 @@ function adicionarOportunidadeManual() {
 
 // Reconstrói os buckets de oportunidades a partir da trilha de auditoria (fonte da verdade).
 // Útil quando divergência entre auditoria e tabela de canais (ex: contagem antiga em Q1).
-function recalcularBucketsDaTrilha() {
+function recalcularBucketsDaTrilha(ignoreManual = false) {
   if (IS_VIEWER) return;
   const data = window.__lastConvImport;
   if (!data || !Array.isArray(data.trilha) || !data.trilha.length) {
     alert('Não há trilha de auditoria. Rode "🔄 Sincronizar do HubSpot" primeiro.');
     return;
   }
-  if (!confirm(
-    'Recalcular os buckets de oportunidades a partir da auditoria?\n\n' +
-    '• Zera TUDO que não foi marcado como manual (🔒)\n' +
-    '• Re-conta cada deal da última auditoria pelo (canal, mes, quarter) registrados\n' +
-    '• Células manuais (amarelas) são preservadas\n\n' +
-    'Continuar?'
-  )) return;
+  const msg = ignoreManual
+    ? 'Recalcular IGNORANDO os cadeados (forçado)?\n\n' +
+      '• Zera TUDO — inclusive células marcadas como manual 🔒\n' +
+      '• Re-conta cada deal da auditoria pelo (canal, mes, quarter)\n' +
+      '• Os flags manuais (amarelo) PERMANECEM na estrutura, mas os valores são sobrescritos\n\n' +
+      'Continuar?'
+    : 'Recalcular os buckets de oportunidades a partir da auditoria?\n\n' +
+      '• Zera TUDO que não foi marcado como manual (🔒)\n' +
+      '• Re-conta cada deal da última auditoria pelo (canal, mes, quarter) registrados\n' +
+      '• Células manuais (amarelas) são preservadas\n\n' +
+      'Continuar?';
+  if (!confirm(msg)) return;
 
-  // 1) Zera todos os períodos canônicos (não-manuais), canais E tipos
+  // Helper: respeita manual a menos que ignoreManual=true
+  const _isLock = (k, dim, val) => ignoreManual ? false : _isManual(k, dim, val);
+
+  // 1) Zera todos os períodos canônicos (canais E tipos), respeitando ou não o manual
   const TODOS_PERIODOS = ['Q1','Q2','Q3','Q4', ...MESES];
   TODOS_PERIODOS.forEach(k => {
     const b = _ensureConvBucket(k);
     CONV_CANAIS.forEach(c => {
-      if (!_isManual(k, 'canais', c)) b.canais[c] = 0;
+      if (!_isLock(k, 'canais', c)) b.canais[c] = 0;
     });
     CONV_TIPOS.forEach(tp => {
-      if (!_isManual(k, 'tipos', tp)) b.tipos[tp] = 0;
+      if (!_isLock(k, 'tipos', tp)) b.tipos[tp] = 0;
     });
+    // Modo FORÇA: limpa também os flags manuais e o cache de IDs sincronizados.
+    // Os cadeados somem visualmente e os números ficam livres pra refletir a trilha.
+    if (ignoreManual) {
+      b.manual = [];
+      delete b.syncedIds;
+    }
   });
 
   // 2) Re-incrementa a partir da trilha. IMPORTANTE: derive quarter SEMPRE do mes
@@ -8136,18 +8229,18 @@ function recalcularBucketsDaTrilha() {
     // Se a trilha tinha quarter inconsistente com mes, corrige (e persiste)
     if (t.quarter !== qDerivado) { t.quarter = qDerivado; corrigidos++; }
 
-    if (!_isManual(qDerivado, 'canais', t.canal)) {
+    if (!_isLock(qDerivado, 'canais', t.canal)) {
       _ensureConvBucket(qDerivado).canais[t.canal] = (_ensureConvBucket(qDerivado).canais[t.canal] || 0) + 1;
     }
-    if (!_isManual(t.mes, 'canais', t.canal)) {
+    if (!_isLock(t.mes, 'canais', t.canal)) {
       _ensureConvBucket(t.mes).canais[t.canal] = (_ensureConvBucket(t.mes).canais[t.canal] || 0) + 1;
     }
     // Conta também tipo de empresa, se foi atribuído manualmente
     if (t.tipoEmpresa && CONV_TIPOS.includes(t.tipoEmpresa)) {
-      if (!_isManual(qDerivado, 'tipos', t.tipoEmpresa)) {
+      if (!_isLock(qDerivado, 'tipos', t.tipoEmpresa)) {
         _ensureConvBucket(qDerivado).tipos[t.tipoEmpresa] = (_ensureConvBucket(qDerivado).tipos[t.tipoEmpresa] || 0) + 1;
       }
-      if (!_isManual(t.mes, 'tipos', t.tipoEmpresa)) {
+      if (!_isLock(t.mes, 'tipos', t.tipoEmpresa)) {
         _ensureConvBucket(t.mes).tipos[t.tipoEmpresa] = (_ensureConvBucket(t.mes).tipos[t.tipoEmpresa] || 0) + 1;
       }
     }
@@ -8637,6 +8730,148 @@ function renderFunilCanais() {
   </tr></tbody></table>`;
 
   host.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+//  AQUISIÇÃO — Detalhamento por Canal de Novas Vendas (NTW + OUT + INB)
+// ════════════════════════════════════════════════
+function renderAquisicaoCanal() {
+  const cardsEl = document.getElementById('aq-cards-resumo');
+  const tbodyEl = document.getElementById('aq-canal-tbody');
+  const tfootEl = document.getElementById('aq-canal-tfoot');
+  const mensalEl = document.getElementById('aq-mensal-tbody');
+  if (!cardsEl || !tbodyEl) return;
+
+  const AQ_CANAIS_SET = ['NTW','OUT','INB'];
+  const MESES_Q_AQ = { Q1:['Jan','Fev','Mar'], Q2:['Abr','Mai','Jun'] };
+  const ALL_MESES = ['Jan','Fev','Mar','Abr','Mai','Jun'];
+  const canalCores = {NTW:'#9900FF', OUT:'#000000', INB:'#00B8A9'};
+
+  // Junta Q1_DEALS + tableRows (apenas canais de aquisição)
+  const todosDeals = [];
+  try { if (typeof Q1_DEALS !== 'undefined') Q1_DEALS.forEach(d => todosDeals.push(d)); } catch(_) {}
+  try { tableRows.forEach(r => todosDeals.push(r)); } catch(_) {}
+  const aqDeals = todosDeals.filter(d => AQ_CANAIS_SET.includes((d.canal||'').toUpperCase()));
+
+  // Helper: aggregação por canal num conjunto de meses
+  function agg(meses) {
+    const out = {};
+    AQ_CANAIS_SET.forEach(c => out[c] = { count: 0, fat: 0, mens: 0 });
+    aqDeals.forEach(d => {
+      if (!meses.includes(d.mes)) return;
+      const c = (d.canal||'').toUpperCase();
+      if (!out[c]) return;
+      out[c].count++;
+      out[c].fat  += parseFloat(d.valor) || 0;
+      out[c].mens += parseFloat(d.mensalidade) || 0;
+    });
+    return out;
+  }
+
+  const aggQ1 = agg(MESES_Q_AQ.Q1);
+  const aggQ2 = agg(MESES_Q_AQ.Q2);
+  const aggS1 = agg(ALL_MESES);
+
+  // Totais
+  const sumCount = a => AQ_CANAIS_SET.reduce((s,c) => s + a[c].count, 0);
+  const sumFat   = a => AQ_CANAIS_SET.reduce((s,c) => s + a[c].fat,   0);
+  const totQ1c = sumCount(aggQ1), totQ1f = sumFat(aggQ1);
+  const totQ2c = sumCount(aggQ2), totQ2f = sumFat(aggQ2);
+  const totS1c = sumCount(aggS1), totS1f = sumFat(aggS1);
+
+  // ── Cards resumo ──
+  const card = (titulo, count, fat, cor, sub) => `
+    <div class="rounded-xl p-4 border" style="background:#fff;border-color:${cor};border-left:6px solid ${cor};">
+      <p class="text-xs font-bold mb-1" style="color:${cor};">${titulo}</p>
+      <p class="text-xs mb-1" style="color:var(--muted);">${sub}</p>
+      <p class="text-2xl font-bold" style="color:var(--text);">${fmtBRL(fat)}</p>
+      <p class="text-xs mt-1" style="color:var(--text2);">${count} vendas · ticket médio ${count>0?fmtBRL(fat/count):'—'}</p>
+    </div>`;
+  cardsEl.innerHTML =
+    card('Q1 2026 — Aquisição', totQ1c, totQ1f, '#9900FF', 'NTW + OUT + INB · Jan/Fev/Mar') +
+    card('Q2 2026 — Aquisição', totQ2c, totQ2f, '#D4A017', 'NTW + OUT + INB · Abr/Mai/Jun') +
+    card('S1 2026 — Aquisição', totS1c, totS1f, '#000000', 'Consolidado dos 6 meses');
+
+  // ── Tabela detalhada ──
+  tbodyEl.innerHTML = AQ_CANAIS_SET.map(c => {
+    const q1 = aggQ1[c], q2 = aggQ2[c], s1 = aggS1[c];
+    const pctQ1 = totQ1f > 0 ? (q1.fat/totQ1f*100) : 0;
+    const pctQ2 = totQ2f > 0 ? (q2.fat/totQ2f*100) : 0;
+    const pctS1 = totS1f > 0 ? (s1.fat/totS1f*100) : 0;
+    const ticket = s1.count > 0 ? s1.fat/s1.count : 0;
+    const cor = canalCores[c];
+    return `<tr>
+      <td style="text-align:left;font-weight:700;">
+        <span style="display:inline-block;width:10px;height:10px;background:${cor};border-radius:2px;margin-right:6px;"></span>${c}
+      </td>
+      <td style="background:#FBF5FF;">${q1.count}</td>
+      <td style="background:#FBF5FF;">${q1.fat ? fmtBRL(q1.fat) : '—'}</td>
+      <td style="background:#FBF5FF;color:#7A00CC;font-weight:600;">${pctQ1.toFixed(1).replace('.', ',')}%</td>
+      <td style="background:#FFF9E5;">${q2.count}</td>
+      <td style="background:#FFF9E5;">${q2.fat ? fmtBRL(q2.fat) : '—'}</td>
+      <td style="background:#FFF9E5;color:#8B6914;font-weight:600;">${pctQ2.toFixed(1).replace('.', ',')}%</td>
+      <td><strong>${s1.count}</strong></td>
+      <td style="font-weight:700;color:var(--accent);">${fmtBRL(s1.fat)}</td>
+      <td style="font-weight:700;color:#7A00CC;">${pctS1.toFixed(1).replace('.', ',')}%</td>
+      <td>${ticket > 0 ? fmtBRL(ticket) : '—'}</td>
+      <td style="padding:6px;">
+        <div style="background:#F3F4F6;border-radius:4px;height:18px;width:100%;overflow:hidden;">
+          <div style="height:100%;width:${pctS1}%;background:${cor};display:flex;align-items:center;justify-content:flex-end;padding-right:4px;color:#fff;font-size:10px;font-weight:700;">${pctS1>=8?pctS1.toFixed(0)+'%':''}</div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Rodapé
+  const tktS1 = totS1c > 0 ? totS1f/totS1c : 0;
+  tfootEl.innerHTML = `
+    <td style="text-align:left;font-weight:700;">TOTAL</td>
+    <td style="background:#F3E5FF;font-weight:700;">${totQ1c}</td>
+    <td style="background:#F3E5FF;font-weight:700;">${fmtBRL(totQ1f)}</td>
+    <td style="background:#F3E5FF;font-weight:700;color:#7A00CC;">100%</td>
+    <td style="background:#FAEDC8;font-weight:700;">${totQ2c}</td>
+    <td style="background:#FAEDC8;font-weight:700;">${fmtBRL(totQ2f)}</td>
+    <td style="background:#FAEDC8;font-weight:700;color:#8B6914;">100%</td>
+    <td style="font-weight:700;">${totS1c}</td>
+    <td style="font-weight:700;color:var(--accent);">${fmtBRL(totS1f)}</td>
+    <td style="font-weight:700;color:#7A00CC;">100%</td>
+    <td style="font-weight:700;">${tktS1 > 0 ? fmtBRL(tktS1) : '—'}</td>
+    <td></td>`;
+
+  // ── Mensal ──
+  if (mensalEl) {
+    mensalEl.innerHTML = AQ_CANAIS_SET.map(c => {
+      const cor = canalCores[c];
+      let totalCount = 0, totalFat = 0;
+      const cells = ALL_MESES.map(m => {
+        const deals = aqDeals.filter(d => d.mes === m && (d.canal||'').toUpperCase() === c);
+        const cnt = deals.length;
+        const fat = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
+        totalCount += cnt; totalFat += fat;
+        return `<td>${cnt > 0 ? cnt+' · '+fmtBRL(fat) : '—'}</td>`;
+      }).join('');
+      return `<tr>
+        <td style="text-align:left;font-weight:700;">
+          <span style="display:inline-block;width:10px;height:10px;background:${cor};border-radius:2px;margin-right:6px;"></span>${c}
+        </td>
+        ${cells}
+        <td style="font-weight:700;">${totalCount}</td>
+        <td style="font-weight:700;color:var(--accent);">${fmtBRL(totalFat)}</td>
+      </tr>`;
+    }).join('');
+    // Total row
+    const totRow = ALL_MESES.map(m => {
+      const deals = aqDeals.filter(d => d.mes === m);
+      const cnt = deals.length;
+      const fat = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
+      return `<td style="font-weight:700;background:#F5F5F5;">${cnt > 0 ? cnt+' · '+fmtBRL(fat) : '—'}</td>`;
+    }).join('');
+    mensalEl.innerHTML += `<tr style="background:#F5F5F5;">
+      <td style="text-align:left;font-weight:700;">TOTAL</td>${totRow}
+      <td style="font-weight:700;">${totS1c}</td>
+      <td style="font-weight:700;color:var(--accent);">${fmtBRL(totS1f)}</td>
+    </tr>`;
+  }
 }
 
 function renderAuditoria() {
