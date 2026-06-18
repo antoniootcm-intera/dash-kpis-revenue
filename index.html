@@ -38,19 +38,28 @@
   /* ── INTERA Light Theme — Roxo + Preto ─────────── */
   /* ── PALETA OFICIAL INTERA ── */
   :root {
-    --accent:        #9900FF;  /* Roxo INTERA */
-    --accent2:       #7A00CC;  /* Roxo escuro */
-    --accent-light:  #F3E5FF;  /* Roxo claro (fundo de hover/seleção) */
-    --mustard:       #D4A017;  /* Mostarda (gráficos) */
-    --mustard-d:     #8B6914;  /* Mostarda escuro */
-    --extra:         #00B8A9;  /* Teal (5ª cor para gráficos) */
-    --black:         #000000;  /* Preto INTERA */
+    --accent:        #9900FF;  /* Roxo INTERA — DETALHES e gráficos, não dominante */
+    --accent2:       #7A00CC;
+    --accent-light:  #F3E5FF;
+    --mustard:       #D4A017;  /* Mostarda — menus, CTAs */
+    --mustard-d:     #8B6914;
+    --extra:         #00B8A9;  /* Teal — 5ª cor pra diferenciar */
+    --black:         #000000;  /* Preto — menus, headers */
+    --dark-gray:     #2D2D2D;  /* Cinza escuro */
     --text:          #1A1A1A;
     --text2:         #4A4A4A;
     --muted:         #9CA3AF;
     --border:        #E5E5E5;
     --surface:       #FFFFFF;
-    --bg:            #EEEEEE;  /* Cinza claro institucional INTERA */
+    --bg:            #EEEEEE;
+
+    /* Indicadores semânticos — tons leves */
+    --positive:      #4CAF50;
+    --positive-bg:   #E8F5E9;
+    --positive-bc:   #A5D6A7;
+    --negative:      #E57373;
+    --negative-bg:   #FFEBEE;
+    --negative-bc:   #EF9A9A;
   }
 
   body { background: var(--bg) !important; color: var(--text) !important; }
@@ -188,13 +197,13 @@
   #viewer-banner { display: none; }
   body.viewer-mode #viewer-banner { display: flex; }
 
-  /* ── Tabs ─────────────────────────────────── */
+  /* ── Tabs (menus principais — preto + mostarda) ─────────────────────────────── */
   #tab-nav { background:#fff; border-bottom:1px solid var(--border); }
   .tab-btn { padding:10px 22px; font-size:13px; font-weight:600; border-bottom:3px solid transparent;
              cursor:pointer; color:var(--text2); background:none; border-top:none; border-left:none; border-right:none;
              transition:all 0.15s; }
-  .tab-btn.active { border-bottom-color:var(--accent); color:var(--accent); }
-  .tab-btn:hover:not(.active) { color:var(--text); background:var(--accent-light); }
+  .tab-btn.active { border-bottom-color:var(--mustard); color:var(--black); }
+  .tab-btn:hover:not(.active) { color:var(--black); background:#F5F5F5; }
 
   /* ── Cadeiras status badges ─────────────────── */
   .cad-badge {
@@ -205,8 +214,8 @@
   }
   .cad-badge:hover  { filter:brightness(0.88); transform:scale(1.04); }
   .cad-badge:active { transform:scale(0.97); }
-  .cb-ativo      { background:#16a34a; color:#fff; }
-  .cb-saindo     { background:#d97706; color:#fff; }
+  .cb-ativo      { background:#9900FF; color:#fff; }
+  .cb-saindo     { background:#D4A017; color:#fff; }
   .cb-fora       { background:#94a3b8; color:#fff; }
   .cb-vazio      { background:#f1f5f9; color:#cbd5e1; }
 
@@ -215,7 +224,7 @@
   #cadeiras-table tbody tr:hover td { background: #f5f3ff !important; }
   #cadeiras-table tbody tr:nth-child(even) td:not(.cad-mes-td) { background:#faf9ff; }
   .cad-mes-td { padding:4px 3px !important; }
-  .cad-mes-th-cur { background:#ede9fe !important; color:var(--accent) !important;
+  .cad-mes-th-cur { background:#F3E5FF !important; color:var(--accent) !important;
                     border-bottom:2px solid var(--accent) !important; font-weight:800; }
   #cadeiras-table th button { background:none; border:none; cursor:pointer;
     color:inherit; padding:0; font:inherit; display:flex; align-items:center; gap:4px; }
@@ -232,14 +241,14 @@
   #contratos-table tbody tr:hover td { background:#f5f3ff !important; }
   #contratos-table tbody tr:nth-child(even) td { background:#faf9ff; }
   .cont-cell { display:inline-block; min-width:60px; padding:2px 4px; border-radius:4px; transition:background .1s; }
-  .cont-cell:hover  { background:#ede9fe; }
-  .cont-cell:focus  { background:#ede9fe; outline:2px solid var(--accent); }
+  .cont-cell:hover  { background:#F3E5FF; }
+  .cont-cell:focus  { background:#F3E5FF; outline:2px solid var(--accent); }
   .cont-tipo { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
                font-weight:600; text-align:center; outline:none; width:100%; }
   .cont-dur  { appearance:none; border:none; background:transparent; font-size:12px; cursor:pointer;
                font-weight:700; text-align:center; outline:none; color:var(--accent); }
-  .tag-oc   { background:#fef3c7; color:#92400e; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
-  .tag-cs   { background:#dcfce7; color:#15803d; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
+  .tag-oc   { background:#FAEDC8; color:#8B6914; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
+  .tag-cs   { background:#F3E5FF; color:#7A00CC; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
   .tag-sc   { background:#fee2e2; color:#991b1b; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; }
   .link-contrato { color:var(--accent); font-size:11px; font-weight:600; text-decoration:underline; cursor:pointer; }
 
@@ -247,7 +256,7 @@
     cursor:pointer; border:1.5px solid var(--border); background:#fff; color:var(--text2);
     transition:all .15s; }
   .filt-dur-btn:hover   { border-color:var(--accent); color:var(--accent); background:#f5f3ff; }
-  .filt-dur-btn.active-filt { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .filt-dur-btn.active-filt { background:var(--black); color:#fff; border-color:var(--black); }
   .dur-sel { appearance:none; border:none; background:transparent; font-size:11px;
     font-weight:700; cursor:pointer; text-align:center; width:100%; outline:none; }
 
@@ -256,8 +265,8 @@
   .dash-sub { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:700;
     cursor:pointer; border:2px solid var(--border); background:#fff; color:var(--text2);
     transition:all .15s; white-space:nowrap; }
-  .dash-sub:hover { border-color:var(--accent); color:var(--accent); background:#f5f3ff; }
-  .dash-sub.ds-active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .dash-sub:hover { border-color:var(--mustard); color:var(--black); background:#FAEDC8; }
+  .dash-sub.ds-active { background:var(--black); color:#fff; border-color:var(--black); }
 
   /* ── Historical tables ──────────────────────── */
   .hist-table { width:100%; font-size:12px; border-collapse:collapse; }
@@ -268,14 +277,14 @@
   .hist-table .total-row td { font-weight:700; background:#f0effe; border-top:2px solid var(--accent); }
 
   .q-badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; }
-  .qb-green { background:#dcfce7; color:#15803d; }
+  .qb-green { background:#F3E5FF; color:#7A00CC; }
   .qb-red   { background:#fee2e2; color:#991b1b; }
-  .qb-blue  { background:#dbeafe; color:#1e40af; }
-  .qb-yellow{ background:#fef3c7; color:#92400e; }
+  .qb-blue  { background:#F3E5FF; color:#7A00CC; }
+  .qb-yellow{ background:#FAEDC8; color:#8B6914; }
 
   /* ── Churn table ──────────────────────────── */
   #churn-table td, #churn-table th { border-bottom:1px solid #ede9fe; }
-  #churn-table tbody tr:hover td { background:#fef2f2 !important; }
+  #churn-table tbody tr:hover td { background:#F5F5F2 !important; }
   #churn-table tbody tr:nth-child(even) td { background:#fffafa; }
   .churn-cell { display:inline-block; min-width:60px; padding:2px 4px; border-radius:4px; transition:background .1s; }
   .churn-cell:hover { background:#fee2e2; }
@@ -318,7 +327,7 @@
         class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm w-52 focus:outline-none focus:ring-2 focus:ring-blue-400"
         oninput="localStorage.setItem('gh_token', this.value)" />
       <button onclick="definirSenhaViewer()" class="admin-only text-sm px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1"
-        style="background:#fff;color:#4f46e5;border:1px solid #c7d2fe;" title="Define/troca a senha de acesso ao dashboard no cloud (GitHub Pages)">
+        style="background:#fff;color:#9900FF;border:1px solid #c7d2fe;" title="Define/troca a senha de acesso ao dashboard no cloud (GitHub Pages)">
         🔐 Senha viewer
       </button>
       <button onclick="publicarSnapshot()" id="btn-publicar"
@@ -396,13 +405,13 @@
           </div>
         </div>
         <div class="relative h-4 rounded-full overflow-hidden" style="background:#d8d5f5;">
-          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:24.57%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:24.57%;background:linear-gradient(90deg,#D4A017,#E0B84B);"></div>
         </div>
         <div class="flex justify-between mt-2">
           <span class="text-xs font-semibold text-yellow-500" id="pct-receita">24,57%</span>
           <div class="flex flex-wrap gap-4 text-xs no-print">
             <span style="color:var(--muted);" title="Soma automática dos gastos do trimestre atual (mídia + fixos + ferramentas + comissões), puxado da aba CAC.">
-              Gastos <span style="background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-left:2px;">auto CAC</span>:
+              Gastos <span style="background:#FAEDC8;color:#8B6914;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-left:2px;">auto CAC</span>:
               <strong id="cac-gastos-display" style="color:var(--accent);margin-left:4px;">R$ 0</strong>
               <input type="hidden" id="cac-gastos" value="0" />
             </span>
@@ -416,35 +425,35 @@
     <!-- ── Linha 2: 4 KPIs em grid ── -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-      <!-- Receita Casa -->
-      <div class="rounded-xl p-4 border" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">RECEITA CASA</p>
+      <!-- Receita Casa — MOSTARDA -->
+      <div class="rounded-xl p-4 border" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#8B6914;">RECEITA DA CASA</p>
         <p class="text-xs mb-2" style="color:#94a3b8;">REN + UP · Meta R$ 1.500.000</p>
-        <p id="receita-casa-valor" class="text-xl font-bold mb-2" style="color:#0369a1;">R$ 0,00</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#e0f2fe;">
-          <div id="bar-receita-casa" class="progress-bar h-full rounded-full" style="width:0%;background:#0284c7;"></div>
+        <p id="receita-casa-valor" class="text-xl font-bold mb-2" style="color:#8B6914;">R$ 0,00</p>
+        <div class="relative h-2 rounded-full overflow-hidden" style="background:#FFF9E5;">
+          <div id="bar-receita-casa" class="progress-bar h-full rounded-full" style="width:0%;background:#D4A017;"></div>
         </div>
         <span id="pct-receita-casa" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
       </div>
 
-      <!-- Receita Novos -->
-      <div class="rounded-xl p-4 border" style="background:#f0fdf4;border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">RECEITA NOVOS</p>
+      <!-- Receita Novos — PRETO/CINZA -->
+      <div class="rounded-xl p-4 border" style="background:#F5F5F5;border-color:#9CA3AF;">
+        <p class="text-xs font-semibold mb-1" style="color:#000000;">RECEITA NOVOS</p>
         <p class="text-xs mb-2" style="color:#94a3b8;">NTW, OUT, INB, MKT… · Meta R$ 600.000</p>
-        <p id="receita-novos-valor" class="text-xl font-bold mb-2" style="color:#16a34a;">R$ 0,00</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#dcfce7;">
-          <div id="bar-receita-novos" class="progress-bar h-full rounded-full" style="width:0%;background:#16a34a;"></div>
+        <p id="receita-novos-valor" class="text-xl font-bold mb-2" style="color:#000000;">R$ 0,00</p>
+        <div class="relative h-2 rounded-full overflow-hidden" style="background:#E5E5E5;">
+          <div id="bar-receita-novos" class="progress-bar h-full rounded-full" style="width:0%;background:#000000;"></div>
         </div>
         <span id="pct-receita-novos" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
       </div>
 
-      <!-- Novos Clientes -->
-      <div class="rounded-xl p-4 border" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">NOVOS CLIENTES</p>
+      <!-- Novos Clientes — ROXO (detalhe) -->
+      <div class="rounded-xl p-4 border" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">NOVOS CLIENTES</p>
         <p class="text-xs mb-2" style="color:#94a3b8;">Meta: <span id="novos-clientes-meta-label">8</span> clientes</p>
-        <p id="novos-clientes-valor" class="text-xl font-bold mb-2" style="color:#7c3aed;">0</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#ede9fe;">
-          <div id="bar-novos-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:#7c3aed;"></div>
+        <p id="novos-clientes-valor" class="text-xl font-bold mb-2" style="color:#9900FF;">0</p>
+        <div class="relative h-2 rounded-full overflow-hidden" style="background:#F3E5FF;">
+          <div id="bar-novos-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:#9900FF;"></div>
         </div>
         <div class="flex items-center justify-between mt-1">
           <span id="pct-novos-clientes" class="text-xs" style="color:#94a3b8;">0%</span>
@@ -571,7 +580,7 @@
   <!-- Filtros por canal -->
   <div class="bg-white border border-t-0 border-gray-200 px-4 py-3 flex flex-wrap items-center gap-2 no-print">
     <span class="text-xs font-semibold" style="color:var(--text2);">Filtrar:</span>
-    <button onclick="filtrarCanal(null)"  id="rfilt-all"  class="rfilt active-rfilt" style="--rc:#9900FF;--rct:#fff;">Todos</button>
+    <button onclick="filtrarCanal(null)"  id="rfilt-all"  class="rfilt active-rfilt" style="--rc:#000000;--rct:#fff;">Todos</button>
     <button onclick="filtrarCanal('UP')"  id="rfilt-UP"   class="rfilt" style="--rc:#D4A017;--rct:#fff;">UP</button>
     <button onclick="filtrarCanal('NTW')" id="rfilt-NTW"  class="rfilt" style="--rc:#9900FF;--rct:#fff;">NTW</button>
     <button onclick="filtrarCanal('REN')" id="rfilt-REN"  class="rfilt" style="--rc:#7A00CC;--rct:#fff;">REN</button>
@@ -673,25 +682,25 @@
         <p class="text-xs font-semibold mb-1" style="color:var(--text2);">META</p>
         <p class="text-lg font-bold" style="color:var(--text);">R$ 2.500.000</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;">
-        <p class="text-xs font-semibold mb-1" style="color:#92400e;">REALIZADO</p>
-        <p class="text-lg font-bold" style="color:#92400e;">R$ 1.186.500</p>
+      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#FAEDC8,#E0B84B);border-color:#D4A017;">
+        <p class="text-xs font-semibold mb-1" style="color:#8B6914;">REALIZADO</p>
+        <p class="text-lg font-bold" style="color:#8B6914;">R$ 1.186.500</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">RECEITA CASA</p>
-        <p class="text-lg font-bold" style="color:#0369a1;">R$ 796.500</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">RECEITA CASA</p>
+        <p class="text-lg font-bold" style="color:#00786F;">R$ 796.500</p>
         <p class="text-xs mt-1" style="color:#94a3b8;">UP + REN</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">RECEITA NOVOS</p>
-        <p class="text-lg font-bold" style="color:#16a34a;">R$ 390.000</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">RECEITA NOVOS</p>
+        <p class="text-lg font-bold" style="color:#9900FF;">R$ 390.000</p>
         <p class="text-xs mt-1" style="color:#94a3b8;">NTW + OUT + MKT + INB</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">ATINGIMENTO</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">ATINGIMENTO</p>
         <p class="text-lg font-bold" style="color:#dc2626;">47,46%</p>
-        <div class="relative h-2 rounded-full overflow-hidden mt-2" style="background:#ede9fe;">
-          <div class="h-full rounded-full" style="width:47.46%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+        <div class="relative h-2 rounded-full overflow-hidden mt-2" style="background:#F3E5FF;">
+          <div class="h-full rounded-full" style="width:47.46%;background:linear-gradient(90deg,#D4A017,#E0B84B);"></div>
         </div>
       </div>
     </div>
@@ -713,7 +722,7 @@
           <tr class="total-row">
             <td colspan="3" style="text-align:left;font-weight:700;">TOTAL Q1 2026</td>
             <td id="q1-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
-            <td id="q1-total-mens" style="font-weight:700;color:#0284c7;">R$ 0,00</td>
+            <td id="q1-total-mens" style="font-weight:700;color:#00B8A9;">R$ 0,00</td>
             <td colspan="5"></td>
             <td id="q1-ciclo-medio" style="font-weight:700;color:var(--accent);"></td>
             <td class="no-print admin-only"></td>
@@ -919,16 +928,16 @@
           <thead>
             <tr>
               <th style="text-align:left;">Mês</th>
-              <th colspan="2" style="background:#dbeafe;">Aquisição (NTW+OUT+INB)</th>
-              <th colspan="2" style="background:#fef3c7;">Casa (REN+UP)</th>
+              <th colspan="2" style="background:#F3E5FF;">Aquisição (NTW+OUT+INB)</th>
+              <th colspan="2" style="background:#FAEDC8;">Casa (REN+UP)</th>
               <th>Total fat.</th>
             </tr>
             <tr>
               <th></th>
               <th style="background:#eff6ff;">Qntd</th>
               <th style="background:#eff6ff;">Faturamento</th>
-              <th style="background:#fffbeb;">Qntd</th>
-              <th style="background:#fffbeb;">Faturamento</th>
+              <th style="background:#FAEDC8;">Qntd</th>
+              <th style="background:#FAEDC8;">Faturamento</th>
               <th></th>
             </tr>
           </thead>
@@ -978,8 +987,8 @@
           <thead>
             <tr>
               <th style="text-align:left;">Quarter</th>
-              <th colspan="3" style="background:#dbeafe;">Aquisição</th>
-              <th colspan="3" style="background:#fef3c7;">Casa</th>
+              <th colspan="3" style="background:#F3E5FF;">Aquisição</th>
+              <th colspan="3" style="background:#FAEDC8;">Casa</th>
               <th>Total fat.</th>
               <th>Split Aq/Casa</th>
             </tr>
@@ -988,9 +997,9 @@
               <th style="background:#eff6ff;">Qntd</th>
               <th style="background:#eff6ff;">Faturamento</th>
               <th style="background:#eff6ff;">%</th>
-              <th style="background:#fffbeb;">Qntd</th>
-              <th style="background:#fffbeb;">Faturamento</th>
-              <th style="background:#fffbeb;">%</th>
+              <th style="background:#FAEDC8;">Qntd</th>
+              <th style="background:#FAEDC8;">Faturamento</th>
+              <th style="background:#FAEDC8;">%</th>
               <th></th>
               <th></th>
             </tr>
@@ -1022,10 +1031,10 @@
           <thead>
             <tr>
               <th style="text-align:left;">Canal</th>
-              <th style="background:#fef3c7;">Q1 Deals</th>
-              <th style="background:#fef3c7;">Q1 Receita</th>
-              <th style="background:#fed7aa;">Q2 Deals</th>
-              <th style="background:#fed7aa;">Q2 Receita</th>
+              <th style="background:#FAEDC8;">Q1 Deals</th>
+              <th style="background:#FAEDC8;">Q1 Receita</th>
+              <th style="background:#E5E5E5;">Q2 Deals</th>
+              <th style="background:#E5E5E5;">Q2 Receita</th>
               <th>YTD Deals</th>
               <th>YTD Receita</th>
               <th>% YTD</th>
@@ -1049,10 +1058,10 @@
           <thead>
             <tr>
               <th style="text-align:left;">Tipo</th>
-              <th style="background:#fef3c7;">Q1 Deals</th>
-              <th style="background:#fef3c7;">Q1 Receita</th>
-              <th style="background:#fed7aa;">Q2 Deals</th>
-              <th style="background:#fed7aa;">Q2 Receita</th>
+              <th style="background:#FAEDC8;">Q1 Deals</th>
+              <th style="background:#FAEDC8;">Q1 Receita</th>
+              <th style="background:#E5E5E5;">Q2 Deals</th>
+              <th style="background:#E5E5E5;">Q2 Receita</th>
               <th>YTD Deals</th>
               <th>YTD Receita</th>
               <th>% YTD</th>
@@ -1099,17 +1108,17 @@
         <p class="text-xs font-semibold mb-1" style="color:var(--text2);">META ANUAL</p>
         <p class="text-lg font-bold" style="color:var(--text);">R$ 5.950.000</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">REALIZADO</p>
-        <p class="text-lg font-bold" style="color:#16a34a;">R$ 7.150.520</p>
+      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#F3E5FF,#D9A1FF);border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">REALIZADO</p>
+        <p class="text-lg font-bold" style="color:#9900FF;">R$ 7.150.520</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">ATINGIMENTO</p>
-        <p class="text-lg font-bold" style="color:#16a34a;">120,2%</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">ATINGIMENTO</p>
+        <p class="text-lg font-bold" style="color:#9900FF;">120,2%</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">SUPERÁVIT</p>
-        <p class="text-lg font-bold" style="color:#0369a1;">R$ 1.200.520</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">SUPERÁVIT</p>
+        <p class="text-lg font-bold" style="color:#00786F;">R$ 1.200.520</p>
       </div>
     </div>
 
@@ -1168,30 +1177,30 @@
       <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Canal — 2025 YTD</h3>
       <p class="text-xs mb-4" style="color:var(--muted);">Receita total fechada em 2025 distribuída por canal. <strong>REN</strong> = renovações (receita de carteira). <strong>NTW · OUT · INB · UP</strong> = novas vendas.</p>
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-        <div class="rounded-xl p-3 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-          <p class="text-xs font-bold mb-1" style="color:#166534;">NTW</p>
-          <p class="text-base font-bold" style="color:#16a34a;">R$ 681.000</p>
-          <p class="text-[10px] mt-1" style="color:#94a3b8;">9,6% · 7 vendas</p>
+        <div class="rounded-xl p-3 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+          <p class="text-xs font-bold mb-1" style="color:#7A00CC;">NTW</p>
+          <p class="text-base font-bold" style="color:#9900FF;">R$ 681.000</p>
+          <p class="text-[10px] mt-1" style="color:#9CA3AF;">9,6% · 7 vendas</p>
         </div>
-        <div class="rounded-xl p-3 border text-center" style="background:#fce7f3;border-color:#f9a8d4;">
-          <p class="text-xs font-bold mb-1" style="color:#9d174d;">OUT</p>
-          <p class="text-base font-bold" style="color:#db2777;">R$ 406.000</p>
-          <p class="text-[10px] mt-1" style="color:#94a3b8;">5,7% · 4 vendas</p>
+        <div class="rounded-xl p-3 border text-center" style="background:#E5E5E5;border-color:#9CA3AF;">
+          <p class="text-xs font-bold mb-1" style="color:#000000;">OUT</p>
+          <p class="text-base font-bold" style="color:#000000;">R$ 406.000</p>
+          <p class="text-[10px] mt-1" style="color:#9CA3AF;">5,7% · 4 vendas</p>
         </div>
-        <div class="rounded-xl p-3 border text-center" style="background:#ede9fe;border-color:#c4b5fd;">
-          <p class="text-xs font-bold mb-1" style="color:#5b21b6;">INB</p>
-          <p class="text-base font-bold" style="color:#7c3aed;">R$ 458.500</p>
-          <p class="text-[10px] mt-1" style="color:#94a3b8;">6,5% · 3 vendas</p>
+        <div class="rounded-xl p-3 border text-center" style="background:#CFF2EF;border-color:#5FCEC4;">
+          <p class="text-xs font-bold mb-1" style="color:#00786F;">INB</p>
+          <p class="text-base font-bold" style="color:#00B8A9;">R$ 458.500</p>
+          <p class="text-[10px] mt-1" style="color:#9CA3AF;">6,5% · 3 vendas</p>
         </div>
-        <div class="rounded-xl p-3 border text-center" style="background:#fef3c7;border-color:#fbbf24;">
-          <p class="text-xs font-bold mb-1" style="color:#92400e;">UP</p>
-          <p class="text-base font-bold" style="color:#d97706;">R$ 2.504.520</p>
-          <p class="text-[10px] mt-1" style="color:#94a3b8;">35,3%</p>
+        <div class="rounded-xl p-3 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+          <p class="text-xs font-bold mb-1" style="color:#8B6914;">UP</p>
+          <p class="text-base font-bold" style="color:#D4A017;">R$ 2.504.520</p>
+          <p class="text-[10px] mt-1" style="color:#9CA3AF;">35,3%</p>
         </div>
-        <div class="rounded-xl p-3 border text-center" style="background:#dbeafe;border-color:#93c5fd;">
-          <p class="text-xs font-bold mb-1" style="color:#1e40af;">REN</p>
-          <p class="text-base font-bold" style="color:#2563eb;">R$ 3.052.500</p>
-          <p class="text-[10px] mt-1" style="color:#94a3b8;">43,0%</p>
+        <div class="rounded-xl p-3 border text-center" style="background:#EBD5FF;border-color:#B86BFF;">
+          <p class="text-xs font-bold mb-1" style="color:#5C0099;">REN</p>
+          <p class="text-base font-bold" style="color:#7A00CC;">R$ 3.052.500</p>
+          <p class="text-[10px] mt-1" style="color:#9CA3AF;">43,0%</p>
         </div>
       </div>
       <div class="relative h-64 mb-3">
@@ -1229,20 +1238,20 @@
     <div>
       <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Novos Clientes 2025</h3>
       <div class="grid grid-cols-3 gap-4 mb-4">
-        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-          <p class="text-xs font-bold mb-1" style="color:#166534;">NTW</p>
-          <p class="text-lg font-bold" style="color:#16a34a;">R$ 681.000</p>
-          <p class="text-xs mt-1" style="color:#94a3b8;">7 vendas</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+          <p class="text-xs font-bold mb-1" style="color:#7A00CC;">NTW</p>
+          <p class="text-lg font-bold" style="color:#9900FF;">R$ 681.000</p>
+          <p class="text-xs mt-1" style="color:#9CA3AF;">7 vendas</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#ede9fe;border-color:#c4b5fd;">
-          <p class="text-xs font-bold mb-1" style="color:#5b21b6;">INB</p>
-          <p class="text-lg font-bold" style="color:#7c3aed;">R$ 458.500</p>
-          <p class="text-xs mt-1" style="color:#94a3b8;">3 vendas</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#CFF2EF;border-color:#5FCEC4;">
+          <p class="text-xs font-bold mb-1" style="color:#00786F;">INB</p>
+          <p class="text-lg font-bold" style="color:#00B8A9;">R$ 458.500</p>
+          <p class="text-xs mt-1" style="color:#9CA3AF;">3 vendas</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#fce7f3;border-color:#f9a8d4;">
-          <p class="text-xs font-bold mb-1" style="color:#9d174d;">OUT</p>
-          <p class="text-lg font-bold" style="color:#db2777;">R$ 406.000</p>
-          <p class="text-xs mt-1" style="color:#94a3b8;">4 vendas</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#E5E5E5;border-color:#9CA3AF;">
+          <p class="text-xs font-bold mb-1" style="color:#000000;">OUT</p>
+          <p class="text-lg font-bold" style="color:#000000;">R$ 406.000</p>
+          <p class="text-xs mt-1" style="color:#9CA3AF;">4 vendas</p>
         </div>
       </div>
       <div class="overflow-x-auto">
@@ -1359,22 +1368,22 @@
           <p class="text-xs mt-1" style="color:var(--muted);">posições no período</p>
         </div>
 
-        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4; border-color:#bbf7d0;">
-          <p class="text-xs font-semibold mb-1" style="color:#166534;">ATIVAS AGORA</p>
-          <p id="cad-ativas" class="text-3xl font-bold" style="color:#16a34a;">0</p>
-          <p class="text-xs mt-1" style="color:#4ade80;">ativas + saindo em maio</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF; border-color:#D9A1FF;">
+          <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">ATIVAS AGORA</p>
+          <p id="cad-ativas" class="text-3xl font-bold" style="color:#9900FF;">0</p>
+          <p class="text-xs mt-1" style="color:#9900FF;">ativas + saindo em maio</p>
         </div>
 
-        <div class="rounded-xl p-4 border text-center" style="background:#fffbeb; border-color:#fde68a;">
-          <p class="text-xs font-semibold mb-1" style="color:#92400e;">CADEIRAS 3 MESES</p>
-          <p id="cad-mais3" class="text-3xl font-bold" style="color:#d97706;">0</p>
-          <p class="text-xs mt-1" style="color:#fbbf24;">3–4 meses ativos</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8; border-color:#E0B84B;">
+          <p class="text-xs font-semibold mb-1" style="color:#8B6914;">CADEIRAS 3 MESES</p>
+          <p id="cad-mais3" class="text-3xl font-bold" style="color:#D4A017;">0</p>
+          <p class="text-xs mt-1" style="color:#D4A017;">3–4 meses ativos</p>
         </div>
 
         <div class="rounded-xl p-4 border text-center" style="background:#eef2ff; border-color:#c7d2fe;">
           <p class="text-xs font-semibold mb-1" style="color:#3730a3;">CADEIRAS +5 MESES</p>
-          <p id="cad-mais5" class="text-3xl font-bold" style="color:#4338ca;">0</p>
-          <p class="text-xs mt-1 font-semibold" id="cad-mais5-pct" style="color:#818cf8;">0% do total</p>
+          <p id="cad-mais5" class="text-3xl font-bold" style="color:#7A00CC;">0</p>
+          <p class="text-xs mt-1 font-semibold" id="cad-mais5-pct" style="color:#7A00CC;">0% do total</p>
         </div>
 
       </div>
@@ -1382,8 +1391,8 @@
       <!-- Legenda dos status -->
       <div class="flex flex-wrap gap-3 mt-4 pt-3 border-t" style="border-color:var(--border);">
         <span class="text-xs font-medium" style="color:var(--muted);">Legenda:</span>
-        <span style="background:#16a34a;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">ATIVO</span>
-        <span style="background:#d97706;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">SAINDO</span>
+        <span style="background:#9900FF;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">ATIVO</span>
+        <span style="background:#D4A017;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">SAINDO</span>
         <span style="background:#94a3b8;color:#fff;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;">FORA</span>
         <span style="background:#f1f5f9;color:#94a3b8;border-radius:5px;padding:2px 10px;font-size:11px;font-weight:700;border:1px solid #e2e8f0;">· vazio</span>
         <span class="text-xs ml-2" style="color:var(--muted);">— Clique em qualquer célula para alternar o status</span>
@@ -1490,23 +1499,23 @@
           <p class="text-xs font-semibold mb-1" style="color:var(--text2);">CONTRATOS ATIVOS</p>
           <p id="cont-total" class="text-3xl font-bold" style="color:var(--black);">0</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#bbf7d0;">
-          <p class="text-xs font-semibold mb-1" style="color:#166534;">VALOR TOTAL MRR</p>
-          <p id="cont-mrr" class="text-xl font-bold" style="color:#16a34a;">R$ 0</p>
-          <p class="text-xs mt-1" style="color:#4ade80;">soma dos valores/RPO</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+          <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">VALOR TOTAL MRR</p>
+          <p id="cont-mrr" class="text-xl font-bold" style="color:#9900FF;">R$ 0</p>
+          <p class="text-xs mt-1" style="color:#9900FF;">soma dos valores/RPO</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#fffbeb;border-color:#fde68a;">
-          <p class="text-xs font-semibold mb-1" style="color:#92400e;">VALOR TOTAL VÍNCULOS</p>
-          <p id="cont-total-valor" class="text-xl font-bold" style="color:#d97706;">R$ 0</p>
-          <p class="text-xs mt-1" style="color:#fbbf24;">soma total dos contratos</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+          <p class="text-xs font-semibold mb-1" style="color:#8B6914;">VALOR TOTAL VÍNCULOS</p>
+          <p id="cont-total-valor" class="text-xl font-bold" style="color:#D4A017;">R$ 0</p>
+          <p class="text-xs mt-1" style="color:#D4A017;">soma total dos contratos</p>
         </div>
         <div class="rounded-xl p-4 border text-center" style="background:#eef2ff;border-color:#c7d2fe;">
           <p class="text-xs font-semibold mb-1" style="color:#3730a3;">CADEIRAS CONTRATADAS</p>
-          <p id="cont-cadeiras" class="text-3xl font-bold" style="color:#4338ca;">0</p>
+          <p id="cont-cadeiras" class="text-3xl font-bold" style="color:#7A00CC;">0</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
-          <p class="text-xs font-semibold mb-1" style="color:#0369a1;">TICKET MÉDIO / RPO ALOCADO</p>
-          <p id="cont-ticket-rpo" class="text-xl font-bold" style="color:#0284c7;">R$ 0</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+          <p class="text-xs font-semibold mb-1" style="color:#00786F;">TICKET MÉDIO / RPO ALOCADO</p>
+          <p id="cont-ticket-rpo" class="text-xl font-bold" style="color:#00B8A9;">R$ 0</p>
           <p class="text-xs mt-1" style="color:#7dd3fc;">média dos valores/RPO</p>
         </div>
       </div>
@@ -1777,6 +1786,8 @@
                 <th>Mês</th>
                 <th>Quarter</th>
                 <th>Tipo empresa</th>
+                <th>SQL?</th>
+                <th>Fechado?</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -1784,8 +1795,28 @@
           </table>
         </div>
         <p class="text-xs italic mt-2" style="color:var(--muted);">
-          <strong>Sufixo do nome</strong> = última parte depois de "|" — se o canal saiu errado, esse texto te dá a dica do que precisa ser ajustado no HubSpot ou na regra de canal.
+          <strong>Sufixo do nome</strong> = última parte depois de "|" — se o canal saiu errado, esse texto te dá a dica do que precisa ser ajustado no HubSpot ou na regra de canal.<br>
+          <strong>SQL?</strong> = se foi enviada proposta a esse lead. <strong>Fechado?</strong> = se virou venda. Conversão considera APENAS oportunidades criadas E fechadas em 2026.
         </p>
+
+        <!-- Funil de Conversão por Canal -->
+        <div class="mt-6 rounded-xl border border-gray-200 p-4" style="background:#FAFAFA;">
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <h4 class="text-sm font-bold" style="color:var(--text);">🔻 Funil de Conversão por Canal — 2026</h4>
+            <div class="admin-only flex gap-2">
+              <button onclick="(function(){const r=sincronizarFechadosNaTrilha();setStatus('🔄 Auto-sync: '+r.criadas+' ops criadas, '+r.marcadas+' marcadas como fechadas','green');renderAuditoria();})()"
+                class="text-xs px-3 py-1 rounded-lg font-semibold transition"
+                style="background:#D4A017;color:#fff;border:none;cursor:pointer;"
+                title="Cria oportunidades automáticas pra todo deal fechado em 2026 (Q1+Q2) que ainda não tem oportunidade equivalente na trilha (mesmo nome + canal)">
+                🔄 Sincronizar fechados → ops
+              </button>
+            </div>
+          </div>
+          <p class="text-xs italic mb-3" style="color:var(--muted);">
+            Cada canal mostra: oportunidades criadas → SQL/proposta enviada → fechadas. A conversão final compara o número de fechadas com o de oportunidades criadas dentro de 2026.
+          </p>
+          <div id="conv-funil-canais"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -1816,27 +1847,27 @@
 
       <!-- Cards de resumo -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="rounded-xl p-4 border text-center" style="background:#fef2f2;border-color:#fca5a5;">
+        <div class="rounded-xl p-4 border text-center" style="background:#F5F5F2;border-color:#C8C8C8;">
           <p class="text-xs font-bold mb-1" style="color:#991b1b;">CUSTO TOTAL 2026</p>
           <p id="cac-resumo-total" class="text-2xl font-bold" style="color:#dc2626;">R$ 0</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-          <p class="text-xs font-bold mb-1" style="color:#166534;">NOVOS CLIENTES</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+          <p class="text-xs font-bold mb-1" style="color:#7A00CC;">NOVOS CLIENTES</p>
           <p>
             <input type="number" id="cac-novos-clientes" min="0" step="1"
               oninput="onCacNovosChange(this.value)"
-              class="text-2xl font-bold text-center border rounded px-2 py-1 w-24" style="color:#16a34a;" />
+              class="text-2xl font-bold text-center border rounded px-2 py-1 w-24" style="color:#9900FF;" />
           </p>
           <p class="text-xs mt-1" style="color:#94a3b8;">NTW + OUT + INB · vazio = automático</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#ede9fe;border-color:#c4b5fd;">
-          <p class="text-xs font-bold mb-1" style="color:#5b21b6;">CAC MÉDIO</p>
-          <p id="cac-resumo-cac" class="text-2xl font-bold" style="color:#7c3aed;">R$ 0</p>
+        <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+          <p class="text-xs font-bold mb-1" style="color:#7A00CC;">CAC MÉDIO</p>
+          <p id="cac-resumo-cac" class="text-2xl font-bold" style="color:#9900FF;">R$ 0</p>
           <p class="text-xs mt-1" style="color:#94a3b8;">custo ÷ novos</p>
         </div>
-        <div class="rounded-xl p-4 border text-center" style="background:#fff7ed;border-color:#fdba74;">
+        <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
           <p class="text-xs font-bold mb-1" style="color:#9a3412;">PAYBACK (meses)</p>
-          <p id="cac-resumo-payback" class="text-2xl font-bold" style="color:#ea580c;">—</p>
+          <p id="cac-resumo-payback" class="text-2xl font-bold" style="color:#D4A017;">—</p>
           <p class="text-xs mt-1" style="color:#94a3b8;">CAC ÷ Ticket Médio</p>
         </div>
       </div>
@@ -1946,8 +1977,8 @@
         <h3 class="font-semibold text-sm mb-2" style="color:var(--text2);">💵 Comissões por trimestre</h3>
         <p class="text-xs mb-2" style="color:var(--muted);">
           Valores fixos de comissão por Q, separados em <strong>Renovação</strong> e <strong>Aquisição</strong>.
-          Quarters anteriores ao atual aparecem como <span style="background:#dcfce7;color:#166534;padding:1px 6px;border-radius:4px;font-weight:600;">✓ Realizado</span>;
-          atual e futuros como <span style="background:#fed7aa;color:#9a3412;padding:1px 6px;border-radius:4px;font-weight:600;">⏳ Estimado</span>.
+          Quarters anteriores ao atual aparecem como <span style="background:#F3E5FF;color:#7A00CC;padding:1px 6px;border-radius:4px;font-weight:600;">✓ Realizado</span>;
+          atual e futuros como <span style="background:#E5E5E5;color:#9a3412;padding:1px 6px;border-radius:4px;font-weight:600;">⏳ Estimado</span>.
         </p>
         <div class="overflow-x-auto">
           <table class="hist-table text-sm" id="cac-comissoes-tri-table">
@@ -1993,7 +2024,7 @@
         <div class="border-t mt-3 pt-3 grid grid-cols-2 md:grid-cols-3 gap-3 text-sm" style="border-color:#e0dff7;">
           <div class="flex justify-between"><span>Total geral:</span><strong id="cac-resumo-total2" style="color:#dc2626;">R$ 0</strong></div>
           <div class="flex justify-between"><span>Novos clientes:</span><strong id="cac-resumo-novos">0</strong></div>
-          <div class="flex justify-between"><span><strong>CAC:</strong></span><strong id="cac-resumo-cac2" style="color:#7c3aed;font-size:15px;">R$ 0</strong></div>
+          <div class="flex justify-between"><span><strong>CAC:</strong></span><strong id="cac-resumo-cac2" style="color:#9900FF;font-size:15px;">R$ 0</strong></div>
         </div>
       </div>
 
@@ -2573,8 +2604,8 @@ function renderCompTriTable() {
       if (t === null) return '<span style="color:var(--muted);">—</span>';
       return `<div style="font-weight:600;">${fmtBRL(t)}</div>
         <div style="font-size:10px;margin-top:2px;">
-          <span style="color:#0369a1;">Casa ${fmtBRL(c)}</span> ·
-          <span style="color:#16a34a;">Novos ${fmtBRL(n)}</span>
+          <span style="color:#00786F;">Casa ${fmtBRL(c)}</span> ·
+          <span style="color:#9900FF;">Novos ${fmtBRL(n)}</span>
         </div>`;
     };
 
@@ -2594,7 +2625,7 @@ function renderCompTriTable() {
   });
 
   // Totals row
-  const fmtTot = (yr) => `<div>${fmtBRL(sums[yr].t)}</div><div style="font-size:10px;"><span style="color:#0369a1;">C ${fmtBRL(sums[yr].c)}</span> · <span style="color:#16a34a;">N ${fmtBRL(sums[yr].n)}</span></div>`;
+  const fmtTot = (yr) => `<div>${fmtBRL(sums[yr].t)}</div><div style="font-size:10px;"><span style="color:#00786F;">C ${fmtBRL(sums[yr].c)}</span> · <span style="color:#9900FF;">N ${fmtBRL(sums[yr].n)}</span></div>`;
   document.getElementById('comp-total-2023').innerHTML = fmtTot(2023);
   document.getElementById('comp-total-2024').innerHTML = fmtTot(2024);
   document.getElementById('comp-total-2025').innerHTML = fmtTot(2025);
@@ -2618,32 +2649,32 @@ function renderCompTriTable() {
     const c26 = sums[2026].c, c25 = COMP_TRI[2025].casa.slice(0,qsCom).reduce((s,v)=>s+v,0);
     const casaPct = c25 ? ((c26/c25-1)*100).toFixed(1) : null;
     insEl.innerHTML = `
-      <div class="rounded-xl p-4 border" style="background:#f0fdf4;border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">MELHOR TRIMESTRE</p>
-        <p class="text-lg font-bold" style="color:#16a34a;">${fmtBRL(best.v)}</p>
+      <div class="rounded-xl p-4 border" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">MELHOR TRIMESTRE</p>
+        <p class="text-lg font-bold" style="color:#9900FF;">${fmtBRL(best.v)}</p>
         <p class="text-xs mt-1" style="color:#94a3b8;">Q${best.q} ${best.y}</p>
       </div>
-      <div class="rounded-xl p-4 border" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">YOY TOTAL (PERÍODOS EQUIV.)</p>
-        <p class="text-lg font-bold" style="color:${yoyPct&&parseFloat(yoyPct)>=0?'#16a34a':'#dc2626'};">${yoyPct!==null?(parseFloat(yoyPct)>=0?'+':'')+yoyPct+'%':'—'}</p>
+      <div class="rounded-xl p-4 border" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">YOY TOTAL (PERÍODOS EQUIV.)</p>
+        <p class="text-lg font-bold" style="color:${yoyPct&&parseFloat(yoyPct)>=0?'#4CAF50':'#E57373'};">${yoyPct!==null?(parseFloat(yoyPct)>=0?'+':'')+yoyPct+'%':'—'}</p>
         <p class="text-xs mt-1" style="color:#94a3b8;">2026 vs 2025 (Q1${qsCom>1?'–Q'+qsCom:''})</p>
       </div>
-      <div class="rounded-xl p-4 border" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">YOY RECEITA CASA</p>
-        <p class="text-lg font-bold" style="color:${casaPct&&parseFloat(casaPct)>=0?'#16a34a':'#dc2626'};">${casaPct!==null?(parseFloat(casaPct)>=0?'+':'')+casaPct+'%':'—'}</p>
+      <div class="rounded-xl p-4 border" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">YOY RECEITA CASA</p>
+        <p class="text-lg font-bold" style="color:${casaPct&&parseFloat(casaPct)>=0?'#4CAF50':'#E57373'};">${casaPct!==null?(parseFloat(casaPct)>=0?'+':'')+casaPct+'%':'—'}</p>
         <p class="text-xs mt-1" style="color:#94a3b8;">Casa 26 ${fmtBRL(c26)} vs 25 ${fmtBRL(c25)}</p>
       </div>`;
   }
 }
 
-// ─── VENDAS POR CANAL (genérica) ────────────────
+// ─── VENDAS POR CANAL (paleta INTERA) ────────────────
 const CANAL_COLORS = {
-  'UP':  { bg:'#dbeafe', bc:'#93c5fd', tc:'#1e40af', chart:'#60a5fa' },
-  'NTW': { bg:'#f0fdf4', bc:'#86efac', tc:'#166534', chart:'#4ade80' },
-  'MKT': { bg:'#fff7ed', bc:'#fdba74', tc:'#c2410c', chart:'#fb923c' },
-  'OUT': { bg:'#fce7f3', bc:'#f9a8d4', tc:'#9d174d', chart:'#f472b6' },
-  'REN': { bg:'#fef3c7', bc:'#fde68a', tc:'#92400e', chart:'#fbbf24' },
-  'INB': { bg:'#ede9fe', bc:'#c4b5fd', tc:'#5b21b6', chart:'#a78bfa' },
+  'UP':  { bg:'#FAEDC8', bc:'#E0B84B', tc:'#8B6914', chart:'#D4A017' },   // mustard
+  'NTW': { bg:'#F3E5FF', bc:'#D9A1FF', tc:'#7A00CC', chart:'#9900FF' },   // roxo INTERA
+  'MKT': { bg:'#EEEEEE', bc:'#C8C8C8', tc:'#4A4A4A', chart:'#C8C8C8' },   // cinza
+  'OUT': { bg:'#E5E5E5', bc:'#9CA3AF', tc:'#000000', chart:'#000000' },   // preto
+  'REN': { bg:'#EBD5FF', bc:'#B86BFF', tc:'#5C0099', chart:'#7A00CC' },   // roxo escuro
+  'INB': { bg:'#CFF2EF', bc:'#5FCEC4', tc:'#00786F', chart:'#00B8A9' },   // teal
 };
 
 const CASA_CANAIS = ['UP','UPSELL','REN','RENOVAÇÃO','RENOVACAO'];
@@ -2679,9 +2710,9 @@ function renderCanalBreakdown(deals, containerId) {
     <!-- Bloco Receita da Casa -->
     <div class="mb-5">
       <div class="flex items-center gap-3 mb-3">
-        <span class="text-xs font-bold uppercase tracking-widest" style="color:#0369a1;">Receita da Casa</span>
+        <span class="text-xs font-bold uppercase tracking-widest" style="color:#00786F;">Receita da Casa</span>
         <span style="font-size:11px;color:#94a3b8;">REN + UP</span>
-        <span class="ml-auto text-sm font-bold" style="color:#0369a1;">${fmtBRL(totalCasa)}</span>
+        <span class="ml-auto text-sm font-bold" style="color:#00786F;">${fmtBRL(totalCasa)}</span>
         <span style="font-size:11px;color:#94a3b8;">${countCasa} venda${countCasa!==1?'s':''}</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-${Math.min(canaisCasa.length,4)} gap-3">${cardHTML(canaisCasa) || '<p class="text-xs col-span-full" style="color:var(--muted);">Nenhuma venda nesta categoria</p>'}</div>
@@ -2689,9 +2720,9 @@ function renderCanalBreakdown(deals, containerId) {
     <!-- Bloco Novas Aquisições -->
     <div>
       <div class="flex items-center gap-3 mb-3">
-        <span class="text-xs font-bold uppercase tracking-widest" style="color:#16a34a;">Novas Aquisições</span>
+        <span class="text-xs font-bold uppercase tracking-widest" style="color:#9900FF;">Novas Aquisições</span>
         <span style="font-size:11px;color:#94a3b8;">NTW · OUT · INB · MKT</span>
-        <span class="ml-auto text-sm font-bold" style="color:#16a34a;">${fmtBRL(totalNovos)}</span>
+        <span class="ml-auto text-sm font-bold" style="color:#9900FF;">${fmtBRL(totalNovos)}</span>
         <span style="font-size:11px;color:#94a3b8;">${countNovos} venda${countNovos!==1?'s':''}</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-${Math.min(canaisNovos.length,4)} gap-3">${cardHTML(canaisNovos) || '<p class="text-xs col-span-full" style="color:var(--muted);">Nenhuma venda nesta categoria</p>'}</div>
@@ -2798,7 +2829,7 @@ function renderConvSummaryInto(containerId, bucket, fechFn) {
   const totalOportTipo  = TIPOS.reduce((s,t) => s + (tipos[t]||0), 0);
   const totalFech = fechFn();
   const convPct = totalOportCanal > 0 ? (totalFech / totalOportCanal * 100) : null;
-  const convCor = convPct === null ? '#9ca3af' : convPct >= 30 ? '#16a34a' : convPct >= 15 ? '#0369a1' : '#dc2626';
+  const convCor = convPct === null ? '#9CA3AF' : convPct >= 30 ? '#4CAF50' : convPct >= 15 ? '#D4A017' : '#E57373';
 
   const linhaCanal = c => {
     const o = canais[c] || 0;
@@ -2834,12 +2865,12 @@ function renderConvSummaryInto(containerId, bucket, fechFn) {
         <p class="text-xl font-bold" style="color:var(--accent);">${totalOportCanal}</p>
         <p class="text-xs mt-1" style="color:#94a3b8;">soma dos canais</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">DEALS FECHADOS</p>
-        <p class="text-xl font-bold" style="color:#16a34a;">${totalFech}</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">DEALS FECHADOS</p>
+        <p class="text-xl font-bold" style="color:#9900FF;">${totalFech}</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">CONVERSÃO</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">CONVERSÃO</p>
         <p class="text-xl font-bold" style="color:${convCor};">${convPct === null ? '—' : convPct.toFixed(1) + '%'}</p>
       </div>
     </div>
@@ -3049,21 +3080,21 @@ function renderAnual() {
         <p class="text-xs font-semibold mb-1" style="color:var(--text2);">RECEITA TOTAL</p>
         <p class="text-lg font-bold" style="color:var(--accent);">${fmtBRL(totalReceita)}</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-        <p class="text-xs font-semibold mb-1" style="color:#166534;">MRR TOTAL</p>
-        <p class="text-lg font-bold" style="color:#16a34a;">${fmtBRL(totalMRR)}</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">MRR TOTAL</p>
+        <p class="text-lg font-bold" style="color:#9900FF;">${fmtBRL(totalMRR)}</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#f0f9ff;border-color:#bae6fd;">
-        <p class="text-xs font-semibold mb-1" style="color:#0369a1;">DEALS · CLIENTES</p>
-        <p class="text-lg font-bold" style="color:#0284c7;">${deals} · ${clientesUnicos}</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">DEALS · CLIENTES</p>
+        <p class="text-lg font-bold" style="color:#00B8A9;">${deals} · ${clientesUnicos}</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
-        <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">TICKET MÉDIO</p>
-        <p class="text-lg font-bold" style="color:#7c3aed;">${fmtBRL(ticketMedio)}</p>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">TICKET MÉDIO</p>
+        <p class="text-lg font-bold" style="color:#9900FF;">${fmtBRL(ticketMedio)}</p>
       </div>
-      <div class="rounded-xl p-4 border text-center" style="background:#fff7ed;border-color:#fdba74;">
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
         <p class="text-xs font-semibold mb-1" style="color:#9a3412;">CICLO MÉDIO</p>
-        <p class="text-lg font-bold" style="color:#ea580c;">${cicloMedio > 0 ? cicloMedio + ' dias' : '—'}</p>
+        <p class="text-lg font-bold" style="color:#D4A017;">${cicloMedio > 0 ? cicloMedio + ' dias' : '—'}</p>
       </div>`;
   }
 
@@ -3135,13 +3166,13 @@ function renderAnual() {
     const barWidth = pct;  // barra externa proporcional ao % do YTD
     return `<tr>
       <td style="text-align:left;font-weight:600;">${esc(k)}</td>
-      <td style="background:#fffbeb;">${q1c}</td>
-      <td style="background:#fffbeb;">${q1v ? fmtBRL(q1v) : '—'}</td>
-      <td style="background:#fff7ed;">${q2c}</td>
-      <td style="background:#fff7ed;">${q2v ? fmtBRL(q2v) : '—'}</td>
+      <td style="background:#FAEDC8;">${q1c}</td>
+      <td style="background:#FAEDC8;">${q1v ? fmtBRL(q1v) : '—'}</td>
+      <td style="background:#FAEDC8;">${q2c}</td>
+      <td style="background:#FAEDC8;">${q2v ? fmtBRL(q2v) : '—'}</td>
       <td><strong>${ytd.count}</strong></td>
       <td style="font-weight:700;color:var(--accent);">${fmtBRL(ytd.valorTotal)}</td>
-      <td style="font-weight:700;color:#7c3aed;">${pct.toFixed(1).replace('.', ',')}%</td>
+      <td style="font-weight:700;color:#9900FF;">${pct.toFixed(1).replace('.', ',')}%</td>
       <td style="padding:6px 8px;">
         <div style="background:#f3f4f6;border-radius:4px;height:18px;width:100%;overflow:hidden;display:flex;">
           <div style="width:${barWidth}%;background:linear-gradient(to right, ${cor} ${wQ1}%, ${cor}99 ${wQ1}%, ${cor}99 100%);height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;color:#fff;font-size:9px;font-weight:700;">${pct >= 8 ? pct.toFixed(0)+'%' : ''}</div>
@@ -3171,13 +3202,13 @@ function renderAnual() {
       const tYc = Object.values(aggCanal).reduce((s,b) => s + (b.count||0), 0);
       tfootCanal.innerHTML = `
         <td style="text-align:left;font-weight:700;">TOTAL</td>
-        <td style="background:#fef3c7;font-weight:700;">${tQ1c}</td>
-        <td style="background:#fef3c7;font-weight:700;">${fmtBRL(tQ1v)}</td>
-        <td style="background:#fed7aa;font-weight:700;">${tQ2c}</td>
-        <td style="background:#fed7aa;font-weight:700;">${fmtBRL(tQ2v)}</td>
+        <td style="background:#FAEDC8;font-weight:700;">${tQ1c}</td>
+        <td style="background:#FAEDC8;font-weight:700;">${fmtBRL(tQ1v)}</td>
+        <td style="background:#E5E5E5;font-weight:700;">${tQ2c}</td>
+        <td style="background:#E5E5E5;font-weight:700;">${fmtBRL(tQ2v)}</td>
         <td style="font-weight:700;">${tYc}</td>
         <td style="font-weight:700;color:var(--accent);">${fmtBRL(totalYTD_canal)}</td>
-        <td style="font-weight:700;color:#7c3aed;">100%</td>
+        <td style="font-weight:700;color:#9900FF;">100%</td>
         <td colspan="3"></td>`;
     }
   }
@@ -3200,13 +3231,13 @@ function renderAnual() {
       const tYc = Object.values(aggTipo).reduce((s,b) => s + (b.count||0), 0);
       tfootTipo.innerHTML = `
         <td style="text-align:left;font-weight:700;">TOTAL</td>
-        <td style="background:#fef3c7;font-weight:700;">${tQ1c}</td>
-        <td style="background:#fef3c7;font-weight:700;">${fmtBRL(tQ1v)}</td>
-        <td style="background:#fed7aa;font-weight:700;">${tQ2c}</td>
-        <td style="background:#fed7aa;font-weight:700;">${fmtBRL(tQ2v)}</td>
+        <td style="background:#FAEDC8;font-weight:700;">${tQ1c}</td>
+        <td style="background:#FAEDC8;font-weight:700;">${fmtBRL(tQ1v)}</td>
+        <td style="background:#E5E5E5;font-weight:700;">${tQ2c}</td>
+        <td style="background:#E5E5E5;font-weight:700;">${fmtBRL(tQ2v)}</td>
         <td style="font-weight:700;">${tYc}</td>
         <td style="font-weight:700;color:var(--accent);">${fmtBRL(totalYTD_tipo)}</td>
-        <td style="font-weight:700;color:#7c3aed;">100%</td>
+        <td style="font-weight:700;color:#9900FF;">100%</td>
         <td colspan="3"></td>`;
     }
   }
@@ -3359,7 +3390,7 @@ function renderAnual() {
       const pctRenDoQ = sub > 0 ? (b.ren / sub) * 100 : 0;
       const pctUpDoQ  = sub > 0 ? (b.up  / sub) * 100 : 0;
       const splitTxt  = sub > 0
-        ? `<span style="color:#60a5fa;">${pctRenDoQ.toFixed(0)}% REN</span> · <span style="color:#1e3a8a;">${pctUpDoQ.toFixed(0)}% UP</span>`
+        ? `<span style="color:#D4A017;">${pctRenDoQ.toFixed(0)}% REN</span> · <span style="color:#000000;">${pctUpDoQ.toFixed(0)}% UP</span>`
         : '—';
       return `<tr>
         <td style="text-align:left;font-weight:600;">${q}</td>
@@ -3373,7 +3404,7 @@ function renderAnual() {
     document.getElementById('anual-casa-tri-tot-up').textContent  = fmtBRL(totAnoUp);
     document.getElementById('anual-casa-tri-tot-all').textContent = fmtBRL(totAnoAll);
     const splitTotal = totAnoAll > 0
-      ? `<span style="color:#60a5fa;">${(totAnoRen/totAnoAll*100).toFixed(0)}% REN</span> · <span style="color:#1e3a8a;">${(totAnoUp/totAnoAll*100).toFixed(0)}% UP</span>`
+      ? `<span style="color:#D4A017;">${(totAnoRen/totAnoAll*100).toFixed(0)}% REN</span> · <span style="color:#000000;">${(totAnoUp/totAnoAll*100).toFixed(0)}% UP</span>`
       : '—';
     document.getElementById('anual-casa-tri-tot-split').innerHTML = splitTotal;
   }
@@ -3496,16 +3527,16 @@ function renderAnual() {
       const pctAq = totQ > 0 ? (b.aqF / totQ) * 100 : 0;
       const pctCa = totQ > 0 ? (b.caF / totQ) * 100 : 0;
       const split = totQ > 0
-        ? `<span style="color:#2563eb;">${pctAq.toFixed(0)}% Aq</span> · <span style="color:#d97706;">${pctCa.toFixed(0)}% Casa</span>`
+        ? `<span style="color:#9900FF;">${pctAq.toFixed(0)}% Aq</span> · <span style="color:#D4A017;">${pctCa.toFixed(0)}% Casa</span>`
         : '—';
       return `<tr>
         <td style="text-align:left;font-weight:600;">${q}</td>
         <td>${b.aqQ}</td>
         <td>${fmtBRL(b.aqF)}</td>
-        <td style="color:#2563eb;font-weight:600;">${pctAq.toFixed(1).replace('.', ',')}%</td>
+        <td style="color:#9900FF;font-weight:600;">${pctAq.toFixed(1).replace('.', ',')}%</td>
         <td>${b.caQ}</td>
         <td>${fmtBRL(b.caF)}</td>
-        <td style="color:#d97706;font-weight:600;">${pctCa.toFixed(1).replace('.', ',')}%</td>
+        <td style="color:#D4A017;font-weight:600;">${pctCa.toFixed(1).replace('.', ',')}%</td>
         <td style="font-weight:700;color:var(--accent);">${fmtBRL(totQ)}</td>
         <td style="font-size:11px;">${split}</td>
       </tr>`;
@@ -3521,7 +3552,7 @@ function renderAnual() {
     document.getElementById('aqcasa-tri-tot-ca-p').textContent = pctCaTotAno.toFixed(1).replace('.', ',') + '%';
     document.getElementById('aqcasa-tri-tot-all').textContent  = fmtBRL(tTotAll_t);
     document.getElementById('aqcasa-tri-tot-split').innerHTML = tTotAll_t > 0
-      ? `<span style="color:#2563eb;">${pctAqTotAno.toFixed(0)}% Aq</span> · <span style="color:#d97706;">${pctCaTotAno.toFixed(0)}% Casa</span>`
+      ? `<span style="color:#9900FF;">${pctAqTotAno.toFixed(0)}% Aq</span> · <span style="color:#D4A017;">${pctCaTotAno.toFixed(0)}% Casa</span>`
       : '—';
   }
 }
@@ -3536,7 +3567,7 @@ function initHistoricalCharts() {
     data: {
       labels: Object.keys(q1porMes),
       datasets: [{ label:'Receita', data:Object.values(q1porMes),
-        backgroundColor:['#818cf8','#6366f1','#4f46e5'], borderRadius:6 }]
+        backgroundColor:['#D4A017','#9900FF','#7A00CC'], borderRadius:6 }]
     },
     options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false },
       tooltip:{ callbacks:{ label: c => 'R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
@@ -3569,7 +3600,7 @@ function initHistoricalCharts() {
     data: {
       labels: HIST_2025.map(d => d.mes.slice(0,3)),
       datasets: [{ label:'Mensal', data:HIST_2025.map(d=>d.mensal),
-        backgroundColor: HIST_2025.map((_,i) => i%2===0 ? '#818cf8' : '#6366f1'), borderRadius:5 }]
+        backgroundColor: HIST_2025.map((_,i) => i%2===0 ? '#9900FF' : '#7A00CC'), borderRadius:5 }]
     },
     options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false },
       tooltip:{ callbacks:{ label: c => 'R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
@@ -3616,9 +3647,9 @@ function initHistoricalCharts() {
     cardsEl.innerHTML = triQ.map((q, i) => {
       const pct = triM[i] ? (triR[i] / triM[i] * 100).toFixed(0) : 0;
       const ok  = triR[i] >= triM[i];
-      const bg  = ok ? '#f0fdf4' : '#fef2f2';
-      const bc  = ok ? '#86efac' : '#fca5a5';
-      const tc  = ok ? '#16a34a' : '#dc2626';
+      const bg  = ok ? '#F3E5FF' : '#fef2f2';
+      const bc  = ok ? '#D9A1FF' : '#fca5a5';
+      const tc  = ok ? '#4CAF50' : '#E57373';
       return `
         <div class="rounded-xl p-4 border text-center" style="background:${bg};border-color:${bc};">
           <p class="text-xs font-bold mb-1" style="color:${tc};">${q} 2025</p>
@@ -3675,7 +3706,7 @@ function initHistoricalCharts() {
       datasets: [{
         label: 'Receita 2025 YTD',
         data: [681000, 406000, 458500, 2504520, 3052500],
-        backgroundColor: ['#16a34a','#db2777','#7c3aed','#d97706','#2563eb'],
+        backgroundColor: ['#9900FF','#000000','#00B8A9','#D4A017','#7A00CC'],
         borderRadius: 6,
       }]
     },
@@ -4113,7 +4144,7 @@ const _voceEstaAquiPlugin = {
 
     // Linha vertical
     ctx.save();
-    ctx.strokeStyle = '#dc2626';
+    ctx.strokeStyle = '#9900FF';
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
@@ -4145,7 +4176,7 @@ const _voceEstaAquiPlugin = {
     const bx = Math.min(Math.max(xPos - tw/2, chart.chartArea.left), chart.chartArea.right - tw);
     const by = yTop + 4;
     // Cor do badge: verde se ≥100%, amarelo entre 80-99%, vermelho < 80%
-    let badgeBg = '#dc2626';
+    let badgeBg = '#E57373';
     try {
       const dsMeta = chart.data.datasets?.[0]?.data || [];
       const dsReal = chart.data.datasets?.[1]?.data || [];
@@ -4153,8 +4184,8 @@ const _voceEstaAquiPlugin = {
       const realAtual = parseFloat(dsReal[idx]) || 0;
       if (metaAtual > 0) {
         const pct = (realAtual / metaAtual) * 100;
-        if (pct >= 100) badgeBg = '#16a34a';
-        else if (pct >= 80) badgeBg = '#d97706';
+        if (pct >= 100) badgeBg = '#4CAF50';
+        else if (pct >= 80) badgeBg = '#D4A017';
       }
     } catch(_) {}
     ctx.fillStyle = badgeBg;
@@ -4404,8 +4435,8 @@ function updateCicloTipoCanalChart() {
   // Coleta tipos e canais existentes nos dados (com ciclo preenchido)
   const TIPO_ORDEM  = ['Enterprise', 'GG', 'SMB'];
   const CANAL_CORES_CHART = {
-    'UP':'#60a5fa', 'NTW':'#4ade80', 'MKT':'#fb923c',
-    'OUT':'#f472b6', 'INB':'#a78bfa', 'REN':'#fbbf24', 'N/D':'#9ca3af'
+    'UP':'#D4A017', 'NTW':'#9900FF', 'MKT':'#C8C8C8',
+    'OUT':'#000000', 'INB':'#00B8A9', 'REN':'#7A00CC', 'N/D':'#9CA3AF'
   };
 
   // Agrupa: agg[tipo][canal] = [ciclos]
@@ -4446,7 +4477,7 @@ function updateCicloTipoCanalChart() {
       label: c,
       data,
       meta,
-      backgroundColor: CANAL_CORES_CHART[c] || '#6366f1',
+      backgroundColor: CANAL_CORES_CHART[c] || '#9900FF',
       borderRadius: 4,
     };
   });
@@ -5139,7 +5170,10 @@ function switchTab(tab) {
   }
   if (tab === 'conversao') {
     if (!_conversaoReady) { _conversaoReady = true; setTimeout(renderConversao, 50); }
-    setTimeout(() => { try { _refreshAuditSummary(); } catch(e) {} }, 60);
+    setTimeout(() => {
+      try { _refreshAuditSummary(); } catch(e) {}
+      try { renderFunilCanais(); } catch(e) {}
+    }, 60);
   }
   if (tab === 'cac') {
     setTimeout(() => { try { renderCAC(); } catch(e) {} }, 50);
@@ -5510,8 +5544,8 @@ function renderCAC() {
       comTriPorQ[q] = sub;
       const realizado = _isQRealizado(q);
       const statusBadge = realizado
-        ? '<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:6px;font-weight:600;font-size:11px;">✓ Realizado</span>'
-        : '<span style="background:#fed7aa;color:#9a3412;padding:2px 8px;border-radius:6px;font-weight:600;font-size:11px;">⏳ Estimado</span>';
+        ? '<span style="background:#F3E5FF;color:#7A00CC;padding:2px 8px;border-radius:6px;font-weight:600;font-size:11px;">✓ Realizado</span>'
+        : '<span style="background:#E5E5E5;color:#9a3412;padding:2px 8px;border-radius:6px;font-weight:600;font-size:11px;">⏳ Estimado</span>';
       return `<tr>
         <td style="text-align:left;font-weight:600;">${q} 2026 <span class="text-xs" style="color:var(--muted);">${CAC_Q_MESES[q].join('·')}</span></td>
         <td><span contenteditable="true" class="churn-cell" onblur="updateCacComissaoTri('${q}','renovacao',parseMoeda(this.textContent))">${fmtBRL(ren)}</span></td>
@@ -5529,10 +5563,10 @@ function renderCAC() {
   const cardsEl = document.getElementById('cac-trimestral-cards');
   if (cardsEl) {
     const qCores = {
-      Q1:{bg:'#f0fdf4',bc:'#86efac',tc:'#16a34a'},
-      Q2:{bg:'#fff7ed',bc:'#fdba74',tc:'#ea580c'},
-      Q3:{bg:'#fefce8',bc:'#fde047',tc:'#ca8a04'},
-      Q4:{bg:'#fdf2f8',bc:'#f9a8d4',tc:'#db2777'},
+      Q1:{bg:'#F3E5FF',bc:'#D9A1FF',tc:'#9900FF'},   // roxo INTERA
+      Q2:{bg:'#FAEDC8',bc:'#E0B84B',tc:'#8B6914'},   // mustard
+      Q3:{bg:'#CFF2EF',bc:'#5FCEC4',tc:'#00786F'},   // teal
+      Q4:{bg:'#E5E5E5',bc:'#9CA3AF',tc:'#000000'},   // preto/cinza
     };
     cardsEl.innerHTML = ['Q1','Q2','Q3','Q4'].map(q => {
       // Mídia: soma os meses do Q
@@ -5571,7 +5605,7 @@ function renderCAC() {
           <div class="flex justify-between"><span>Fixos:</span><strong>${fmtBRL(custoFixosQ)}</strong></div>
           <div class="flex justify-between"><span>Ferramentas:</span><strong>${fmtBRL(custoFerrQ)}</strong></div>
           <div class="flex justify-between items-center">
-            <span>Comissões${comEstimada ? ' <span style="background:#fed7aa;color:#9a3412;padding:0px 5px;border-radius:4px;font-weight:600;font-size:9px;vertical-align:middle;">⏳ estimado</span>' : ''}:</span>
+            <span>Comissões${comEstimada ? ' <span style="background:#E5E5E5;color:#9a3412;padding:0px 5px;border-radius:4px;font-weight:600;font-size:9px;vertical-align:middle;">⏳ estimado</span>' : ''}:</span>
             <strong>${fmtBRL(custoComQ)}</strong>
           </div>
         </div>
@@ -5727,7 +5761,7 @@ function statusBg(v) {
 }
 function statusColor(v) {
   if (v === 'ATIVO')       return '#15803d';
-  if (v === 'DESALOCAÇÃO') return '#854d0e';
+  if (v === 'DESALOCAÇÃO') return '#8B6914';
   if (v === 'DESALOCADO')  return '#6b7280';
   return '#9ca3af';
 }
@@ -5841,7 +5875,7 @@ function renderCadeiras() {
     row.meses.forEach((v, m) => {
       const isCur = m === curMes;
       const bg = isCur && !v ? '#ede9fe' : '';
-      mesCells += `<td class="cad-mes-td" style="${bg?'background:'+bg+';':''}${isCur?'outline:2px solid #6366f1; outline-offset:-2px;':''}">
+      mesCells += `<td class="cad-mes-td" style="${bg?'background:'+bg+';':''}${isCur?'outline:2px solid #9900FF; outline-offset:-2px;':''}">
         ${cadBadge(v, i, m)}
       </td>`;
     });
@@ -5849,14 +5883,14 @@ function renderCadeiras() {
     // Mais3 / mais5 badges — clicáveis
     const resetBtn3 = mais3Manual ? `<span onclick="resetMais(${i},'mais3',event)" title="Voltar para auto-cálculo" style="margin-left:3px;font-size:9px;opacity:.6;cursor:pointer;">↺</span>` : '';
     const resetBtn5 = mais5Manual ? `<span onclick="resetMais(${i},'mais5',event)" title="Voltar para auto-cálculo" style="margin-left:3px;font-size:9px;opacity:.6;cursor:pointer;">↺</span>` : '';
-    const manualStyle3 = mais3Manual ? 'outline:2px dashed #d97706;outline-offset:1px;' : '';
+    const manualStyle3 = mais3Manual ? 'outline:2px dashed #D4A017;outline-offset:1px;' : '';
     const manualStyle5 = mais5Manual ? 'outline:2px dashed #4338ca;outline-offset:1px;' : '';
 
     const b3 = mais3
-      ? `<span onclick="toggleMais(${i},'mais3')" title="${mais3Manual?'Manual — clique para desmarcar':'Auto — clique para desmarcar'}" style="background:#fef3c7;color:#92400e;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;${manualStyle3}">✓ +3m${resetBtn3}</span>`
+      ? `<span onclick="toggleMais(${i},'mais3')" title="${mais3Manual?'Manual — clique para desmarcar':'Auto — clique para desmarcar'}" style="background:#FAEDC8;color:#8B6914;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;${manualStyle3}">✓ +3m${resetBtn3}</span>`
       : `<span onclick="toggleMais(${i},'mais3')" title="${mais3Manual?'Manual — clique para marcar':'Auto — clique para marcar'}" style="background:#f1f5f9;color:#94a3b8;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;${manualStyle3}">— +3m${resetBtn3}</span>`;
     const b5 = mais5
-      ? `<span onclick="toggleMais(${i},'mais5')" title="${mais5Manual?'Manual — clique para desmarcar':'Auto — clique para desmarcar'}" style="background:#ede9fe;color:#4338ca;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;${manualStyle5}">✓ +5m${resetBtn5}</span>`
+      ? `<span onclick="toggleMais(${i},'mais5')" title="${mais5Manual?'Manual — clique para desmarcar':'Auto — clique para desmarcar'}" style="background:#F3E5FF;color:#7A00CC;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;${manualStyle5}">✓ +5m${resetBtn5}</span>`
       : `<span onclick="toggleMais(${i},'mais5')" title="${mais5Manual?'Manual — clique para marcar':'Auto — clique para marcar'}" style="background:#f1f5f9;color:#94a3b8;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;${manualStyle5}">— +5m${resetBtn5}</span>`;
 
     tr.innerHTML = `
@@ -6226,7 +6260,7 @@ function renderContratos() {
     // Tipo — badge clicável (cycle)
     const TIPO_CYCLE = ['', 'Ordem de Compra', 'Contrato Assinado', 'Sem Contrato'];
     const tipoCfg = {
-      'Ordem de Compra':   { bg:'#fef3c7', color:'#92400e', label:'Ordem de Compra' },
+      'Ordem de Compra':   { bg:'#FAEDC8', color:'#8B6914', label:'Ordem de Compra' },
       'Contrato Assinado': { bg:'#dcfce7', color:'#15803d', label:'Contrato Assinado' },
       'Sem Contrato':      { bg:'#fee2e2', color:'#991b1b', label:'Sem Contrato' },
       '':                  { bg:'#f3f4f6', color:'#9ca3af', label:'— definir tipo —' },
@@ -6603,7 +6637,7 @@ function cycleChurnTipo(i) {
 
 const TIPO_CHURN_CFG = {
   logo:      { label:'Conta Churn', bg:'#fee2e2', color:'#991b1b' },
-  downgrade: { label:'Downgrade',  bg:'#fef3c7', color:'#92400e' },
+  downgrade: { label:'Downgrade',  bg:'#FAEDC8', color:'#8B6914' },
 };
 
 const MOTIVOS_CHURN = [
@@ -6637,10 +6671,10 @@ function renderChurn() {
   const quarters = ['Q1','Q2','Q3','Q4'];
   const trimMeses = { Q1:'Jan/Fev/Mar', Q2:'Abr/Mai/Jun', Q3:'Jul/Ago/Set', Q4:'Out/Nov/Dez' };
   const qColors = {
-    Q1: { hdr:'#dbeafe', txt:'#1e40af' },
-    Q2: { hdr:'#fef3c7', txt:'#92400e' },
-    Q3: { hdr:'#dcfce7', txt:'#15803d' },
-    Q4: { hdr:'#fce7f3', txt:'#9d174d' },
+    Q1: { hdr:'#F3E5FF', txt:'#9900FF' },   // roxo INTERA
+    Q2: { hdr:'#FAEDC8', txt:'#8B6914' },   // mustard
+    Q3: { hdr:'#CFF2EF', txt:'#00786F' },   // teal
+    Q4: { hdr:'#E5E5E5', txt:'#000000' },   // preto/cinza
   };
 
   const indexed = churnRows.map((r,i) => ({r,i}));
@@ -6745,15 +6779,15 @@ function renderChurn() {
         <!-- Filtros -->
         <div class="px-4 py-2 flex gap-2 items-center no-print" style="background:#fafafa;border-bottom:1px solid #ede9fe;">
           <span class="text-xs font-semibold" style="color:var(--text2);">Filtrar:</span>
-          <button class="viewer-ok" onclick="setChurnFilter('${q}','all')"       style="${chipActive(filter==='all','#6366f1','#6366f1')}">Todos (${allRowsQ.length})</button>
-          <button class="viewer-ok" onclick="setChurnFilter('${q}','logo')"      style="${chipActive(filter==='logo','#991b1b','#dc2626')}">🔴 Conta (${logoRows.length})</button>
-          <button class="viewer-ok" onclick="setChurnFilter('${q}','downgrade')" style="${chipActive(filter==='downgrade','#92400e','#d97706')}">🟡 Downgrade (${dgRows.length})</button>
+          <button class="viewer-ok" onclick="setChurnFilter('${q}','all')"       style="${chipActive(filter==='all','#9900FF','#9900FF')}">Todos (${allRowsQ.length})</button>
+          <button class="viewer-ok" onclick="setChurnFilter('${q}','logo')"      style="${chipActive(filter==='logo','#000000','#000000')}">⚫ Conta (${logoRows.length})</button>
+          <button class="viewer-ok" onclick="setChurnFilter('${q}','downgrade')" style="${chipActive(filter==='downgrade','#8B6914','#D4A017')}">🟡 Downgrade (${dgRows.length})</button>
         </div>
         <!-- Tabela -->
         <div class="overflow-x-auto">
           <table class="min-w-full text-sm">
             <thead>
-              <tr style="background:#fef2f2;color:#991b1b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;">
+              <tr style="background:#F5F5F2;color:#991b1b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;">
                 <th class="px-3 py-2 text-left">Cliente</th>
                 <th class="px-2 py-2 text-center" style="width:110px;">Tipo</th>
                 <th class="px-2 py-2 text-center" style="width:90px;">Mês</th>
@@ -6855,10 +6889,10 @@ function updateChurnCards() {
   const quarters = ['Q1','Q2','Q3','Q4'];
   const trimMeses = { Q1:'Jan/Fev/Mar', Q2:'Abr/Mai/Jun', Q3:'Jul/Ago/Set', Q4:'Out/Nov/Dez' };
   const colors = {
-    Q1: { bg:'#fef2f2', bc:'#fca5a5', tc:'#991b1b', muted:'#dc2626' },
-    Q2: { bg:'#fff7ed', bc:'#fdba74', tc:'#9a3412', muted:'#ea580c' },
-    Q3: { bg:'#fefce8', bc:'#fde047', tc:'#854d0e', muted:'#ca8a04' },
-    Q4: { bg:'#fdf2f8', bc:'#f9a8d4', tc:'#9d174d', muted:'#db2777' },
+    Q1: { bg:'#F3E5FF', bc:'#D9A1FF', tc:'#7A00CC', muted:'#9900FF' },   // roxo INTERA
+    Q2: { bg:'#FAEDC8', bc:'#E0B84B', tc:'#8B6914', muted:'#D4A017' },   // mustard
+    Q3: { bg:'#CFF2EF', bc:'#5FCEC4', tc:'#00786F', muted:'#00B8A9' },   // teal
+    Q4: { bg:'#E5E5E5', bc:'#9CA3AF', tc:'#000000', muted:'#000000' },   // preto/cinza
   };
 
   const cardsEl = document.getElementById('churn-quarter-cards');
@@ -6888,13 +6922,13 @@ function updateChurnCards() {
         <!-- Downgrade -->
         <div class="rounded-lg p-2 mb-2" style="background:rgba(217,119,6,0.08);">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-bold" style="color:#92400e;">🟡 Downgrade</span>
+            <span class="text-xs font-bold" style="color:#8B6914;">🟡 Downgrade</span>
             <span class="text-xs" style="color:var(--text2);">${d.downgrade.contratos} contratos · ${d.downgrade.clientes.size} ${d.downgrade.clientes.size===1?'cliente':'clientes'}</span>
           </div>
           <div class="grid grid-cols-3 gap-1 text-xs">
             <div><span style="color:var(--text2);">Cad:</span> <strong>${d.downgrade.cadeiras}</strong></div>
-            <div><span style="color:var(--text2);">MRR:</span> <strong style="color:#d97706;">${fmtBRL(d.downgrade.mrr)}</strong></div>
-            <div><span style="color:var(--text2);">Total:</span> <strong style="color:#92400e;">${fmtBRL(d.downgrade.contrato)}</strong></div>
+            <div><span style="color:var(--text2);">MRR:</span> <strong style="color:#D4A017;">${fmtBRL(d.downgrade.mrr)}</strong></div>
+            <div><span style="color:var(--text2);">Total:</span> <strong style="color:#8B6914;">${fmtBRL(d.downgrade.contrato)}</strong></div>
           </div>
         </div>
 
@@ -6987,13 +7021,73 @@ function getNovosClientesPorQuarter(q) {
   return clientes.size;
 }
 
-function renderChurnSaldo(byQ) {
-  const MESES_POR_Q = {
-    Q1: ['Jan','Fev','Mar'],
-    Q2: ['Abr','Mai','Jun'],
-    Q3: ['Jul','Ago','Set'],
-    Q4: ['Out','Nov','Dez'],
+// ════════════════════════════════════════════════
+//  Cadeiras adicionadas com NOVA regra (igual Net New Logos)
+//  Conta apenas:
+//   1) Novos contratos (NTW/OUT/INB) — isNovoLogo
+//   2) Upsell de nova vertente (UP* com '*' no cliente)
+//   3) Manual: upsell de nova cadeira (não dá pra automatizar)
+// ════════════════════════════════════════════════
+const _MESES_POR_Q_CHURN = {
+  Q1: ['Jan','Fev','Mar'], Q2: ['Abr','Mai','Jun'],
+  Q3: ['Jul','Ago','Set'], Q4: ['Out','Nov','Dez'],
+};
+
+// Estado: cadeiras manuais extras por Q (upsell de nova cadeira)
+let _cadeirasExtraQ = {};
+try { _cadeirasExtraQ = JSON.parse(localStorage.getItem('cadeiras_extra_q') || '{}'); } catch(_) {}
+function _saveCadeirasExtraQ() {
+  try { localStorage.setItem('cadeiras_extra_q', JSON.stringify(_cadeirasExtraQ)); } catch(_) {}
+}
+function updateCadeirasExtraQ(q, key, val) {
+  if (IS_VIEWER) return;
+  if (!_cadeirasExtraQ[q]) _cadeirasExtraQ[q] = { count: 0, descricao: '' };
+  if (key === 'count') _cadeirasExtraQ[q].count = Math.max(0, parseInt(val) || 0);
+  else _cadeirasExtraQ[q].descricao = String(val || '');
+  _saveCadeirasExtraQ();
+  renderChurn();
+}
+
+// Retorna { count, nomes:[] } de cadeiras adicionadas no Q via regra automática
+function _cadeirasNovasAutoQ(q) {
+  const meses = _MESES_POR_Q_CHURN[q] || [];
+  const seen = new Map(); // cliente lowercase -> {cliente original, alocacoes}
+  const allocOf = r => {
+    const a = r.alocacoes;
+    const n = parseInt(a) || 0;
+    return n > 0 ? n : 1; // se vazio, assume 1
   };
+  // Q1 vem de Q1_DEALS; demais de tableRows
+  if (q === 'Q1') {
+    (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
+      if (!meses.includes(d.mes)) return;
+      if (!isNovoLogo(d)) return;
+      const nm = (d.cliente||'').trim();
+      const key = nm.toLowerCase();
+      if (!seen.has(key)) seen.set(key, { cliente: nm, alocacoes: allocOf(d) });
+      else seen.get(key).alocacoes += allocOf(d);
+    });
+  } else {
+    (tableRows||[]).forEach(r => {
+      if (!meses.includes(r.mes)) return;
+      if (!isNovoLogo(r)) return;
+      const nm = (r.cliente||'').trim();
+      const key = nm.toLowerCase();
+      if (!seen.has(key)) seen.set(key, { cliente: nm, alocacoes: allocOf(r) });
+      else seen.get(key).alocacoes += allocOf(r);
+    });
+  }
+  let totalCad = 0;
+  const nomes = [];
+  seen.forEach(v => {
+    totalCad += v.alocacoes;
+    nomes.push(`${v.cliente} (${v.alocacoes})`);
+  });
+  return { count: totalCad, nomes: nomes.sort((a,b) => a.localeCompare(b, 'pt-BR')) };
+}
+
+function renderChurnSaldo(byQ) {
+  const MESES_POR_Q = _MESES_POR_Q_CHURN;
 
   // Quarters visíveis: o trimestre atual (e anteriores) + qualquer trimestre com dado lançado.
   // Assim Q3/Q4 aparecem automaticamente quando chegarem ou quando você registrar dados antecipados.
@@ -7015,14 +7109,21 @@ function renderChurnSaldo(byQ) {
   if (!cardsEl) return;
 
   cardsEl.innerHTML = cardQs.map(q => {
-    // Agregado trimestral
-    let recT=0, recM=0, cadAdic=0;
+    // Agregado trimestral — recT/recM ainda usa getReceitaPorMes
+    let recT=0, recM=0;
     MESES_POR_Q[q].forEach(m => {
       const r = getReceitaPorMes(m);
       recT    += r.receitaTotal;
       recM    += r.receitaMRR;
-      cadAdic += (r.cadeiras||0);
     });
+
+    // NOVA regra: cadeiras adicionadas = novas aquisições (isNovoLogo) + manual de upsell de nova cadeira
+    const novasAuto  = _cadeirasNovasAutoQ(q);     // {count, nomes:[]}
+    const extraQ     = _cadeirasExtraQ[q] || { count: 0, descricao: '' };
+    const cadAdicAuto    = novasAuto.count;
+    const cadAdicManual  = parseInt(extraQ.count) || 0;
+    const cadAdic        = cadAdicAuto + cadAdicManual;
+
     const churnMRR = byQ[q].mrr;
     const churnT   = byQ[q].contrato;
     const cadPerd  = byQ[q].cadeiras;
@@ -7033,31 +7134,52 @@ function renderChurnSaldo(byQ) {
     const positivoMRR   = saldoMRR   >= 0;
     const positivoCad   = saldoCad   >= 0;
 
+    // HTML dos nomes (cadeiras automáticas via isNovoLogo)
+    const nomesCadHTML = novasAuto.nomes.length
+      ? novasAuto.nomes.map(n => `<span style="background:#F3E5FF;color:#7A00CC;border-radius:4px;padding:1px 6px;font-weight:600;font-size:11px;">${esc(n)}</span>`).join(' ')
+      : '<span style="color:var(--muted);font-style:italic;font-size:11px;">— nenhuma cadeira nova</span>';
+
+    // Helper: cadeiras novas (regra isNovoLogo) por MÊS específico
+    const _cadNovasNoMes = (mes) => {
+      let total = 0;
+      const allocOf = r => { const n = parseInt(r.alocacoes)||0; return n > 0 ? n : 1; };
+      if (['Jan','Fev','Mar'].includes(mes)) {
+        (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
+          if (d.mes === mes && isNovoLogo(d)) total += allocOf(d);
+        });
+      } else {
+        (tableRows||[]).forEach(r => { if (r.mes === mes && isNovoLogo(r)) total += allocOf(r); });
+      }
+      return total;
+    };
+
     // Breakdown mês a mês
     const mensalHTML = MESES_POR_Q[q].map(m => {
       const r = getReceitaPorMes(m);
       const c = getChurnPorMes(m);
       const sMRR = r.receitaMRR - c.mrr;
       const sT   = r.receitaTotal - c.contrato;
-      const sCad = (r.cadeiras||0) - (c.cadeiras||0);
+      // Cadeiras: nova regra (só novas via isNovoLogo) — sem o manual aqui
+      const cadNovasMes = _cadNovasNoMes(m);
+      const sCad = cadNovasMes - (c.cadeiras||0);
       const okMRR = sMRR >= 0, okT = sT >= 0, okCad = sCad >= 0;
       return `
         <div class="rounded-lg p-2" style="background:#fff;border:1px solid #e5e7eb;">
           <p class="text-xs font-bold text-center mb-2" style="color:var(--text);">${m}</p>
           <div class="space-y-1 text-xs">
-            <div class="flex justify-between"><span style="color:#16a34a;">+ Rec MRR</span><span class="font-semibold">${fmtBRL(r.receitaMRR)}</span></div>
+            <div class="flex justify-between"><span style="color:#9900FF;">+ Rec MRR</span><span class="font-semibold">${fmtBRL(r.receitaMRR)}</span></div>
             <div class="flex justify-between"><span style="color:#dc2626;">− Churn</span><span class="font-semibold">${fmtBRL(c.mrr)}</span></div>
-            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo MRR</span><span class="font-bold" style="color:${okMRR?'#16a34a':'#dc2626'};">${okMRR?'+':''}${fmtBRL(sMRR)}</span></div>
+            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo MRR</span><span class="font-bold" style="color:${okMRR?'#9900FF':'#dc2626'};">${okMRR?'+':''}${fmtBRL(sMRR)}</span></div>
           </div>
           <div class="space-y-1 text-xs mt-3 pt-2 border-t border-gray-200">
-            <div class="flex justify-between"><span style="color:#16a34a;">+ Rec Total</span><span class="font-semibold">${fmtBRL(r.receitaTotal)}</span></div>
+            <div class="flex justify-between"><span style="color:#9900FF;">+ Rec Total</span><span class="font-semibold">${fmtBRL(r.receitaTotal)}</span></div>
             <div class="flex justify-between"><span style="color:#dc2626;">− Churn</span><span class="font-semibold">${fmtBRL(c.contrato)}</span></div>
-            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okT?'#16a34a':'#dc2626'};">${okT?'+':''}${fmtBRL(sT)}</span></div>
+            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okT?'#9900FF':'#dc2626'};">${okT?'+':''}${fmtBRL(sT)}</span></div>
           </div>
           <div class="space-y-1 text-xs mt-3 pt-2 border-t border-gray-200">
-            <div class="flex justify-between"><span style="color:#16a34a;">+ Cad add</span><span class="font-semibold">${r.cadeiras||0}</span></div>
-            <div class="flex justify-between"><span style="color:#dc2626;">− Cad perd</span><span class="font-semibold">${c.cadeiras||0}</span></div>
-            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okCad?'#16a34a':'#dc2626'};">${okCad?'+':''}${sCad}</span></div>
+            <div class="flex justify-between" title="Cadeiras de novas aquisições + UP*/REN*"><span style="color:#9900FF;">+ Cad novas</span><span class="font-semibold">${cadNovasMes}</span></div>
+            <div class="flex justify-between"><span style="color:#E57373;">− Cad perd</span><span class="font-semibold">${c.cadeiras||0}</span></div>
+            <div class="flex justify-between pt-1 border-t border-gray-200"><span class="font-semibold">= Saldo</span><span class="font-bold" style="color:${okCad?'#4CAF50':'#E57373'};">${okCad?'+':''}${sCad}</span></div>
           </div>
         </div>`;
     }).join('');
@@ -7070,27 +7192,27 @@ function renderChurnSaldo(byQ) {
     const novosNomes        = getNovosClientesNomesPorQuarter(q);
     const perdidosNomes     = (byQ[q].logo.clientesNomes || []).slice().sort((a,b) => a.localeCompare(b, 'pt-BR'));
     // HTML para listas (mostra "— nenhuma" quando vazio)
-    const novosNomesHTML    = novosNomes.length    ? novosNomes.map(n => `<span style="background:#dcfce7;color:#166534;border-radius:4px;padding:1px 6px;font-weight:600;">${esc(n)}</span>`).join(' ')    : '<span style="color:var(--muted);font-style:italic;">— nenhuma</span>';
+    const novosNomesHTML    = novosNomes.length    ? novosNomes.map(n => `<span style="background:#F3E5FF;color:#7A00CC;border-radius:4px;padding:1px 6px;font-weight:600;">${esc(n)}</span>`).join(' ')    : '<span style="color:var(--muted);font-style:italic;">— nenhuma</span>';
     const perdidosNomesHTML = perdidosNomes.length ? perdidosNomes.map(n => `<span style="background:#fee2e2;color:#991b1b;border-radius:4px;padding:1px 6px;font-weight:600;">${esc(n)}</span>`).join(' ') : '<span style="color:var(--muted);font-style:italic;">— nenhuma</span>';
 
-    return `<div class="rounded-xl p-4 border" style="background:${positivoTotal?'#f0fdf4':'#fef2f2'};border-color:${positivoTotal?'#86efac':'#fca5a5'};">
+    return `<div class="rounded-xl p-4 border" style="background:${positivoTotal?'#E8F5E9':'#FFEBEE'};border-color:${positivoTotal?'#A5D6A7':'#EF9A9A'};">
       <div class="flex items-center justify-between mb-3">
-        <p class="text-sm font-bold" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${q} 2026</p>
+        <p class="text-sm font-bold" style="color:${positivoTotal?'#4CAF50':'#E57373'};">${q} 2026</p>
         <p class="text-xs" style="color:var(--muted);">${MESES_POR_Q[q].join(' · ')}</p>
       </div>
 
       <!-- Net New Logos -->
-      <div class="rounded-lg p-3 mb-3" style="background:${positivoLogos?'rgba(22,163,74,0.1)':'rgba(220,38,38,0.1)'};border:1.5px dashed ${positivoLogos?'#86efac':'#fca5a5'};">
+      <div class="rounded-lg p-3 mb-3" style="background:${positivoLogos?'#E8F5E9':'#FFEBEE'};border:1.5px dashed ${positivoLogos?'#A5D6A7':'#EF9A9A'};">
         <p class="text-xs font-bold mb-1" style="color:var(--text2);">📊 NET NEW CONTAS (CONTA CHURN APENAS)</p>
         <div class="grid grid-cols-3 gap-2 text-xs">
-          <div><span style="color:#16a34a;">Novas:</span> <span class="font-bold">${novosLogos}</span></div>
+          <div><span style="color:#9900FF;">Novas:</span> <span class="font-bold">${novosLogos}</span></div>
           <div><span style="color:#dc2626;">Perdidas:</span> <span class="font-bold">${logosPerdidos}</span></div>
-          <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#16a34a':'#dc2626'};">${positivoLogos?'+':''}${netNewLogos} contas</span></div>
+          <div class="text-right"><span class="font-bold text-base" style="color:${positivoLogos?'#4CAF50':'#E57373'};">${positivoLogos?'+':''}${netNewLogos} contas</span></div>
         </div>
         <!-- Listas com nomes -->
         <div class="mt-2 space-y-1.5 text-xs">
           <div>
-            <span style="color:#16a34a;font-weight:700;">↑ Novas (${novosLogos}):</span>
+            <span style="color:#9900FF;font-weight:700;">↑ Novas (${novosLogos}):</span>
             <span class="ml-1" style="display:inline-flex;flex-wrap:wrap;gap:4px;vertical-align:middle;">${novosNomesHTML}</span>
           </div>
           <div>
@@ -7110,27 +7232,50 @@ function renderChurnSaldo(byQ) {
       <!-- Resumo trimestral -->
       <div class="space-y-3 mb-4 p-3 rounded-lg" style="background:rgba(255,255,255,0.5);">
         <div>
-          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO DE CADEIRAS — Adicionadas vs Perdidas</p>
-          <div class="grid grid-cols-3 gap-2 text-xs">
-            <div><span style="color:#16a34a;">Adicionadas:</span> <span class="font-bold">${cadAdic}</span></div>
-            <div><span style="color:#dc2626;">Perdidas:</span> <span class="font-bold">${cadPerd}</span></div>
-            <div class="text-right"><span class="font-bold text-base" style="color:${positivoCad?'#16a34a':'#dc2626'};">${positivoCad?'+':''}${saldoCad} cadeiras</span></div>
+          <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO DE CADEIRAS — Novas (aquisição + UP*) + manual − Perdidas</p>
+          <!-- Breakdown da adicionadas -->
+          <div class="text-xs space-y-1 mb-2 pl-1">
+            <div class="flex justify-between"><span style="color:#7A00CC;">+ Novas (aquisição NTW/OUT/INB + UP*/REN*)</span><span class="font-bold">${cadAdicAuto}</span></div>
+            <div class="flex justify-between items-center">
+              <span style="color:#D4A017;">+ Upsell de nova cadeira (manual)</span>
+              <input type="number" min="0" value="${cadAdicManual}" class="admin-only no-print"
+                onchange="updateCadeirasExtraQ('${q}','count',this.value)"
+                style="width:60px;border:1px solid #E0B84B;border-radius:4px;padding:1px 4px;font-size:11px;text-align:right;font-weight:700;background:#FFF9E5;">
+            </div>
+            <div class="flex justify-between"><span style="color:#E57373;">− Perdidas em churn</span><span class="font-bold">${cadPerd}</span></div>
+            <div class="flex justify-between pt-1 border-t" style="border-color:var(--border);">
+              <span class="font-bold">= Saldo</span>
+              <span class="font-bold text-base" style="color:${positivoCad?'#4CAF50':'#E57373'};">${positivoCad?'+':''}${saldoCad} cadeiras</span>
+            </div>
           </div>
+          <!-- Nomes das cadeiras adicionadas (auto) -->
+          <div class="mt-1">
+            <p class="text-[10px] font-bold uppercase tracking-wider mb-1" style="color:var(--muted);">Cadeiras novas (${cadAdicAuto}):</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;line-height:1.6;">${nomesCadHTML}</div>
+          </div>
+          <!-- Campo descrição manual -->
+          <div class="mt-2 admin-only no-print">
+            <p class="text-[10px] font-bold uppercase tracking-wider mb-1" style="color:#D4A017;">Detalhe do upsell de nova cadeira (${cadAdicManual}):</p>
+            <input type="text" value="${esc(extraQ.descricao||'')}" placeholder="Ex: Cliente X +2 cadeiras de nova vertical"
+              onchange="updateCadeirasExtraQ('${q}','descricao',this.value)"
+              style="width:100%;border:1px solid #E0B84B;border-radius:4px;padding:4px 8px;font-size:11px;background:#FFF9E5;">
+          </div>
+          ${extraQ.descricao ? `<p class="text-[10px] italic mt-1" style="color:#8B6914;">${esc(extraQ.descricao)}</p>` : ''}
         </div>
-        <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
+        <div class="pt-2 border-t" style="border-color:${positivoTotal?'#A5D6A7':'#EF9A9A'};">
           <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO MRR (MENSAL) — Conta + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
-            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recM)}</span></div>
+            <div><span style="color:#9900FF;">Receita:</span> <span class="font-bold">${fmtBRL(recM)}</span></div>
             <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnMRR)}</span></div>
-            <div class="text-right"><span class="font-bold" style="color:${positivoMRR?'#16a34a':'#dc2626'};">${positivoMRR?'+':''}${fmtBRL(saldoMRR)}</span></div>
+            <div class="text-right"><span class="font-bold" style="color:${positivoMRR?'#4CAF50':'#E57373'};">${positivoMRR?'+':''}${fmtBRL(saldoMRR)}</span></div>
           </div>
         </div>
-        <div class="pt-2 border-t" style="border-color:${positivoTotal?'#bbf7d0':'#fecaca'};">
+        <div class="pt-2 border-t" style="border-color:${positivoTotal?'#A5D6A7':'#EF9A9A'};">
           <p class="text-xs font-bold mb-1" style="color:var(--text2);">SALDO CONTRATO TOTAL — Conta + Downgrade</p>
           <div class="grid grid-cols-3 gap-2 text-xs">
-            <div><span style="color:#16a34a;">Receita:</span> <span class="font-bold">${fmtBRL(recT)}</span></div>
+            <div><span style="color:#9900FF;">Receita:</span> <span class="font-bold">${fmtBRL(recT)}</span></div>
             <div><span style="color:#dc2626;">Churn:</span> <span class="font-bold">${fmtBRL(churnT)}</span></div>
-            <div class="text-right"><span class="font-bold text-base" style="color:${positivoTotal?'#16a34a':'#dc2626'};">${positivoTotal?'+':''}${fmtBRL(saldoTotal)}</span></div>
+            <div class="text-right"><span class="font-bold text-base" style="color:${positivoTotal?'#4CAF50':'#E57373'};">${positivoTotal?'+':''}${fmtBRL(saldoTotal)}</span></div>
           </div>
         </div>
       </div>
@@ -7184,18 +7329,18 @@ function renderChurnChart() {
 // ─── ANÁLISE DE MOTIVOS DE CHURN ────────────────
 let _motivosCharts = { contratos:null, cadeiras:null, mrr:null };
 
-// Paleta de cores fixa por motivo (consistência visual entre pies)
+// Paleta de cores fixa por motivo — paleta INTERA
 const _MOTIVO_COLORS = {
-  'Internalização':         '#dc2626',
-  'Sem volume':             '#f59e0b',
-  'Performance ruim':       '#a855f7',
-  'Trocou de fornecedor':   '#3b82f6',
-  'Mudança de estratégia':  '#14b8a6',
-  'Projeto com data final': '#ec4899',
-  '— Sem motivo —':         '#9ca3af',
-  'Outros':                 '#fb923c',
+  'Internalização':         '#000000',  // preto
+  'Sem volume':             '#D4A017',  // mustard
+  'Performance ruim':       '#9900FF',  // roxo INTERA
+  'Trocou de fornecedor':   '#00B8A9',  // teal
+  'Mudança de estratégia':  '#7A00CC',  // roxo escuro
+  'Projeto com data final': '#8B6914',  // mustard escuro
+  '— Sem motivo —':         '#C8C8C8',  // cinza
+  'Outros':                 '#9CA3AF',  // cinza médio
 };
-function _corMotivo(m) { return _MOTIVO_COLORS[m] || '#6366f1'; }
+function _corMotivo(m) { return _MOTIVO_COLORS[m] || '#9900FF'; }
 
 function renderMotivosCharts() {
   const periodo = document.getElementById('motivos-periodo')?.value || 'all';
@@ -7437,12 +7582,11 @@ function resetManualOportunidades() {
 // Conta deals fechados para um período (Q1/Q2/.. ou mês 'Jan'/'Fev'...)
 // Filtros opcionais por canal ou tipo
 function getFechadosCount(key, filtroDim, filtroVal) {
-  // 1) Override manual tem precedência absoluta. Permite editar a contagem na aba Conversão.
+  // 1) Override manual tem precedência absoluta.
   const bucket = oportunidadesData[key];
   if (bucket && bucket.fechadosManual) {
     const fm = bucket.fechadosManual;
     if (!filtroDim) {
-      // Total: usa __total se setado, senão soma canais
       if (fm.__total != null) return parseInt(fm.__total) || 0;
     } else {
       const dimBucket = fm[filtroDim];
@@ -7452,7 +7596,28 @@ function getFechadosCount(key, filtroDim, filtroVal) {
     }
   }
 
-  // 2) Caso não haja override → calcula dos deals (comportamento original)
+  // 2) TRILHA é a fonte primária quando houver entries com `fechado:true`.
+  //    Conta APENAS oportunidades criadas (ano 2026) E marcadas como fechadas.
+  let mesesArr;
+  if (CONV_MESES_POR_Q[key]) mesesArr = CONV_MESES_POR_Q[key];
+  else mesesArr = [key];
+
+  const trilha = (window.__lastConvImport && window.__lastConvImport.trilha) || [];
+  const algumaFechada = trilha.some(t => t && t.fechado);
+  if (algumaFechada) {
+    let cnt = 0;
+    trilha.forEach(t => {
+      if (!t || !t.fechado) return;
+      if (t.ano && t.ano !== 2026) return;          // só 2026
+      if (!mesesArr.includes(t.mes)) return;         // período (mês ou Q)
+      if (filtroDim === 'canais' && (t.canal||'').toUpperCase() !== String(filtroVal).toUpperCase()) return;
+      if (filtroDim === 'tipos'  && (t.tipoEmpresa||'') !== filtroVal) return;
+      cnt++;
+    });
+    return cnt;
+  }
+
+  // 3) Fallback: calcula dos deals (comportamento legacy)
   let meses;
   if (CONV_MESES_POR_Q[key]) {
     meses = CONV_MESES_POR_Q[key]; // trimestre
@@ -8251,6 +8416,229 @@ function updateTrilhaTipo(idx, newTipo) {
   if (typeof _refreshConvMirrors === 'function') _refreshConvMirrors();
 }
 
+// ════════════════════════════════════════════════
+//  AUDITORIA DE OPORTUNIDADES — funil por canal (Opp → SQL → Fechado)
+// ════════════════════════════════════════════════
+
+// Toggle "Fechado" — marca/desmarca se essa oportunidade virou venda fechada
+function toggleTrilhaFechado(idx) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+  t.fechado = !t.fechado;
+  if (t.fechado) t.sql = true; // se fechou, obviamente passou pelo SQL
+  _saveTrilha();
+  renderAuditoria();
+  renderFunilCanais();
+  _refreshAuditSummary && _refreshAuditSummary();
+}
+
+// Toggle "SQL" — marca/desmarca se foi enviado proposta
+function toggleTrilhaSQL(idx) {
+  if (IS_VIEWER) return;
+  const data = window.__lastConvImport;
+  if (!data || !data.trilha || !data.trilha[idx]) return;
+  const t = data.trilha[idx];
+  t.sql = !t.sql;
+  if (!t.sql) t.fechado = false; // se desfez SQL, não pode ter fechado
+  _saveTrilha();
+  renderAuditoria();
+  renderFunilCanais();
+}
+
+// Sincroniza deals fechados de Q1_DEALS + tableRows com a trilha de oportunidades.
+// Para cada deal de 2026 cujo (cliente, canal) NÃO tem oportunidade equivalente, cria uma.
+// Marca como "fechado:true" e "sql:true".
+function sincronizarFechadosNaTrilha() {
+  if (IS_VIEWER) return;
+  if (!window.__lastConvImport || !Array.isArray(window.__lastConvImport.trilha)) {
+    window.__lastConvImport = { ts: new Date().toISOString(), totalDeals: 0, trilha: [] };
+  }
+  const trilha = window.__lastConvImport.trilha;
+  const norm = s => (s||'').trim().toLowerCase();
+  const sameDeal = (a, b) =>
+    norm(a.nome || a.cliente) === norm(b.nome || b.cliente) &&
+    String(a.canal||'').toUpperCase() === String(b.canal||'').toUpperCase();
+
+  // Junta deals de 2026 de todas as fontes (Q1_DEALS + tableRows com ano=2026)
+  const todosDeals2026 = [];
+  try {
+    if (typeof Q1_DEALS !== 'undefined') {
+      Q1_DEALS.forEach(d => todosDeals2026.push({
+        cliente: d.cliente, canal: d.canal, mes: d.mes, valor: d.valor,
+        data: d.data, tipo: d.tipo, source:'q1', anoCreate: 2026,
+      }));
+    }
+  } catch(_){}
+  try {
+    tableRows.forEach(r => {
+      // Filtra deals que não sejam de 2026 (anoCreate explícito ou createdate)
+      const ano = r.anoCreate || (r.createdate ? new Date(r.createdate).getFullYear() : null);
+      if (ano && ano !== 2026) return;
+      todosDeals2026.push({
+        cliente: r.cliente, canal: r.canal, mes: r.mes, valor: r.valor,
+        data: r.data, tipo: r.tipo, source: r.source || 'tb',
+        anoCreate: ano || 2026,
+      });
+    });
+  } catch(_){}
+
+  let criadas = 0, marcadas = 0;
+  todosDeals2026.forEach(deal => {
+    if (!deal.cliente) return;
+    // procura na trilha
+    const match = trilha.find(t => sameDeal(t, deal));
+    if (match) {
+      // marca fechado/sql se não estava
+      if (!match.fechado) { match.fechado = true; marcadas++; }
+      if (!match.sql)     match.sql = true;
+    } else {
+      // cria nova entrada na trilha
+      const mesIdx = MESES.indexOf(deal.mes);
+      const qKey = mesIdx >= 0 ? 'Q' + (Math.floor(mesIdx/3)+1) : 'Q1';
+      // Tenta parsear data DD/MM
+      let createdate = '';
+      try {
+        const m = String(deal.data||'').match(/^(\d{1,2})[\/\-](\d{1,2})/);
+        if (m) {
+          createdate = new Date(2026, parseInt(m[2],10)-1, parseInt(m[1],10)).toISOString();
+        }
+      } catch(_){}
+      trilha.push({
+        id: 'autosync_' + Date.now() + '_' + criadas,
+        nome: deal.cliente,
+        hint: '',
+        canal: (deal.canal||'').toUpperCase(),
+        createdate: createdate,
+        ano: 2026,
+        mes: deal.mes || '',
+        quarter: qKey,
+        tipoEmpresa: deal.tipo || '',
+        status: 'contou',
+        fechado: true,
+        sql: true,
+        autoSynced: true,
+        valor: parseFloat(deal.valor) || 0,
+      });
+      criadas++;
+    }
+  });
+
+  _saveTrilha();
+  log.info('auditoria.sync_fechados', { criadas, marcadas, totalDeals: todosDeals2026.length });
+  return { criadas, marcadas, total: todosDeals2026.length };
+}
+
+// Calcula funil por canal: total ops → SQL → fechado.
+// Considera só oportunidades criadas E fechadas em 2026 (ano 2026 em ambos).
+function _calcFunilCanais() {
+  const trilha = (window.__lastConvImport && window.__lastConvImport.trilha) || [];
+  const out = {};
+  // Inicializa todos canais
+  ['NTW','OUT','INB','UP','REN','MKT','N/D'].forEach(c => {
+    out[c] = { ops: 0, sql: 0, fechado: 0 };
+  });
+  trilha.forEach(t => {
+    if (!t) return;
+    if (t.ano && t.ano !== 2026) return; // ignora ops fora de 2026
+    const c = (t.canal || '').toUpperCase() || 'N/D';
+    if (!out[c]) out[c] = { ops: 0, sql: 0, fechado: 0 };
+    out[c].ops += 1;
+    if (t.sql) out[c].sql += 1;
+    if (t.fechado) out[c].fechado += 1;
+  });
+  return out;
+}
+
+// Renderiza o funil por canal em #conv-funil-canais
+function renderFunilCanais() {
+  const host = document.getElementById('conv-funil-canais');
+  if (!host) return;
+  const data = _calcFunilCanais();
+  const canais = ['NTW','OUT','INB','UP','REN'].filter(c => (data[c]?.ops||0) > 0);
+  if (!canais.length) { host.innerHTML = '<p class="text-xs italic" style="color:var(--muted);padding:12px;">Sem oportunidades de 2026 na auditoria.</p>'; return; }
+
+  const corMap = {
+    'NTW':'#9900FF', 'OUT':'#000000', 'INB':'#00B8A9', 'UP':'#D4A017', 'REN':'#7A00CC', 'MKT':'#C8C8C8', 'N/D':'#9CA3AF'
+  };
+
+  // Calcula totais agregados
+  let totOps = 0, totSql = 0, totFech = 0;
+  canais.forEach(c => { totOps += data[c].ops; totSql += data[c].sql; totFech += data[c].fechado; });
+
+  // Card principal com totais
+  let html = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:#FAEDC8;border:1px solid #E0B84B;border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#8B6914;letter-spacing:.5px;">OPORTUNIDADES</div>
+        <div style="font-size:24px;font-weight:800;color:#000;margin-top:4px;">${totOps}</div>
+      </div>
+      <div style="background:#F3E5FF;border:1px solid #D9A1FF;border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#7A00CC;letter-spacing:.5px;">SQL / PROPOSTA</div>
+        <div style="font-size:24px;font-weight:800;color:#000;margin-top:4px;">${totSql}</div>
+        <div style="font-size:10px;color:#7A00CC;font-weight:600;">${totOps>0?((totSql/totOps*100).toFixed(0)+'%'):'—'}</div>
+      </div>
+      <div style="background:#E8F5E9;border:1px solid #A5D6A7;border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#2E7D32;letter-spacing:.5px;">FECHADOS</div>
+        <div style="font-size:24px;font-weight:800;color:#000;margin-top:4px;">${totFech}</div>
+        <div style="font-size:10px;color:#2E7D32;font-weight:600;">${totOps>0?((totFech/totOps*100).toFixed(0)+'%'):'—'}</div>
+      </div>
+    </div>`;
+
+  // Tabela por canal
+  html += `<table class="hist-table text-sm" style="width:100%;">
+    <thead>
+      <tr>
+        <th style="text-align:left;">Canal</th>
+        <th>Ops Criadas</th>
+        <th>SQL</th>
+        <th>Conv. SQL</th>
+        <th>Fechadas</th>
+        <th>Conv. Final</th>
+        <th style="min-width:140px;">Funil visual</th>
+      </tr>
+    </thead><tbody>`;
+  canais.forEach(c => {
+    const b = data[c];
+    const cor = corMap[c];
+    const convSql = b.ops > 0 ? (b.sql/b.ops*100) : 0;
+    const convFech = b.ops > 0 ? (b.fechado/b.ops*100) : 0;
+    // Barra escalonada Ops > SQL > Fechado
+    const wOps = 100;
+    const wSql = b.ops > 0 ? (b.sql/b.ops*100) : 0;
+    const wFech = b.ops > 0 ? (b.fechado/b.ops*100) : 0;
+    html += `<tr>
+      <td style="text-align:left;font-weight:700;">
+        <span style="display:inline-block;width:10px;height:10px;background:${cor};border-radius:2px;margin-right:6px;"></span>${c}
+      </td>
+      <td>${b.ops}</td>
+      <td>${b.sql}</td>
+      <td style="color:#7A00CC;font-weight:600;">${convSql.toFixed(0)}%</td>
+      <td style="color:#2E7D32;font-weight:700;">${b.fechado}</td>
+      <td style="font-weight:700;color:${convFech>=30?'#4CAF50':convFech>=15?'#D4A017':'#E57373'};">${convFech.toFixed(1).replace('.', ',')}%</td>
+      <td>
+        <div style="position:relative;height:18px;background:#F5F5F5;border-radius:3px;overflow:hidden;">
+          <div style="position:absolute;left:0;top:0;height:100%;width:${wOps}%;background:${cor};opacity:0.25;"></div>
+          <div style="position:absolute;left:0;top:0;height:100%;width:${wSql}%;background:${cor};opacity:0.55;"></div>
+          <div style="position:absolute;left:0;top:0;height:100%;width:${wFech}%;background:${cor};"></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+  html += `<tr style="background:#F5F5F5;font-weight:700;">
+    <td style="text-align:left;">TOTAL</td>
+    <td>${totOps}</td>
+    <td>${totSql}</td>
+    <td style="color:#7A00CC;">${totOps>0?((totSql/totOps*100).toFixed(0)+'%'):'—'}</td>
+    <td style="color:#2E7D32;">${totFech}</td>
+    <td style="color:#2E7D32;">${totOps>0?((totFech/totOps*100).toFixed(1).replace('.', ',')+'%'):'—'}</td>
+    <td></td>
+  </tr></tbody></table>`;
+
+  host.innerHTML = html;
+}
+
 function renderAuditoria() {
   const tbody = document.getElementById('audit-tbody');
   const countEl = document.getElementById('audit-count');
@@ -8282,7 +8670,7 @@ function renderAuditoria() {
   if (countEl) countEl.textContent = filtered.length + ' de ' + trilha.length + ' deals';
 
   if (!trilha.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--muted);font-style:italic;padding:16px;">Nenhum sync executado ainda. Clique em "🔄 Sincronizar do HubSpot" acima.</td></tr>';
     return;
   }
 
@@ -8311,7 +8699,7 @@ function renderAuditoria() {
         const isDeleted = d.status === 'manual_deletado' || d.status === 'ignorado_deletado';
 
         // Select de mês — sempre editável (admin), permite arrumar mesmo deals sem canal/data
-        const overrideMark = d.overridden ? '<span title="Editado manualmente — sobrevive a re-syncs" style="color:#d97706;font-size:10px;margin-left:4px;">✏️</span>' : '';
+        const overrideMark = d.overridden ? '<span title="Editado manualmente — sobrevive a re-syncs" style="color:#D4A017;font-size:10px;margin-left:4px;">✏️</span>' : '';
         const mesSelect = `<select onchange="updateTrilhaMes(${origIdx}, this.value)"
              class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;">
              ${!d.mes ? '<option value="" selected>—</option>' : ''}
@@ -8341,8 +8729,25 @@ function renderAuditoria() {
             </button>`
           : '';
 
-        return `<tr>
-          <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}</td>
+        // Botões toggle SQL e Fechado (oportunidade de conversão de 2026)
+        const sqlOn = !!d.sql;
+        const fechadoOn = !!d.fechado;
+        const sqlBtn = `<button onclick="toggleTrilhaSQL(${origIdx})" class="admin-only no-print"
+            title="Marca se foi enviado proposta / virou SQL"
+            style="font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;font-weight:700;
+                   background:${sqlOn?'#7A00CC':'#F3E5FF'};color:${sqlOn?'#fff':'#7A00CC'};border:1.5px solid #7A00CC;">
+            ${sqlOn?'✓ SQL':'SQL?'}
+          </button>`;
+        const fechBtn = `<button onclick="toggleTrilhaFechado(${origIdx})" class="admin-only no-print"
+            title="Marca se a oportunidade virou venda fechada"
+            style="font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;font-weight:700;
+                   background:${fechadoOn?'#4CAF50':'#E8F5E9'};color:${fechadoOn?'#fff':'#2E7D32'};border:1.5px solid #4CAF50;">
+            ${fechadoOn?'✓ Fechado':'Fechado?'}
+          </button>`;
+        const autoTag = d.autoSynced ? '<span title="Criada automaticamente a partir de deal fechado" style="font-size:9px;color:#D4A017;margin-left:4px;">🔄</span>' : '';
+
+        return `<tr style="${fechadoOn?'background:#F0F9F2;':''}">
+          <td style="text-align:left;font-weight:500;">${esc(d.nome||'')}${autoTag}</td>
           <td style="text-align:left;font-family:monospace;font-size:11px;color:var(--text2);">${esc(d.hint || '—')}</td>
           <td>${canalSelect}</td>
           <td>${dateCell}</td>
@@ -8351,15 +8756,20 @@ function renderAuditoria() {
           <td>${(() => {
             const tipoAtual = d.tipoEmpresa || '';
             return `<select onchange="updateTrilhaTipo(${origIdx}, this.value)"
-                     class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;${!tipoAtual?'background:#fef3c7;':''}">
+                     class="border rounded-md px-1 py-0.5 text-xs no-print admin-only" style="font-weight:600;${!tipoAtual?'background:#FAEDC8;':''}">
                      <option value="" ${!tipoAtual?'selected':''}>—</option>
                      ${CONV_TIPOS.map(tp => `<option ${tipoAtual===tp?'selected':''}>${tp}</option>`).join('')}
                    </select>`;
           })()}</td>
+          <td>${sqlBtn}</td>
+          <td>${fechBtn}</td>
           <td>${statusLabel[d.status] || d.status}${toggleBtn}</td>
         </tr>`;
       }).join('')
-    : '<tr><td colspan="8" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
+    : '<tr><td colspan="10" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum deal com esses filtros.</td></tr>';
+
+  // Re-renderiza o funil por canal (depende dos novos sql/fechado)
+  try { renderFunilCanais(); } catch(_) {}
 }
 
 function renderConversao() {
@@ -8414,12 +8824,12 @@ function _renderConvBloco(key) {
     return `<tr>
       <td style="text-align:left;font-weight:600;">${c}</td>
       <td>
-        <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','canais','${c}',this.textContent)" style="${manual?'background:#fef3c7;':''}">${oport}</span>
-        ${manual ? '<span title="Baseline manual — syncs futuros somam APENAS deals novos por cima desse valor" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+        <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','canais','${c}',this.textContent)" style="${manual?'background:#FAEDC8;':''}">${oport}</span>
+        ${manual ? '<span title="Baseline manual — syncs futuros somam APENAS deals novos por cima desse valor" style="font-size:9px;margin-left:4px;color:#8B6914;">🔒</span>' : ''}
       </td>
       <td>
-        <span contenteditable="true" class="churn-cell" onblur="updateFechado('${key}','canais','${c}',this.textContent)" style="font-weight:600;color:var(--accent);${fechManual?'background:#fef3c7;':''}" title="Edite à mão para sobrescrever a contagem automática dos deals. Deixe vazio para voltar ao automático.">${fech}</span>
-        ${fechManual ? '<span title="Editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+        <span contenteditable="true" class="churn-cell" onblur="updateFechado('${key}','canais','${c}',this.textContent)" style="font-weight:600;color:var(--accent);${fechManual?'background:#FAEDC8;':''}" title="Edite à mão para sobrescrever a contagem automática dos deals. Deixe vazio para voltar ao automático.">${fech}</span>
+        ${fechManual ? '<span title="Editado manualmente" style="font-size:9px;margin-left:4px;color:#8B6914;">🔒</span>' : ''}
       </td>
       <td>${_convBadge(conv)}</td>
     </tr>`;
@@ -8436,12 +8846,12 @@ function _renderConvBloco(key) {
     return `<tr>
       <td style="text-align:left;font-weight:600;">${t}</td>
       <td>
-        <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','tipos','${t}',this.textContent)" style="${manual?'background:#fef3c7;':''}">${oport}</span>
-        ${manual ? '<span title="Valor editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+        <span contenteditable="true" class="churn-cell" onblur="updateOportunidade('${key}','tipos','${t}',this.textContent)" style="${manual?'background:#FAEDC8;':''}">${oport}</span>
+        ${manual ? '<span title="Valor editado manualmente" style="font-size:9px;margin-left:4px;color:#8B6914;">🔒</span>' : ''}
       </td>
       <td>
-        <span contenteditable="true" class="churn-cell" onblur="updateFechado('${key}','tipos','${t}',this.textContent)" style="font-weight:600;color:var(--accent);${fechManual?'background:#fef3c7;':''}" title="Edite à mão para sobrescrever a contagem automática. Vazio = volta ao automático.">${fech}</span>
-        ${fechManual ? '<span title="Editado manualmente" style="font-size:9px;margin-left:4px;color:#92400e;">🔒</span>' : ''}
+        <span contenteditable="true" class="churn-cell" onblur="updateFechado('${key}','tipos','${t}',this.textContent)" style="font-weight:600;color:var(--accent);${fechManual?'background:#FAEDC8;':''}" title="Edite à mão para sobrescrever a contagem automática. Vazio = volta ao automático.">${fech}</span>
+        ${fechManual ? '<span title="Editado manualmente" style="font-size:9px;margin-left:4px;color:#8B6914;">🔒</span>' : ''}
       </td>
       <td>${_convBadge(conv)}</td>
     </tr>`;
@@ -8462,14 +8872,14 @@ function _renderConvBloco(key) {
             <p class="text-2xl font-bold" style="color:var(--accent);">${totalOport}</p>
             <p class="text-xs mt-1" style="color:#94a3b8;">soma dos canais (edite abaixo)</p>
           </div>
-          <div class="rounded-xl p-4 border text-center" style="background:#f0fdf4;border-color:#86efac;">
-            <p class="text-xs font-semibold mb-1" style="color:#166534;">DEALS FECHADOS</p>
-            <p class="text-2xl font-bold" style="color:#16a34a;">${totalFech}</p>
+          <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+            <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">DEALS FECHADOS</p>
+            <p class="text-2xl font-bold" style="color:#9900FF;">${totalFech}</p>
             <p class="text-xs mt-1" style="color:#94a3b8;">auto — tabela Revenue + Q1 deals</p>
           </div>
-          <div class="rounded-xl p-4 border text-center" style="background:#faf5ff;border-color:#d8b4fe;">
-            <p class="text-xs font-semibold mb-1" style="color:#6b21a8;">CONVERSÃO</p>
-            <p class="text-2xl font-bold" style="color:${convTotal===null?'var(--muted)':convTotal>=30?'#16a34a':convTotal>=15?'#0369a1':'#dc2626'};">
+          <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+            <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">CONVERSÃO</p>
+            <p class="text-2xl font-bold" style="color:${convTotal===null?'var(--muted)':convTotal>=30?'#9900FF':convTotal>=15?'#00786F':'#dc2626'};">
               ${convTotal===null ? '—' : convTotal.toFixed(1) + '%'}
             </p>
             <p class="text-xs mt-1" style="color:#94a3b8;">fechados ÷ oportunidades</p>
@@ -8546,7 +8956,7 @@ function _renderConvBloco(key) {
         </details>` : ''}
 
         <!-- Nota: regra de conversão (deals abertos e fechados no mesmo período) -->
-        <p class="text-xs italic mt-2 p-3 rounded-lg" style="color:var(--text2);background:#fffbeb;border:1px solid #fde68a;">
+        <p class="text-xs italic mt-2 p-3 rounded-lg" style="color:var(--text2);background:#FAEDC8;border:1px solid #E0B84B;">
           ⚠️ <strong>Atenção:</strong> o número de fechamentos nesta aba pode ser diferente da contagem de "deals fechados no mês/trimestre" em outras abas, pois aqui consideramos <strong>apenas deals que foram abertos E fechados no mesmo período</strong>. Ex: um deal aberto em 2025 e fechado em Jan/2026 NÃO entra na conversão de 2026.
         </p>
 
@@ -8571,14 +8981,14 @@ function _renderConvBlocoMensalCompacto(mKey) {
     return `<tr>
       <td style="text-align:left;font-weight:600;font-size:11px;padding:3px 6px;">${c}</td>
       <td style="padding:3px 6px;">
-        <span contenteditable="true" class="churn-cell" style="font-size:11px;${manualO?'background:#fef3c7;':''}"
+        <span contenteditable="true" class="churn-cell" style="font-size:11px;${manualO?'background:#FAEDC8;':''}"
           onblur="updateOportunidade('${mKey}','canais','${c}',this.textContent)">${oport}</span>
-        ${manualO?'<span title="Baseline manual" style="font-size:9px;color:#92400e;">🔒</span>':''}
+        ${manualO?'<span title="Baseline manual" style="font-size:9px;color:#8B6914;">🔒</span>':''}
       </td>
       <td style="padding:3px 6px;">
-        <span contenteditable="true" class="churn-cell" style="font-size:11px;font-weight:600;color:var(--accent);${manualF?'background:#fef3c7;':''}"
+        <span contenteditable="true" class="churn-cell" style="font-size:11px;font-weight:600;color:var(--accent);${manualF?'background:#FAEDC8;':''}"
           onblur="updateFechado('${mKey}','canais','${c}',this.textContent)">${fech}</span>
-        ${manualF?'<span title="Editado manualmente" style="font-size:9px;color:#92400e;">🔒</span>':''}
+        ${manualF?'<span title="Editado manualmente" style="font-size:9px;color:#8B6914;">🔒</span>':''}
       </td>
       <td style="padding:3px 6px;font-size:10px;">${_convBadge(conv)}</td>
     </tr>`;
