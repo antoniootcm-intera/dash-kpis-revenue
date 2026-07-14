@@ -362,15 +362,16 @@
 
 <!-- Sub-tabs do Dashboard -->
 <div class="dash-subtabs">
-  <button class="dash-sub ds-active" onclick="switchDashSub('q2-2026')">🎯 Q2 2026 — Atual</button>
+  <button class="dash-sub ds-active" onclick="switchDashSub('q3-2026')">🎯 Q3 2026 — Atual</button>
+  <button class="dash-sub" onclick="switchDashSub('q2-2026')">✅ Q2 2026</button>
   <button class="dash-sub" onclick="switchDashSub('q1-2026')">✅ Q1 2026</button>
   <button class="dash-sub" onclick="switchDashSub('anual-2026')">🗓️ Anual 2026</button>
   <button class="dash-sub" onclick="switchDashSub('hist-2025')">📅 Histórico 2025</button>
   <button class="dash-sub" onclick="switchDashSub('comp-tri')">📈 Comparativo Trimestral</button>
 </div>
 
-<!-- ═══ SUB-PAINEL: Q2 2026 (atual) ═══ -->
-<div id="dash-sub-q2-2026">
+<!-- ═══ SUB-PAINEL: Q3 2026 (atual) ═══ -->
+<div id="dash-sub-q3-2026">
 
 <!-- ══════════════════════════════════════════════
      SEÇÃO 1 — OKRs
@@ -383,22 +384,22 @@
 
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
 
-    <!-- ── Linha 1: Meta de Receita (full width) ── -->
+    <!-- ── Linha 1: Meta de Receita GLOBAL — 100% renovação (full width) ── -->
     <div>
-      <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:var(--accent);">KR1 — Crescer a base de forma sustentável</p>
+      <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:var(--accent);">KR1 — Renovar a base com previsibilidade · Meta global, 100% renovação</p>
       <div class="rounded-2xl p-5 border" style="background:linear-gradient(135deg,#f8f7ff 0%,#ede9fe 100%);border-color:#c4c2e8;">
         <div class="flex flex-wrap justify-between items-start gap-4 mb-3">
           <div>
-            <p class="text-xs font-semibold" style="color:var(--text2);">META DE RECEITA</p>
-            <p class="text-2xl font-bold mt-0.5" style="color:var(--black);">R$ <span id="meta-receita-label">2.100.000,00</span></p>
+            <p class="text-xs font-semibold" style="color:var(--text2);">META DE RECEITA (RENOVAÇÃO)</p>
+            <p class="text-2xl font-bold mt-0.5" style="color:var(--black);">R$ <span id="meta-receita-label">1.400.000,00</span></p>
           </div>
           <div class="text-right">
             <p class="text-xs font-semibold" style="color:var(--text2);">REALIZADO</p>
-            <p class="text-2xl font-bold mt-0.5 text-yellow-500" id="realizado-label">R$ 516.000,00</p>
+            <p class="text-2xl font-bold mt-0.5 text-yellow-500" id="realizado-label">R$ 0,00</p>
           </div>
           <div class="flex gap-2 items-center no-print self-end">
             <label class="text-xs" style="color:var(--muted);">Realizado (R$):</label>
-            <input type="number" id="input-realizado" value="516000" step="1000"
+            <input type="number" id="input-realizado" value="0" step="1000"
               class="border rounded px-2 py-1 text-xs w-32"
               oninput="lockRealizado(); updateOKR('receita', this.value)" />
             <button onclick="unlockRealizado()" title="Sincronizar com HubSpot"
@@ -406,10 +407,10 @@
           </div>
         </div>
         <div class="relative h-4 rounded-full overflow-hidden" style="background:#d8d5f5;">
-          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:24.57%;background:linear-gradient(90deg,#D4A017,#E0B84B);"></div>
+          <div id="bar-receita" class="progress-bar h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#D4A017,#E0B84B);"></div>
         </div>
         <div class="flex justify-between mt-2">
-          <span class="text-xs font-semibold text-yellow-500" id="pct-receita">24,57%</span>
+          <span class="text-xs font-semibold text-yellow-500" id="pct-receita">0,00%</span>
           <div class="flex flex-wrap gap-4 text-xs no-print">
             <span style="color:var(--muted);" title="Soma automática dos gastos do trimestre atual (mídia + fixos + ferramentas + comissões), puxado da aba CAC.">
               Gastos <span style="background:#FAEDC8;color:#8B6914;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-left:2px;">auto CAC</span>:
@@ -423,45 +424,16 @@
       </div>
     </div>
 
-    <!-- ── Linha 2: 4 KPIs em grid ── -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- ── Linha 2: KPIs em grid (sem meta de novos clientes — trimestre 100% renovação) ── -->
+    <div class="grid grid-cols-1 gap-4">
 
-      <!-- Receita Casa — MOSTARDA -->
-      <div class="rounded-xl p-4 border" style="background:#FAEDC8;border-color:#E0B84B;">
-        <p class="text-xs font-semibold mb-1" style="color:#8B6914;">RECEITA DA CASA</p>
-        <p class="text-xs mb-2" style="color:#94a3b8;">REN + UP · Meta R$ 1.500.000</p>
-        <p id="receita-casa-valor" class="text-xl font-bold mb-2" style="color:#8B6914;">R$ 0,00</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#FFF9E5;">
-          <div id="bar-receita-casa" class="progress-bar h-full rounded-full" style="width:0%;background:#D4A017;"></div>
-        </div>
-        <span id="pct-receita-casa" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
-      </div>
-
-      <!-- Receita Novos — PRETO/CINZA -->
-      <div class="rounded-xl p-4 border" style="background:#F5F5F5;border-color:#9CA3AF;">
-        <p class="text-xs font-semibold mb-1" style="color:#000000;">RECEITA NOVOS</p>
-        <p class="text-xs mb-2" style="color:#94a3b8;">NTW, OUT, INB, MKT… · Meta R$ 600.000</p>
-        <p id="receita-novos-valor" class="text-xl font-bold mb-2" style="color:#000000;">R$ 0,00</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#E5E5E5;">
-          <div id="bar-receita-novos" class="progress-bar h-full rounded-full" style="width:0%;background:#000000;"></div>
-        </div>
-        <span id="pct-receita-novos" class="text-xs mt-1 block" style="color:#94a3b8;">0% da meta</span>
-      </div>
-
-      <!-- Novos Clientes — ROXO (detalhe) -->
-      <div class="rounded-xl p-4 border" style="background:#F3E5FF;border-color:#D9A1FF;">
-        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">NOVOS CLIENTES</p>
-        <p class="text-xs mb-2" style="color:#94a3b8;">Meta: <span id="novos-clientes-meta-label">8</span> clientes</p>
-        <p id="novos-clientes-valor" class="text-xl font-bold mb-2" style="color:#9900FF;">0</p>
-        <div class="relative h-2 rounded-full overflow-hidden" style="background:#F3E5FF;">
-          <div id="bar-novos-clientes" class="progress-bar h-full rounded-full" style="width:0%;background:#9900FF;"></div>
-        </div>
-        <div class="flex items-center justify-between mt-1">
-          <span id="pct-novos-clientes" class="text-xs" style="color:#94a3b8;">0%</span>
-          <input type="number" id="input-meta-novos-clientes" value="8" min="1"
-            class="border rounded px-1.5 py-0.5 text-xs w-14 no-print"
-            oninput="updateReceitaCards(); saveOKRInputs()" />
-        </div>
+      <!-- ids legados mantidos ocultos p/ compatibilidade com updateReceitaCards() -->
+      <div style="display:none;">
+        <span id="receita-casa-valor"></span><span id="receita-novos-valor"></span>
+        <div id="bar-receita-casa"></div><span id="pct-receita-casa"></span>
+        <div id="bar-receita-novos"></div><span id="pct-receita-novos"></span>
+        <span id="novos-clientes-valor"></span><div id="bar-novos-clientes"></div><span id="pct-novos-clientes"></span>
+        <span id="novos-clientes-meta-label"></span><input id="input-meta-novos-clientes" value="0" />
       </div>
 
       <!-- Crescimento base + Duração juntos -->
@@ -625,32 +597,157 @@
   </div>
 </section>
 
-<!-- Vendas por Canal Q2 2026 (ao vivo) -->
+<!-- Vendas por Canal Q3 2026 (ao vivo) -->
 <section>
   <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
-    <span class="text-lg font-bold">Vendas por Canal — Q2 2026</span>
+    <span class="text-lg font-bold">Vendas por Canal — Q3 2026</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-4">
-    <div id="q2-canal-blocks"></div>
+    <div id="q3-canal-blocks"></div>
   </div>
 </section>
 
-<!-- Ticket médio Q2 — por canal e por tipo -->
+<!-- Ticket médio Q3 — por canal e por tipo -->
 <section>
   <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
-    <span class="text-lg font-bold">Ticket Médio — Q2 2026</span>
+    <span class="text-lg font-bold">Ticket Médio — Q3 2026</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — Q3 (mensalidade)</h3>
+        <div class="relative h-52"><canvas id="chartQ3ticketCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo de Empresa — Q3 (mensalidade)</h3>
+        <div class="relative h-52"><canvas id="chartQ3ticketTipo"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Conversão Q3 (espelha da aba 📊 Conversão) -->
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+    <span class="text-lg font-bold">📊 Conversão — Q3 2026</span>
+    <span class="text-blue-200 text-xs">Espelho da aba Conversão · edite os números lá</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+    <div id="conv-summary-q3"></div>
+  </div>
+</section>
+
+</div><!-- /dash-sub-q3-2026 -->
+
+<!-- ═══ SUB-PAINEL: Q2 2026 (histórico — Abr/Mai/Jun, consolidado) ═══ -->
+<div id="dash-sub-q2-2026" style="display:none" class="space-y-8">
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center gap-2">
+    <span class="text-lg font-bold">Q2 2026 — Consolidado</span>
+    <span class="text-blue-200 text-sm font-medium">Abril a Junho · Meta R$ 2.100.000</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+    <!-- Resumo Q2 -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">META</p>
+        <p class="text-lg font-bold" style="color:var(--text);">R$ 2.100.000</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#FAEDC8,#E0B84B);border-color:#D4A017;">
+        <p class="text-xs font-semibold mb-1" style="color:#8B6914;">REALIZADO</p>
+        <p class="text-lg font-bold" style="color:#8B6914;" id="q2-resumo-realizado">R$ 0,00</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">RECEITA CASA</p>
+        <p class="text-lg font-bold" style="color:#00786F;" id="q2-resumo-casa">R$ 0,00</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">UP + REN</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">RECEITA NOVOS</p>
+        <p class="text-lg font-bold" style="color:#9900FF;" id="q2-resumo-novos">R$ 0,00</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">NTW + OUT + MKT + INB</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#E8F5E9;border-color:#A5D6A7;">
+        <p class="text-xs font-semibold mb-1" style="color:#2E7D32;">ATINGIMENTO</p>
+        <p class="text-lg font-bold" style="color:#2E7D32;" id="q2-resumo-atingimento">0,00%</p>
+        <div class="relative h-2 rounded-full overflow-hidden mt-2" style="background:#E8F5E9;">
+          <div class="h-full rounded-full" id="q2-resumo-atingimento-bar" style="width:0%;background:linear-gradient(90deg,#4CAF50,#81C784);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela de deals Q2 -->
+    <div class="overflow-x-auto">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Serviço</th><th>Canal</th><th>Valor (R$)</th>
+            <th>Mensalidade</th>
+            <th>Data</th><th>Mês</th><th>Alocações</th><th>Tipo</th><th>Semana</th>
+            <th>Ciclo (dias)</th>
+            <th class="no-print admin-only" style="width:36px;">✕</th>
+          </tr>
+        </thead>
+        <tbody id="q2-hist-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3" style="text-align:left;font-weight:700;">TOTAL Q2 2026</td>
+            <td id="q2-hist-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
+            <td id="q2-hist-total-mens" style="font-weight:700;color:#00B8A9;">R$ 0,00</td>
+            <td colspan="5"></td>
+            <td id="q2-hist-ciclo-medio" style="font-weight:700;color:var(--accent);"></td>
+            <td class="no-print admin-only"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="mt-3 admin-only no-print">
+      <button onclick="addQ2Deal()" class="text-sm font-semibold px-3 py-1.5 rounded-lg border-2 transition"
+        style="border-color:var(--accent);color:var(--accent);background:#fff;"
+        onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='#fff'">
+        + Adicionar deal ao Q2
+      </button>
+    </div>
+
+    <!-- Gráfico receita mensal Q2 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Receita por Mês — Q2 2026</h3>
+      <div class="relative h-52">
+        <canvas id="chartQ2histMensal"></canvas>
+      </div>
+    </div>
+
+    <!-- Vendas por Canal Q2 2026 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Q2 2026</h3>
+      <div id="q2-hist-canal-blocks"></div>
+    </div>
+
+    <!-- 4 Gráficos: ciclo×canal, ciclo×tipo, ticket×canal, ticket×tipo -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ciclo de Vendas por Canal — Q2 (dias)</h3>
+        <div class="relative h-52"><canvas id="chartQ2histCicloCanal"></canvas></div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ciclo de Vendas por Tipo de Empresa — Q2 (dias)</h3>
+        <div class="relative h-52"><canvas id="chartQ2histCicloTipo"></canvas></div>
+      </div>
+      <div>
         <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — Q2 (mensalidade)</h3>
-        <div class="relative h-52"><canvas id="chartQ2ticketCanal"></canvas></div>
+        <div class="relative h-52"><canvas id="chartQ2histTicketCanal"></canvas></div>
       </div>
       <div>
         <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo de Empresa — Q2 (mensalidade)</h3>
-        <div class="relative h-52"><canvas id="chartQ2ticketTipo"></canvas></div>
+        <div class="relative h-52"><canvas id="chartQ2histTicketTipo"></canvas></div>
       </div>
     </div>
+    <p class="text-xs italic" style="color:var(--muted);">
+      Ticket médio usa a coluna <strong>Mensalidade</strong>. Preencha as células acima para popular esses gráficos.
+    </p>
+
   </div>
 </section>
 
@@ -2109,6 +2206,7 @@
 
 </div><!-- /panel-cac -->
 
+
 <footer class="text-center text-xs text-gray-400 py-6 no-print">
   INTERA Dashboard · Gestão à Vista RPO · Dados via HubSpot API v3
 </footer>
@@ -2296,7 +2394,7 @@ const log = {
 window.__interaLogs = function() { return _logBuffer.slice(); };
 
 // ─── DASHBOARD SUB-TABS ─────────────────────────
-const DASH_SUBS = ['q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
+const DASH_SUBS = ['q3-2026','q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
 let _histChartsReady = false;
 
 let _q2CanalReady = false;
@@ -2311,18 +2409,21 @@ function switchDashSub(key) {
   if (idx >= 0) document.querySelectorAll('.dash-sub')[idx]?.classList.add('ds-active');
 
   // Lazy init dos gráficos históricos (Chart.js precisa do canvas visível)
-  if (!_histChartsReady && key !== 'q2-2026') {
+  if (!_histChartsReady && key !== 'q3-2026') {
     _histChartsReady = true;
     setTimeout(initHistoricalCharts, 50);
   }
-  // Lazy init do canal Q2 (precisa canvas visível + dados carregados)
-  if (!_q2CanalReady && key === 'q2-2026' && tableRows.length > 0) {
+  // Lazy init do canal Q3 (precisa canvas visível + dados carregados)
+  if (!_q2CanalReady && key === 'q3-2026' && tableRows.length > 0) {
     _q2CanalReady = true;
     setTimeout(() => { renderQ2CanalCards(); renderQ2TicketCharts(); }, 50);
   }
-  // Re-render quando entra no Q1 (sempre, pra refletir edições)
+  // Re-render quando entra no Q1/Q2 (sempre, pra refletir edições)
   if (key === 'q1-2026') {
     setTimeout(renderQ1Analytics, 50);
+  }
+  if (key === 'q2-2026') {
+    setTimeout(renderQ2Analytics, 50);
   }
   // Render do painel anual (lazy)
   if (key === 'anual-2026') {
@@ -2437,6 +2538,52 @@ try {
   } catch(e) { log.warn('canal.migrate.mkt_to_inb.failed', {}, e); }
 })();
 
+// ─── Q2 2026 DATA (consolidado — Abr/Mai/Jun, congelado ao virar Q3) ────
+// Usado só como fallback (ex.: browser novo sem localStorage); o normal é
+// _migrateQ2ToHistorical() popular Q2_DEALS a partir do tableRows real.
+const Q2_DEALS_DEFAULTS = [
+  { cliente:'AbInBev',      servico:'Staffing', canal:'UP',  valor:84000,  mensalidade:14000, ciclo:10, data:'02/04', mes:'Abr', alocacoes:'2', tipo:'Enterprise', semana:1 },
+  { cliente:'Venturus',     servico:'RPO',      canal:'NTW', valor:90000,  mensalidade:15000, ciclo:7,  data:'08/04', mes:'Abr', alocacoes:'1', tipo:'GG',         semana:2 },
+  { cliente:'Renner Corp*', servico:'RPO',      canal:'REN', valor:48000,  mensalidade:16000, ciclo:15, data:'23/04', mes:'Abr', alocacoes:'1', tipo:'Enterprise', semana:3 },
+];
+
+let Q2_DEALS;
+try {
+  const saved = JSON.parse(localStorage.getItem('q2_deals') || 'null');
+  Q2_DEALS = Array.isArray(saved) ? saved : [];
+} catch(e) { Q2_DEALS = []; }
+
+function saveQ2Deals() {
+  try { localStorage.setItem('q2_deals', JSON.stringify(Q2_DEALS)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'q2_deals', size: JSON.stringify(Q2_DEALS).length }, e); }
+}
+
+// Roda uma vez (na virada pra Q3): move os deals de Abr/Mai/Jun do tableRows
+// (que era o "Q2 ao vivo") pra Q2_DEALS (histórico congelado), liberando o
+// tableRows pra representar só o trimestre corrente. Também zera o OKR de
+// Realizado/Meta pro novo trimestre.
+function _migrateQ2ToHistorical() {
+  if (localStorage.getItem('q2_migrated') === 'true') return;
+  const Q2_MESES = ['Abr','Mai','Jun'];
+  if (!Q2_DEALS.length) {
+    const moved = tableRows.filter(r => Q2_MESES.includes(r.mes));
+    Q2_DEALS = moved.length ? moved.map(r => ({ ...r })) : JSON.parse(JSON.stringify(Q2_DEALS_DEFAULTS));
+    saveQ2Deals();
+  }
+  tableRows = tableRows.filter(r => !Q2_MESES.includes(r.mes));
+  try { localStorage.setItem('table_rows', JSON.stringify(tableRows)); } catch(e) {}
+  try {
+    const okr = JSON.parse(localStorage.getItem('okr_state') || '{}');
+    okr['input-realizado'] = '0';
+    okr['chart-meta']      = '1400000';
+    okr['cac-gastos']      = '0';
+    localStorage.setItem('okr_state', JSON.stringify(okr));
+    localStorage.setItem('realizado_locked', 'false');
+  } catch(e) {}
+  localStorage.setItem('q2_migrated', 'true');
+  log.info('q2.migrated_to_historical', { deals: Q2_DEALS.length, remaining_table_rows: tableRows.length });
+}
+
 function saveQ1Deals() {
   try { localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS)); }
   catch(e) { log.error('localstorage.write.failed', { key:'q1_deals', size: JSON.stringify(Q1_DEALS).length }, e); }
@@ -2470,6 +2617,36 @@ function removeQ1Deal(i) {
   saveQ1Deals();
   renderQ1Deals();
   renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
+  if (typeof updateChurnCards === 'function') updateChurnCards();
+}
+
+function updateQ2Field(i, field, value) {
+  if (IS_VIEWER) return;
+  if (!Q2_DEALS[i]) return;
+  Q2_DEALS[i][field] = value;
+  saveQ2Deals();
+  renderQ2Deals();
+  renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
+  if (typeof renderQ2Analytics === 'function') renderQ2Analytics();
+  if (typeof updateChurnCards === 'function') updateChurnCards();
+  if (_anualReady && typeof renderAnual === 'function') renderAnual();
+}
+
+function addQ2Deal() {
+  Q2_DEALS.push({
+    cliente:'Novo cliente', servico:'RPO', canal:'REN', valor:0, mensalidade:0, ciclo:0,
+    data:'', mes:'Abr', alocacoes:'1', tipo:'Enterprise', semana:''
+  });
+  saveQ2Deals();
+  renderQ2Deals();
+}
+
+function removeQ2Deal(i) {
+  if (!confirm('Remover este deal do Q2?')) return;
+  Q2_DEALS.splice(i, 1);
+  saveQ2Deals();
+  renderQ2Deals();
+  renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
   if (typeof updateChurnCards === 'function') updateChurnCards();
 }
 
@@ -2512,9 +2689,9 @@ const COMP_TRI = {
     novos:  [74500,   835000,  246000,  438000],
   },
   2026: {
-    total:  [1186500, null, null, null], // Q1 consolidado; Q2-Q4 pendentes
-    casa:   [796500,  null, null, null],
-    novos:  [390000,  null, null, null],
+    total:  [1186500, 2184500, null, null], // Q1 e Q2 consolidados; Q3-Q4 pendentes
+    casa:   [796500,  1901000, null, null],
+    novos:  [390000,  283500,  null, null],
   },
 };
 
@@ -2610,6 +2787,114 @@ function renderQ1Deals() {
     const m = ciclosArr.length ? Math.round(ciclosArr.reduce((a,b)=>a+b,0) / ciclosArr.length) : 0;
     elCiclo.textContent = m > 0 ? (m + ' d') : '—';
   }
+}
+
+function renderQ2Deals() {
+  const tbody = document.getElementById('q2-hist-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  let totalMens = 0, totalValor = 0, ciclosArr = [];
+  const CANAIS_OPTS = ['UP','NTW','OUT','INB','REN'];
+  const SERVICO_OPTS = ['RPO','Staffing','Hunting'];
+  const TIPO_OPTS = ['Enterprise','GG','SMB'];
+  const MESES_OPTS = ['Abr','Mai','Jun'];
+
+  const indexed = Q2_DEALS.map((d, i) => ({ d, i }));
+  indexed.sort((a, b) => _parseDataDDMM(a.d.data) - _parseDataDDMM(b.d.data));
+  indexed.forEach(({ d, i }) => {
+    const mens     = parseFloat(d.mensalidade)||0;
+    const val      = parseFloat(d.valor)||0;
+    const ciclo    = parseInt(d.ciclo)||0;
+    totalMens     += mens;
+    totalValor    += val;
+    if (ciclo > 0) ciclosArr.push(ciclo);
+    const mensCor  = mens > 0 ? '#0284c7' : '#9ca3af';
+    const cicloCor = ciclo > 0 ? 'var(--accent)' : '#9ca3af';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:600;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'cliente',this.textContent.trim())">${esc(d.cliente||'')}</span>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ2Field(${i},'servico',this.value)" class="churn-mes-sel">
+          ${SERVICO_OPTS.map(o => `<option ${d.servico===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ2Field(${i},'canal',this.value)" class="churn-mes-sel">
+          ${CANAIS_OPTS.map(o => `<option ${(d.canal||'').toUpperCase()===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="font-weight:600;color:var(--accent);text-align:right;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'valor',parseMoeda(this.textContent))">${fmtBRL(val)}</span>
+      </td>
+      <td style="font-weight:600;color:${mensCor};text-align:right;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'mensalidade',parseMoeda(this.textContent))">${mens > 0 ? fmtBRL(mens) : 'R$ 0,00'}</span>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'data',this.textContent.trim())">${esc(d.data||'')}</span>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ2Field(${i},'mes',this.value)" class="churn-mes-sel">
+          ${MESES_OPTS.map(o => `<option ${d.mes===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'alocacoes',this.textContent.trim())">${esc(d.alocacoes||'')}</span>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateQ2Field(${i},'tipo',this.value)" class="churn-mes-sel">
+          ${TIPO_OPTS.map(o => `<option ${d.tipo===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'semana',this.textContent.trim())">${esc(d.semana||'')}</span>
+      </td>
+      <td style="font-weight:600;color:${cicloCor};text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateQ2Field(${i},'ciclo',parseInt(this.textContent)||0)">${ciclo > 0 ? ciclo : '0'}</span>
+      </td>
+      <td class="no-print admin-only" style="text-align:center;">
+        <button onclick="removeQ2Deal(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;background:none;border:none;cursor:pointer;"
+          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  const elMens  = document.getElementById('q2-hist-total-mens');
+  const elValor = document.getElementById('q2-hist-total-valor');
+  const elCiclo = document.getElementById('q2-hist-ciclo-medio');
+  if (elMens)  elMens.textContent  = fmtBRL(totalMens);
+  if (elValor) elValor.textContent = fmtBRL(totalValor);
+  if (elCiclo) {
+    const m = ciclosArr.length ? Math.round(ciclosArr.reduce((a,b)=>a+b,0) / ciclosArr.length) : 0;
+    elCiclo.textContent = m > 0 ? (m + ' d') : '—';
+  }
+  updateQ2ResumoCards();
+}
+
+const META_Q2_2026 = 2_100_000;
+
+// Mantém os cards "Resumo Q2" (Realizado/Receita Casa/Receita Novos/Atingimento)
+// em sincronia com a tabela de deals — antes eram números fixos no HTML e ficavam
+// desatualizados sempre que um deal do Q2 era editado/adicionado/removido.
+function updateQ2ResumoCards() {
+  let casa = 0, novos = 0;
+  Q2_DEALS.forEach(d => {
+    const v = parseFloat(d.valor) || 0;
+    const c = (d.canal || '').toUpperCase();
+    if (CANAIS_CASA.has(c)) casa += v; else novos += v;
+  });
+  const realizado = casa + novos;
+  const atingimento = META_Q2_2026 > 0 ? (realizado / META_Q2_2026) * 100 : 0;
+
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const setW   = (id, v) => { const el = document.getElementById(id); if (el) el.style.width = v; };
+
+  setTxt('q2-resumo-realizado', fmtBRL(realizado));
+  setTxt('q2-resumo-casa', fmtBRL(casa));
+  setTxt('q2-resumo-novos', fmtBRL(novos));
+  setTxt('q2-resumo-atingimento', fmt(atingimento, 2) + '%');
+  setW('q2-resumo-atingimento-bar', Math.min(atingimento, 100) + '%');
 }
 
 function renderHist2025Table() {
@@ -2806,7 +3091,7 @@ function renderCanalBreakdown(deals, containerId) {
 }
 
 function renderQ2CanalCards() {
-  renderCanalBreakdown(tableRows, 'q2-canal-blocks');
+  renderCanalBreakdown(tableRows, 'q3-canal-blocks');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3031,25 +3316,54 @@ function renderQ1Analytics() {
   renderConvQuarter('Q1', 'conv-summary-q1');
 }
 
-// Renderiza ticket médio por canal e tipo no Q2 (live de tableRows)
+// Renderiza os 4 gráficos do Q2 histórico: ciclo×canal, ciclo×tipo, ticket×canal, ticket×tipo
+function renderQ2Analytics() {
+  const aggCanal = _aggregar(Q2_DEALS, d => (d.canal||'').toUpperCase());
+  const aggTipo  = _aggregar(Q2_DEALS, d => d.tipo);
+
+  const lc = Object.keys(aggCanal).filter(k => aggCanal[k].ciclosArr.length > 0);
+  _criarOuAtualizar('chartQ2histCicloCanal', lc, lc.map(k => _cicloMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS, { tooltipFmt: v => v + ' dias' });
+
+  const lt = Object.keys(aggTipo).filter(k => aggTipo[k].ciclosArr.length > 0);
+  _criarOuAtualizar('chartQ2histCicloTipo', lt, lt.map(k => _cicloMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS, { tooltipFmt: v => v + ' dias' });
+
+  const tc = Object.keys(aggCanal).filter(k => aggCanal[k].mrrTotal > 0);
+  const tcCounts = tc.map(k => aggCanal[k].count);
+  _criarOuAtualizar('chartQ2histTicketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
+    _CANAL_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(tcCounts[idx]) });
+
+  const tt = Object.keys(aggTipo).filter(k => aggTipo[k].mrrTotal > 0);
+  const ttCounts = tt.map(k => aggTipo[k].count);
+  _criarOuAtualizar('chartQ2histTicketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
+    _TIPO_CHART_COLORS,
+    { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
+
+  // Conversão Q2 (espelho, histórico)
+  renderConvQuarter('Q2', 'conv-summary-q2');
+}
+
+// Renderiza ticket médio por canal e tipo no Q3 (live de tableRows)
 function renderQ2TicketCharts() {
   const aggCanal = _aggregar(tableRows, r => (r.canal||'').toUpperCase());
   const aggTipo  = _aggregar(tableRows, r => r.tipo);
 
   const tc = Object.keys(aggCanal).filter(k => aggCanal[k].mrrTotal > 0);
   const tcCounts = tc.map(k => aggCanal[k].count);
-  _criarOuAtualizar('chartQ2ticketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
+  _criarOuAtualizar('chartQ3ticketCanal', tc, tc.map(k => _ticketMedio(aggCanal[k])),
     _CANAL_CHART_COLORS,
     { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(tcCounts[idx]) });
 
   const tt = Object.keys(aggTipo).filter(k => aggTipo[k].mrrTotal > 0);
   const ttCounts = tt.map(k => aggTipo[k].count);
-  _criarOuAtualizar('chartQ2ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
+  _criarOuAtualizar('chartQ3ticketTipo', tt, tt.map(k => _ticketMedio(aggTipo[k])),
     _TIPO_CHART_COLORS,
     { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
 
-  // Conversão Q2 (espelho)
-  renderConvQuarter('Q2', 'conv-summary-q2');
+  // Conversão Q3 (espelho)
+  renderConvQuarter('Q3', 'conv-summary-q3');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3058,12 +3372,17 @@ function renderQ2TicketCharts() {
 let _anualReady = false;
 
 function _getAllDeals2026() {
-  // Une Q1_DEALS (Q1) + tableRows (Q2+, ao vivo). Normaliza campos.
+  // Une Q1_DEALS (Q1) + Q2_DEALS (Q2, histórico) + tableRows (Q3+, ao vivo). Normaliza campos.
   const all = [];
   Q1_DEALS.forEach(d => all.push({
     cliente: d.cliente, canal: (d.canal||'').toUpperCase(), tipo: d.tipo,
     valor: parseFloat(d.valor)||0, mensalidade: parseFloat(d.mensalidade)||0,
     ciclo: parseInt(d.ciclo)||0, mes: d.mes, quarter: 'Q1'
+  }));
+  Q2_DEALS.forEach(d => all.push({
+    cliente: d.cliente, canal: (d.canal||'').toUpperCase(), tipo: d.tipo,
+    valor: parseFloat(d.valor)||0, mensalidade: parseFloat(d.mensalidade)||0,
+    ciclo: parseInt(d.ciclo)||0, mes: d.mes, quarter: 'Q2'
   }));
   tableRows.forEach(r => {
     const mes = r.mes;
@@ -3650,6 +3969,22 @@ function initHistoricalCharts() {
       scales: darkScales() }
   });
 
+  // ── Q2 2026: barras mensais (histórico congelado) ──
+  const q2porMes = { 'Abr':0, 'Mai':0, 'Jun':0 };
+  Q2_DEALS.forEach(d => { q2porMes[d.mes] = (q2porMes[d.mes]||0) + (parseFloat(d.valor)||0); });
+  const ctxQ2h = document.getElementById('chartQ2histMensal');
+  if (ctxQ2h) new Chart(ctxQ2h, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(q2porMes),
+      datasets: [{ label:'Receita', data:Object.values(q2porMes),
+        backgroundColor:['#D4A017','#9900FF','#7A00CC'], borderRadius:6 }]
+    },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false },
+      tooltip:{ callbacks:{ label: c => 'R$ ' + (c.raw||0).toLocaleString('pt-BR') }}},
+      scales: darkScales() }
+  });
+
   // ── 2025: Meta vs Acumulado (linhas) ──
   const ctx2025a = document.getElementById('chart2025acum');
   if (ctx2025a) new Chart(ctx2025a, {
@@ -3810,14 +4145,17 @@ function initHistoricalCharts() {
 
   // Render tables + canal breakdowns
   renderQ1Deals();
+  renderQ2Deals();
   renderHist2025Table();
   renderCompTriTable();
   renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
+  renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
+  renderQ2Analytics();
   renderQ2CanalCards();
 }
 
 // ─── CONSTANTS ──────────────────────────────────
-const META_RECEITA = 2_100_000;
+const META_RECEITA = 1_400_000; // Q3 2026 — meta global de renovação
 let PIPELINE_ID  = localStorage.getItem('hs_pipeline') || '873229319';
 // IDs reais do pipeline "RPO - Vendas e Renovação"
 const STAGE_FECHADO  = '1308217885'; // NEGÓCIO FECHADO
@@ -3865,6 +4203,8 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
         if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
         if (Array.isArray(d.q1_deals) && d.q1_deals.length) Q1_DEALS = d.q1_deals;
+        if (Array.isArray(d.q2_deals) && d.q2_deals.length) Q2_DEALS = d.q2_deals;
+        _migrateQ2ToHistorical();
         if (d.oportunidades_data && typeof d.oportunidades_data === 'object') oportunidadesData = d.oportunidades_data;
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
@@ -3881,6 +4221,7 @@ window.addEventListener('DOMContentLoaded', () => {
         renderTable();
         renderCadeiras();
         renderContratos();
+        if (_limparContratosDuplicadosUmaVez() > 0) renderContratos();
         if (d.okr_state) restoreOKRFromState(d.okr_state);
         updateLockIcon();
         // Atualiza os gráficos com os dados carregados (em admin isso ocorre via fetchHubSpot)
@@ -3888,16 +4229,21 @@ window.addEventListener('DOMContentLoaded', () => {
         updateFunilChart();
         rebuildLineChart();
         renderQ1Deals();
+        renderQ2Deals();
+        renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
+        renderQ2Analytics();
         renderHist2025Table();
         renderCompTriTable();
         renderChurn();
-        // Q2 canal cards (Q2 é o painel padrão visível)
+        // Q3 canal cards (Q3 é o painel padrão visível)
         if (tableRows.length > 0) { _q2CanalReady = true; renderQ2CanalCards(); }
         switchTab(d.active_tab || 'dashboard');
       })
       .catch(() => {
         initCharts(); renderTable(); renderCadeiras(); renderContratos();
-        restoreOKRInputs(); updateLockIcon(); switchTab('dashboard');
+        if (_limparContratosDuplicadosUmaVez() > 0) renderContratos();
+        restoreOKRInputs(); updateLockIcon();
+        switchTab('dashboard');
       });
     return;
   }
@@ -3916,6 +4262,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderTable();
   renderCadeiras();
   renderContratos();
+  if (_limparContratosDuplicadosUmaVez() > 0) renderContratos();
 
   // Popula gráficos a partir dos dados salvos (não precisa recarregar HubSpot)
   if (tableRows.length > 0) {
@@ -3926,11 +4273,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Render tabelas históricas (não precisam de canvas visível)
   renderQ1Deals();
+  renderQ2Deals();
+  renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
+  renderQ2Analytics();
   renderHist2025Table();
   renderCompTriTable();
   renderChurn();
 
-  // Render Q2 canal cards (Q2 é a sub-tab padrão — canvas visível)
+  // Render Q3 canal cards (Q3 é a sub-tab padrão — canvas visível)
   if (tableRows.length > 0) {
     _q2CanalReady = true;
     renderQ2CanalCards();
@@ -4091,6 +4441,7 @@ async function publicarSnapshot() {
       contratos_rows:   contratosRows,
       churn_rows:       churnRows,
       q1_deals:         Q1_DEALS,
+      q2_deals:         Q2_DEALS,
       oportunidades_data: oportunidadesData,
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
@@ -4493,8 +4844,8 @@ function updateCicloChart() {
   charts.ciclo.data.datasets[0].data = data;
   charts.ciclo.update();
   updateCicloTipoCanalChart();
-  // Atualiza também ticket por canal/tipo do Q2 (mesmos dados)
-  if (typeof renderQ2TicketCharts === 'function' && document.getElementById('chartQ2ticketCanal')) {
+  // Atualiza também ticket por canal/tipo do Q3 (mesmos dados)
+  if (typeof renderQ2TicketCharts === 'function' && document.getElementById('chartQ3ticketCanal')) {
     try { renderQ2TicketCharts(); } catch(e) { log.warn('q2.ticket.render.failed', {}, e); }
   }
   // E o painel anual também depende de tableRows
@@ -4592,17 +4943,20 @@ function updateReceitaCards() {
   const pctNovosBar  = Math.min(pctNovosReal, 100);
   const pctNCBar     = Math.min(pctNCReal,    100);
 
-  document.getElementById('receita-casa-valor').textContent  = fmtBRL(casa);
-  document.getElementById('bar-receita-casa').style.width    = pctCasaBar + '%';
-  document.getElementById('pct-receita-casa').textContent    = fmt(pctCasaReal,1) + '% da meta';
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const setW   = (id, v) => { const el = document.getElementById(id); if (el) el.style.width = v; };
 
-  document.getElementById('receita-novos-valor').textContent = fmtBRL(novos);
-  document.getElementById('bar-receita-novos').style.width   = pctNovosBar + '%';
-  document.getElementById('pct-receita-novos').textContent   = fmt(pctNovosReal,1) + '% da meta';
+  setTxt('receita-casa-valor', fmtBRL(casa));
+  setW('bar-receita-casa', pctCasaBar + '%');
+  setTxt('pct-receita-casa', fmt(pctCasaReal,1) + '% da meta');
 
-  document.getElementById('novos-clientes-valor').textContent = qtdNovos;
-  document.getElementById('bar-novos-clientes').style.width   = pctNCBar + '%';
-  document.getElementById('pct-novos-clientes').textContent   = qtdNovos + ' de ' + metaNovosClientes;
+  setTxt('receita-novos-valor', fmtBRL(novos));
+  setW('bar-receita-novos', pctNovosBar + '%');
+  setTxt('pct-receita-novos', fmt(pctNovosReal,1) + '% da meta');
+
+  setTxt('novos-clientes-valor', qtdNovos);
+  setW('bar-novos-clientes', pctNCBar + '%');
+  setTxt('pct-novos-clientes', qtdNovos + ' de ' + metaNovosClientes);
 }
 
 // ─── HUBSPOT FETCH ───────────────────────────────
@@ -5229,6 +5583,9 @@ try {
   if (Array.isArray(saved) && saved.length) { tableRows = saved; }
 } catch(e) { log.error('localstorage.read.failed', { key:'table_rows' }, e); }
 
+// Congela Q2 (Abr/Mai/Jun) num histórico e libera tableRows pro trimestre corrente
+if (!IS_VIEWER) _migrateQ2ToHistorical();
+
 // ════════════════════════════════════════════════
 //  TAB NAVIGATION
 // ════════════════════════════════════════════════
@@ -5335,6 +5692,9 @@ function _novosClientesCACNomes(qOpt) {
   };
   try {
     if (typeof Q1_DEALS !== 'undefined') Q1_DEALS.forEach(add);
+  } catch(_) {}
+  try {
+    if (typeof Q2_DEALS !== 'undefined') Q2_DEALS.forEach(add);
   } catch(_) {}
   try { tableRows.forEach(add); } catch(_) {}
   return nomes.sort((a,b) => a.localeCompare(b, 'pt-BR'));
@@ -6411,7 +6771,8 @@ function isUpsellContrato(cliente) {
 
 function updateContratosCards() {
   // Todos os vínculos (MRR e valor total incluem UP — é receita real)
-  const mrr        = contratosRows.reduce((s,r) => s + (parseFloat(r.valorRPO)||0), 0);
+  // MRR = valor por RPO × cadeiras (mensalidade real de cada cliente), somado entre todos os contratos
+  const mrr        = contratosRows.reduce((s,r) => s + (parseFloat(r.valorRPO)||0) * (parseInt(r.cadeiras)||0), 0);
   const totalValor = contratosRows.reduce((s,r) => s + (parseFloat(r.valorTotal)||0), 0);
   const cadeiras   = contratosRows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0);
 
@@ -6500,7 +6861,7 @@ function removeContrato(i) {
     const mesIdx = hoje.getMonth();
     const dataChurn = String(hoje.getDate()).padStart(2,'0') + '/' + String(mesIdx+1).padStart(2,'0');
     const cadeiras = parseInt(row.cadeiras) || 0;
-    const mrr      = parseFloat(row.valorRPO) || 0;
+    const mrr      = (parseFloat(row.valorRPO) || 0) * (cadeiras || 1);
     const total    = parseFloat(row.valorTotal) || 0;
 
     // Evita duplicar se já existir um churn pro mesmo cliente nesta data
@@ -6592,7 +6953,11 @@ function importarContratosDeCADEIRAS() {
     adicionados++;
   });
 
-  if (!adicionados) {
+  // Remove contratos "hs" (auto-criados por deal fechado) que ficaram redundantes:
+  // o mesmo cliente/vínculo já está representado aqui pelo agregado de Cadeiras.
+  const removidos = _removerContratosHSRedundantes();
+
+  if (!adicionados && !removidos) {
     alert('Todos os contratos das cadeiras já estão na lista.');
     return;
   }
@@ -6602,7 +6967,49 @@ function importarContratosDeCADEIRAS() {
 
   renderContratos();
   saveContratosState();
-  setStatus(`✓ ${adicionados} contrato(s) importado(s) das cadeiras`, 'green');
+  const msg = [
+    adicionados ? `${adicionados} contrato(s) importado(s)` : null,
+    removidos   ? `${removidos} duplicado(s) removido(s)`    : null,
+  ].filter(Boolean).join(' · ');
+  setStatus(`✓ ${msg || 'nenhuma alteração'} das cadeiras`, 'green');
+}
+
+// Um mesmo contrato pode acabar com 2 linhas: uma criada automaticamente quando o
+// deal fecha no HubSpot (source:'hs', granular por deal) e outra ao importar de
+// Cadeiras (source:'cadeiras', agregada por cliente+vigência). Quando o agregado já
+// cobre o mesmo cliente/vigência/valor por RPO, a linha "hs" é redundante — some ela
+// da contagem (senão duplica MRR e valor total do contrato).
+// Roda uma vez (limpeza de dados já duplicados antes do fix): remove contratos
+// "hs" redundantes que já estavam na lista antes desta correção existir.
+function _limparContratosDuplicadosUmaVez() {
+  if (localStorage.getItem('contratos_dedup_hs_v1') === 'true') return 0;
+  const removidos = _removerContratosHSRedundantes();
+  if (removidos > 0) {
+    saveContratosState();
+    log.info('contratos.dedup_hs_placeholder', { removidos });
+  }
+  localStorage.setItem('contratos_dedup_hs_v1', 'true');
+  return removidos;
+}
+
+function _removerContratosHSRedundantes() {
+  let removidos = 0;
+  const agregados = contratosRows.filter(c => c.source === 'cadeiras');
+  for (let idx = contratosRows.length - 1; idx >= 0; idx--) {
+    const r = contratosRows[idx];
+    if (r.source !== 'hs') continue;
+    const clienteR = (r.cliente || '').trim().toLowerCase();
+    if (!clienteR) continue;
+    const rpoR = parseFloat(r.valorRPO) || 0;
+    const bate = agregados.some(a => {
+      if ((a.cliente || '').trim().toLowerCase() !== clienteR) return false;
+      const vigenciaBate = !r.vigencia || r.vigencia === a.vigencia;
+      const rpoBate       = rpoR === (parseFloat(a.valorRPO) || 0);
+      return vigenciaBate && rpoBate;
+    });
+    if (bate) { contratosRows.splice(idx, 1); removidos++; }
+  }
+  return removidos;
 }
 
 function exportContratosCSV() {
@@ -6955,6 +7362,10 @@ function getNovosClientesNomesPorQuarter(q) {
     (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : [])
       .filter(d => MESES_POR_Q.Q1.includes(d.mes) && isNovoLogo(d))
       .forEach(d => add(d.cliente));
+  } else if (q === 'Q2') {
+    (typeof Q2_DEALS !== 'undefined' ? Q2_DEALS : [])
+      .filter(d => MESES_POR_Q.Q2.includes(d.mes) && isNovoLogo(d))
+      .forEach(d => add(d.cliente));
   } else {
     tableRows
       .filter(r => MESES_POR_Q[q].includes(r.mes) && isNovoLogo(r))
@@ -7043,8 +7454,9 @@ function updateChurnCards() {
 
 // Recebe um mês ('Jan', 'Fev'...) e retorna { receitaTotal, receitaMRR }
 function getReceitaPorMes(mes) {
-  // Q1: usa Q1_DEALS  ·  Q2 em diante: tableRows ao vivo
+  // Q1: usa Q1_DEALS  ·  Q2: usa Q2_DEALS (histórico)  ·  Q3 em diante: tableRows ao vivo
   const Q1_NOMES = ['Jan','Fev','Mar'];
+  const Q2_NOMES = ['Abr','Mai','Jun'];
   if (Q1_NOMES.includes(mes)) {
     const deals = (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).filter(d => d.mes === mes);
     const valor       = deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0);
@@ -7052,7 +7464,15 @@ function getReceitaPorMes(mes) {
     const cadeiras    = deals.reduce((s,d) => s + (parseInt(d.alocacoes)||0), 0);
     return { receitaTotal: valor, receitaMRR, cadeiras };
   }
-  // Q2 em diante — usa tableRows
+  if (Q2_NOMES.includes(mes)) {
+    const deals = (typeof Q2_DEALS !== 'undefined' ? Q2_DEALS : []).filter(d => d.mes === mes);
+    return {
+      cadeiras: deals.reduce((s,d) => s + (parseInt(d.alocacoes)||0), 0),
+      receitaTotal: deals.reduce((s,d) => s + (parseFloat(d.valor)||0), 0),
+      receitaMRR:   deals.reduce((s,d) => s + (parseFloat(d.mensalidade)||0), 0),
+    };
+  }
+  // Q3 em diante — usa tableRows (aba ao vivo)
   const rows = tableRows.filter(r => r.mes === mes);
   return {
     cadeiras: rows.reduce((s,r) => s + (parseInt(r.alocacoes)||0), 0),
@@ -7090,6 +7510,10 @@ function getNovosClientesPorQuarter(q) {
   if (q === 'Q1') {
     (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : [])
       .filter(d => MESES_POR_Q.Q1.includes(d.mes) && isNovoLogo(d))
+      .forEach(d => clientes.add((d.cliente||'').trim().toLowerCase()));
+  } else if (q === 'Q2') {
+    (typeof Q2_DEALS !== 'undefined' ? Q2_DEALS : [])
+      .filter(d => MESES_POR_Q.Q2.includes(d.mes) && isNovoLogo(d))
       .forEach(d => clientes.add((d.cliente||'').trim().toLowerCase()));
   } else {
     tableRows
@@ -7136,9 +7560,12 @@ function _cadeirasNovasAutoQ(q) {
     const n = parseInt(a) || 0;
     return n > 0 ? n : 1; // se vazio, assume 1
   };
-  // Q1 vem de Q1_DEALS; demais de tableRows
-  if (q === 'Q1') {
-    (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
+  // Q1 vem de Q1_DEALS; Q2 vem de Q2_DEALS (histórico); demais de tableRows
+  if (q === 'Q1' || q === 'Q2') {
+    const fonte = q === 'Q1'
+      ? (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : [])
+      : (typeof Q2_DEALS !== 'undefined' ? Q2_DEALS : []);
+    fonte.forEach(d => {
       if (!meses.includes(d.mes)) return;
       if (!isNovoLogo(d)) return;
       const nm = (d.cliente||'').trim();
@@ -7224,6 +7651,10 @@ function renderChurnSaldo(byQ) {
       const allocOf = r => { const n = parseInt(r.alocacoes)||0; return n > 0 ? n : 1; };
       if (['Jan','Fev','Mar'].includes(mes)) {
         (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
+          if (d.mes === mes && isNovoLogo(d)) total += allocOf(d);
+        });
+      } else if (['Abr','Mai','Jun'].includes(mes)) {
+        (typeof Q2_DEALS !== 'undefined' ? Q2_DEALS : []).forEach(d => {
           if (d.mes === mes && isNovoLogo(d)) total += allocOf(d);
         });
       } else {
@@ -7639,6 +8070,7 @@ function _refreshConvMirrors() {
   try {
     if (document.getElementById('conv-summary-q1'))    renderConvQuarter('Q1', 'conv-summary-q1');
     if (document.getElementById('conv-summary-q2'))    renderConvQuarter('Q2', 'conv-summary-q2');
+    if (document.getElementById('conv-summary-q3'))    renderConvQuarter('Q3', 'conv-summary-q3');
     if (document.getElementById('conv-summary-anual')) renderConvAnual('conv-summary-anual');
   } catch(e) { log.warn('conv.mirror.refresh.failed', {}, e); }
 }
@@ -7705,8 +8137,10 @@ function getFechadosCount(key, filtroDim, filtroVal) {
   }
 
   const Q1_MESES = ['Jan','Fev','Mar'];
+  const Q2_MESES = ['Abr','Mai','Jun'];
   const usaQ1 = meses.some(m => Q1_MESES.includes(m));
-  const usaTb = meses.some(m => !Q1_MESES.includes(m));
+  const usaQ2 = meses.some(m => Q2_MESES.includes(m));
+  const usaTb = meses.some(m => !Q1_MESES.includes(m) && !Q2_MESES.includes(m));
 
   // REGRA: só conta deals que foram ABERTOS E FECHADOS no mesmo período.
   // Se mesCreate/anoCreate não estiver setado (deal manual antigo, Q1_DEALS), assume mesmo período (compat).
@@ -7721,6 +8155,15 @@ function getFechadosCount(key, filtroDim, filtroVal) {
 
   if (usaQ1) {
     (typeof Q1_DEALS !== 'undefined' ? Q1_DEALS : []).forEach(d => {
+      if (!meses.includes(d.mes)) return;
+      if (!mesmoPeriodo(d)) return;
+      if (filtroDim === 'canais' && (d.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
+      if (filtroDim === 'tipos'  && d.tipo  !== filtroVal) return;
+      count++;
+    });
+  }
+  if (usaQ2) {
+    (typeof Q2_DEALS !== 'undefined' ? Q2_DEALS : []).forEach(d => {
       if (!meses.includes(d.mes)) return;
       if (!mesmoPeriodo(d)) return;
       if (filtroDim === 'canais' && (d.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
@@ -8565,6 +9008,14 @@ function sincronizarFechadosNaTrilha() {
     }
   } catch(_){}
   try {
+    if (typeof Q2_DEALS !== 'undefined') {
+      Q2_DEALS.forEach(d => todosDeals2026.push({
+        cliente: d.cliente, canal: d.canal, mes: d.mes, valor: d.valor,
+        data: d.data, tipo: d.tipo, source:'q2', anoCreate: 2026,
+      }));
+    }
+  } catch(_){}
+  try {
     tableRows.forEach(r => {
       // Filtra deals que não sejam de 2026 (anoCreate explícito ou createdate)
       const ano = r.anoCreate || (r.createdate ? new Date(r.createdate).getFullYear() : null);
@@ -8747,9 +9198,10 @@ function renderAquisicaoCanal() {
   const ALL_MESES = ['Jan','Fev','Mar','Abr','Mai','Jun'];
   const canalCores = {NTW:'#9900FF', OUT:'#000000', INB:'#00B8A9'};
 
-  // Junta Q1_DEALS + tableRows (apenas canais de aquisição)
+  // Junta Q1_DEALS + Q2_DEALS + tableRows (apenas canais de aquisição)
   const todosDeals = [];
   try { if (typeof Q1_DEALS !== 'undefined') Q1_DEALS.forEach(d => todosDeals.push(d)); } catch(_) {}
+  try { if (typeof Q2_DEALS !== 'undefined') Q2_DEALS.forEach(d => todosDeals.push(d)); } catch(_) {}
   try { tableRows.forEach(r => todosDeals.push(r)); } catch(_) {}
   const aqDeals = todosDeals.filter(d => AQ_CANAIS_SET.includes((d.canal||'').toUpperCase()));
 
