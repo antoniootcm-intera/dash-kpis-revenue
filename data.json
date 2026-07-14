@@ -2178,7 +2178,7 @@
     {
       "cliente": "Banco Inter",
       "servico": "RPO",
-      "canal": "REN",
+      "canal": "OUT",
       "valor": 204000,
       "mensalidade": 17000,
       "ciclo": 0,
@@ -2779,5 +2779,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-07-14T18:17:01.862Z"
+  "snapshot_at": "2026-07-14T18:17:16.643Z"
 }
