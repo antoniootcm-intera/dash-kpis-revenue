@@ -2567,8 +2567,11 @@ function _migrateQ2ToHistorical() {
   const Q2_MESES = ['Abr','Mai','Jun'];
   if (!Q2_DEALS.length) {
     const moved = tableRows.filter(r => Q2_MESES.includes(r.mes));
-    Q2_DEALS = moved.length ? moved.map(r => ({ ...r })) : JSON.parse(JSON.stringify(Q2_DEALS_DEFAULTS));
-    saveQ2Deals();
+    // Não usa mais Q2_DEALS_DEFAULTS aqui: preencher com negócios de exemplo
+    // (fictícios) quando não há nada pra migrar só confundia — se não achou
+    // nada real, fica vazio mesmo (a recuperação automática cobre o caso de
+    // dado perdido; aqui é só ausência legítima).
+    if (moved.length) { Q2_DEALS = moved.map(r => ({ ...r })); saveQ2Deals(); }
   }
   tableRows = tableRows.filter(r => !Q2_MESES.includes(r.mes));
   try { localStorage.setItem('table_rows', JSON.stringify(tableRows)); } catch(e) {}
@@ -5583,8 +5586,58 @@ try {
   if (Array.isArray(saved) && saved.length) { tableRows = saved; }
 } catch(e) { log.error('localstorage.read.failed', { key:'table_rows' }, e); }
 
-// Congela Q2 (Abr/Mai/Jun) num histórico e libera tableRows pro trimestre corrente
-if (!IS_VIEWER) _migrateQ2ToHistorical();
+// ─── RECUPERAÇÃO AUTOMÁTICA ──────────────────────
+// Se o navegador local está com table_rows E q2_deals vazios (perda de dados —
+// ex: cache do navegador limpo), restaura automaticamente a partir do último
+// snapshot publicado (data.json no GitHub Pages), que é sempre a fonte mais
+// recente e confiável dos dados reais.
+async function _tentarRecuperarDoDataJson() {
+  try {
+    const rawTR = localStorage.getItem('table_rows');
+    const rawQ2 = localStorage.getItem('q2_deals');
+    const arrTR = rawTR ? (JSON.parse(rawTR) || []) : [];
+    const arrQ2 = rawQ2 ? (JSON.parse(rawQ2) || []) : [];
+    const trVazio = arrTR.length === 0;
+    // Também conta como "vazio" o caso em que Q2 caiu nos negócios de exemplo
+    // (placeholder antigo) em vez dos dados reais — sinal de perda de dados.
+    const q2Placeholder = arrQ2.length === Q2_DEALS_DEFAULTS.length &&
+      arrQ2[0] && arrQ2[0].cliente === Q2_DEALS_DEFAULTS[0].cliente;
+    const q2Vazio = arrQ2.length === 0 || q2Placeholder;
+    if (!(trVazio && q2Vazio)) return; // dados presentes, não mexe em nada
+
+    const r = await fetch('https://antoniootcm-intera.github.io/dash-kpis-revenue/data.json');
+    if (!r.ok) return;
+    const d = await r.json();
+
+    const setArr = (key, val) => { if (Array.isArray(val)) localStorage.setItem(key, JSON.stringify(val)); };
+    setArr('table_rows',     d.table_rows);
+    setArr('q1_deals',       d.q1_deals);
+    setArr('q2_deals',       d.q2_deals);
+    setArr('cadeiras_rows',  d.cadeiras_rows);
+    setArr('contratos_rows', d.contratos_rows);
+    setArr('churn_rows',     d.churn_rows);
+    if (d.oportunidades_data) localStorage.setItem('oportunidades_data', JSON.stringify(d.oportunidades_data));
+    if (d.hs_overrides)  localStorage.setItem('hs_overrides', JSON.stringify(d.hs_overrides));
+    if (d.hs_deleted)    localStorage.setItem('hs_deleted', JSON.stringify(d.hs_deleted));
+    if (d.cac_state)     localStorage.setItem('cac_state', JSON.stringify(d.cac_state));
+    if (d.okr_state)     localStorage.setItem('okr_state', JSON.stringify(d.okr_state));
+    if (d.realizado_locked !== undefined) localStorage.setItem('realizado_locked', String(d.realizado_locked));
+    localStorage.setItem('q2_migrated', 'true'); // snapshot publicado já reflete o Q2 migrado
+
+    const quando = d.snapshot_at ? new Date(d.snapshot_at).toLocaleString('pt-BR') : 'último snapshot';
+    alert('Os dados deste navegador estavam vazios (Q2/Q3 zerados) — restaurei automaticamente a partir do último backup publicado (' + quando + ').\n\nA página vai recarregar agora.');
+    location.reload();
+  } catch(e) {
+    log.error('recovery.failed', {}, e);
+  }
+}
+// A recuperação PRECISA terminar (ou concluir que não é necessária) antes da
+// migração rodar — senão a migração corre na frente, não acha nada pra mover
+// e o Q2 acaba com os negócios de exemplo em vez de esperar os dados reais
+// chegarem da nuvem.
+if (!IS_VIEWER) {
+  _tentarRecuperarDoDataJson().then(() => { _migrateQ2ToHistorical(); });
+}
 
 // ════════════════════════════════════════════════
 //  TAB NAVIGATION
