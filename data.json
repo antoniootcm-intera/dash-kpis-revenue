@@ -175,6 +175,24 @@
       "_locked": true
     },
     {
+      "id": "63027950407",
+      "cliente": "Global",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 90000,
+      "data": "05/08",
+      "mes": "Ago",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 6,
+      "ciclo": 12,
+      "createdate": "2026-07-24T15:02:09.333Z",
+      "mesCreate": "Jul",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 15000
+    },
+    {
       "id": "63433823759",
       "cliente": "Banco Inter",
       "servico": "RPO",
@@ -1374,6 +1392,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_63027950407",
+      "dealId": "63027950407",
+      "servico": "RPO",
+      "cliente": "Global",
+      "vigencia": "",
+      "dataInicio": "05/08",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1925,6 +1966,21 @@
       "cadeiras": null,
       "valorRPO": null,
       "valorTotal": 81000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_63027950407",
+      "dealId": "63027950407",
+      "cliente": "Global",
+      "vigencia": "",
+      "inicio": "05/08",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 90000,
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
@@ -3119,6 +3175,12 @@
       "alocacoes": "1",
       "tipo": "GG",
       "canal": "OUT"
+    },
+    "63027950407": {
+      "mensalidade": 15000,
+      "alocacoes": "1",
+      "tipo": "GG",
+      "canal": "REN"
     }
   },
   "hs_deleted": [
@@ -3323,9 +3385,9 @@
   },
   "viewer_password_hash": "",
   "okr_state": {
-    "input-realizado": "880000",
+    "input-realizado": "970000",
     "input-clientes": "0",
-    "input-duracao": "54",
+    "input-duracao": "53",
     "cac-gastos": "0",
     "chart-meta": "1400000",
     "chart-periodo": "semanas",
@@ -3333,5 +3395,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-08-04T18:06:34.448Z"
+  "snapshot_at": "2026-08-05T20:09:19.454Z"
 }
