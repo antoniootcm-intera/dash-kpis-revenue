@@ -175,6 +175,24 @@
       "_locked": true
     },
     {
+      "id": "62929981839",
+      "cliente": "Radix",
+      "servico": "RPO",
+      "canal": "INB",
+      "valor": 102000,
+      "data": "07/08",
+      "mes": "Ago",
+      "alocacoes": "2",
+      "tipo": "GG",
+      "semana": 6,
+      "ciclo": 17,
+      "createdate": "2026-07-21T19:22:23.397Z",
+      "mesCreate": "Jul",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 17000
+    },
+    {
       "id": "63027950407",
       "cliente": "Global",
       "servico": "RPO",
@@ -190,7 +208,8 @@
       "mesCreate": "Jul",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 15000
+      "mensalidade": 15000,
+      "_locked": true
     },
     {
       "id": "63433823759",
@@ -1415,6 +1434,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_62929981839",
+      "dealId": "62929981839",
+      "servico": "RPO",
+      "cliente": "Radix",
+      "vigencia": "",
+      "dataInicio": "07/08",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1981,6 +2023,21 @@
       "cadeiras": null,
       "valorRPO": null,
       "valorTotal": 90000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_62929981839",
+      "dealId": "62929981839",
+      "cliente": "Radix",
+      "vigencia": "",
+      "inicio": "07/08",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 102000,
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
@@ -3181,6 +3238,12 @@
       "alocacoes": "1",
       "tipo": "GG",
       "canal": "REN"
+    },
+    "62929981839": {
+      "canal": "INB",
+      "mensalidade": 17000,
+      "alocacoes": "2",
+      "tipo": "GG"
     }
   },
   "hs_deleted": [
@@ -3385,9 +3448,9 @@
   },
   "viewer_password_hash": "",
   "okr_state": {
-    "input-realizado": "970000",
+    "input-realizado": "1072000",
     "input-clientes": "0",
-    "input-duracao": "53",
+    "input-duracao": "52",
     "cac-gastos": "0",
     "chart-meta": "1400000",
     "chart-periodo": "semanas",
@@ -3395,5 +3458,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-08-05T20:09:19.454Z"
+  "snapshot_at": "2026-08-07T12:12:52.915Z"
 }
