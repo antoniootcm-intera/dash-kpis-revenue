@@ -80,6 +80,25 @@
       "_locked": true
     },
     {
+      "id": "62044437844",
+      "cliente": "Renner ",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 16000,
+      "data": "07/08",
+      "mes": "Ago",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 6,
+      "ciclo": 61,
+      "createdate": "2026-07-01T14:29:02.389Z",
+      "mesCreate": "Jul",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 16000,
+      "_locked": true
+    },
+    {
       "id": "62045631125",
       "cliente": "Riachuelo Estágio ",
       "servico": "RPO",
@@ -190,7 +209,8 @@
       "mesCreate": "Jul",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 17000
+      "mensalidade": 17000,
+      "_locked": true
     },
     {
       "id": "63027950407",
@@ -248,6 +268,43 @@
       "source": "hs",
       "mensalidade": 17000,
       "_locked": true
+    },
+    {
+      "id": "63676952321",
+      "cliente": "Cielo",
+      "servico": "RPO",
+      "canal": "UP",
+      "valor": 51000,
+      "data": "10/08",
+      "mes": "Ago",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 6,
+      "ciclo": 51,
+      "createdate": "2026-08-10T17:39:29.589Z",
+      "mesCreate": "Ago",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 17000,
+      "_locked": true
+    },
+    {
+      "id": "63717556601",
+      "cliente": "Boticário",
+      "servico": "RPO",
+      "canal": "Up",
+      "valor": 192000,
+      "data": "10/08",
+      "mes": "Ago",
+      "alocacoes": "3",
+      "tipo": "Enterprise",
+      "semana": 6,
+      "ciclo": 50,
+      "createdate": "2026-08-11T18:19:09.146Z",
+      "mesCreate": "Ago",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 16000
     }
   ],
   "cadeiras_rows": [
@@ -393,8 +450,8 @@
       "id": "cad_init_21",
       "servico": "RPO",
       "cliente": "Caffeine Army",
-      "vigencia": "junho/2026",
-      "dataInicio": "12/012",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "12/12",
       "meses": [
         "DESALOCADO",
         "ATIVO",
@@ -1457,6 +1514,75 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_62044437844",
+      "dealId": "62044437844",
+      "servico": "RPO",
+      "cliente": "Renner - Bruna - Ren",
+      "vigencia": "",
+      "dataInicio": "31/08",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
+    },
+    {
+      "id": "cad_hs_63676952321",
+      "dealId": "63676952321",
+      "servico": "RPO",
+      "cliente": "Cielo",
+      "vigencia": "",
+      "dataInicio": "30/09",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
+    },
+    {
+      "id": "cad_hs_63717556601",
+      "dealId": "63717556601",
+      "servico": "RPO",
+      "cliente": "Boticário",
+      "vigencia": "",
+      "dataInicio": "30/09",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1479,14 +1605,14 @@
       "id": "cont_cad_1778536769511_22",
       "cliente": "RNP",
       "vigencia": "julho/2026",
-      "inicio": "06/01",
-      "fim": "06/07",
+      "inicio": "11/08",
+      "fim": "11/02",
       "duracao": 6,
       "cadeiras": 1,
-      "valorRPO": 14000,
-      "valorTotal": 78000,
+      "valorRPO": 13500,
+      "valorTotal": 81000,
       "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
+      "linkContrato": "https://drive.google.com/file/d/1NFdeSpAkfwK7UAf43IK-xubvX-GgY3xe/view?usp=sharing",
       "source": "cadeiras"
     },
     {
@@ -1983,21 +2109,6 @@
       "source": "hs"
     },
     {
-      "id": "cont_manual_1785845227231",
-      "dealId": "manual_1785845227231",
-      "cliente": "Novo Cliente",
-      "vigencia": "",
-      "inicio": "04/08",
-      "fim": "",
-      "duracao": null,
-      "cadeiras": null,
-      "valorRPO": null,
-      "valorTotal": null,
-      "tipoContrato": "",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
       "id": "cont_60694988816",
       "dealId": "60694988816",
       "cliente": "RNP",
@@ -2038,6 +2149,51 @@
       "cadeiras": null,
       "valorRPO": null,
       "valorTotal": 102000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_62044437844",
+      "dealId": "62044437844",
+      "cliente": "Renner - Bruna - Ren",
+      "vigencia": "",
+      "inicio": "31/08",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 16000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_63676952321",
+      "dealId": "63676952321",
+      "cliente": "Cielo",
+      "vigencia": "",
+      "inicio": "30/09",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 51000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_63717556601",
+      "dealId": "63717556601",
+      "cliente": "Boticário",
+      "vigencia": "",
+      "inicio": "30/09",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 192000,
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
@@ -2296,6 +2452,17 @@
       "mrrPerdido": 15000,
       "contratoTotal": 15000,
       "motivo": "Mudança de estratégia"
+    },
+    {
+      "id": "churn_1786450174139",
+      "cliente": "Novo Cliente",
+      "tipo": "logo",
+      "mes": "Ago",
+      "dataChurn": "11/08",
+      "cadeiras": 1,
+      "mrrPerdido": 0,
+      "contratoTotal": 0,
+      "motivo": "Removido do controle de contratos"
     }
   ],
   "q1_deals": [
@@ -2807,6 +2974,48 @@
       "semana": "12"
     }
   ],
+  "forecast_deals": [
+    {
+      "cliente": "Localiza",
+      "prazo": "4 meses",
+      "mrr": 15000,
+      "valor": 60000,
+      "expectativa": "Próxima semana",
+      "canal": "REN"
+    },
+    {
+      "cliente": "Radix",
+      "prazo": "3 meses",
+      "mrr": 17000,
+      "valor": 102000,
+      "expectativa": "Esta semana",
+      "canal": "UP"
+    },
+    {
+      "cliente": "XP",
+      "prazo": "3 meses",
+      "mrr": 32000,
+      "valor": 96000,
+      "expectativa": "30 dias",
+      "canal": "NTW"
+    },
+    {
+      "cliente": "Caffeine Army",
+      "prazo": "3 meses",
+      "mrr": 15000,
+      "valor": 45000,
+      "expectativa": "15 dias",
+      "canal": "UP"
+    },
+    {
+      "cliente": "Olist",
+      "prazo": "3 meses",
+      "mrr": 17000,
+      "valor": 51000,
+      "expectativa": "Esta semana",
+      "canal": "NTW"
+    }
+  ],
   "oportunidades_data": {
     "Q1": {
       "canais": {
@@ -3190,7 +3399,8 @@
       "alocacoes": "1",
       "tipo": "Enterprise",
       "cliente": "Riachuelo Natal/RN",
-      "canal": "UP"
+      "canal": "UP",
+      "valor": 108000
     },
     "62412761486": {
       "mensalidade": 17000,
@@ -3244,6 +3454,32 @@
       "mensalidade": 17000,
       "alocacoes": "2",
       "tipo": "GG"
+    },
+    "62044437844": {
+      "data": "07/08",
+      "semana": 6,
+      "mes": "Ago",
+      "mensalidade": 16000,
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "cliente": "Renner ",
+      "canal": "REN"
+    },
+    "63676952321": {
+      "data": "10/08",
+      "semana": 6,
+      "mes": "Ago",
+      "mensalidade": 17000,
+      "alocacoes": "1",
+      "tipo": "Enterprise"
+    },
+    "63717556601": {
+      "mensalidade": 16000,
+      "data": "10/08",
+      "semana": 6,
+      "mes": "Ago",
+      "alocacoes": "3",
+      "tipo": "Enterprise"
     }
   },
   "hs_deleted": [
@@ -3446,11 +3682,11 @@
       }
     }
   },
-  "viewer_password_hash": "",
+  "viewer_password_hash": "323af34cd5ffeacc472b4608c2b68209d27552024511649cfe5fb4ed1bcd99ce",
   "okr_state": {
-    "input-realizado": "1072000",
+    "input-realizado": "1331000",
     "input-clientes": "0",
-    "input-duracao": "52",
+    "input-duracao": "49",
     "cac-gastos": "0",
     "chart-meta": "1400000",
     "chart-periodo": "semanas",
@@ -3458,5 +3694,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-08-10T14:11:08.324Z"
+  "snapshot_at": "2026-09-01T19:22:05.091Z"
 }
