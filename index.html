@@ -363,6 +363,7 @@
 <!-- Sub-tabs do Dashboard -->
 <div class="dash-subtabs">
   <button class="dash-sub ds-active" onclick="switchDashSub('q3-2026')">🎯 Q3 2026 — Atual</button>
+  <button class="dash-sub" onclick="switchDashSub('forecast')">🔮 Forecast</button>
   <button class="dash-sub" onclick="switchDashSub('q2-2026')">✅ Q2 2026</button>
   <button class="dash-sub" onclick="switchDashSub('q1-2026')">✅ Q1 2026</button>
   <button class="dash-sub" onclick="switchDashSub('anual-2026')">🗓️ Anual 2026</button>
@@ -638,6 +639,80 @@
 </section>
 
 </div><!-- /dash-sub-q3-2026 -->
+
+<!-- ═══ SUB-PAINEL: Forecast (pipeline de possíveis clientes — trimestre atual) ═══ -->
+<div id="dash-sub-forecast" style="display:none" class="space-y-8">
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+    <span class="text-lg font-bold">🔮 Forecast — Q3 2026</span>
+    <span class="text-blue-200 text-xs">Pipeline de possíveis clientes ainda não fechados</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+
+    <!-- Cards resumo -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">OPORTUNIDADES</p>
+        <p class="text-lg font-bold" style="color:#9900FF;" id="forecast-resumo-qtd">0</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#E0F2F1;border-color:#80CBC4;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">MRR NEGOCIADO (TOTAL)</p>
+        <p class="text-lg font-bold" style="color:#00786F;" id="forecast-resumo-mrr">R$ 0,00</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#8B6914;">VALOR TOTAL (PIPELINE)</p>
+        <p class="text-lg font-bold" style="color:#8B6914;" id="forecast-resumo-valor">R$ 0,00</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#E8F5E9;border-color:#A5D6A7;">
+        <p class="text-xs font-semibold mb-1" style="color:#2E7D32;">FECHAMENTO ATÉ 30 DIAS</p>
+        <p class="text-lg font-bold" style="color:#2E7D32;" id="forecast-resumo-30d">R$ 0,00</p>
+      </div>
+    </div>
+
+    <!-- Tabela de forecast -->
+    <div class="overflow-x-auto">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>Possível Cliente</th>
+            <th>Canal</th>
+            <th>Prazo do Contrato</th>
+            <th>MRR Negociado</th>
+            <th>Valor Total</th>
+            <th>Expectativa de Fechamento</th>
+            <th class="no-print admin-only" style="width:36px;">✕</th>
+          </tr>
+        </thead>
+        <tbody id="forecast-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td style="text-align:left;font-weight:700;">TOTAL FORECAST</td>
+            <td></td>
+            <td></td>
+            <td id="forecast-total-mrr" style="font-weight:700;color:#00B8A9;">R$ 0,00</td>
+            <td id="forecast-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
+            <td></td>
+            <td class="no-print admin-only"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="mt-3 admin-only no-print">
+      <button onclick="addForecastDeal()" class="text-sm font-semibold px-3 py-1.5 rounded-lg border-2 transition"
+        style="border-color:var(--accent);color:var(--accent);background:#fff;"
+        onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='#fff'">
+        + Adicionar possível cliente
+      </button>
+    </div>
+    <p class="text-xs italic" style="color:var(--muted);">
+      Este forecast é só um acompanhamento de pipeline — não entra na meta/realizado do trimestre até o contrato ser fechado de fato.
+    </p>
+
+  </div>
+</section>
+
+</div><!-- /dash-sub-forecast -->
 
 <!-- ═══ SUB-PAINEL: Q2 2026 (histórico — Abr/Mai/Jun, consolidado) ═══ -->
 <div id="dash-sub-q2-2026" style="display:none" class="space-y-8">
@@ -2394,7 +2469,7 @@ const log = {
 window.__interaLogs = function() { return _logBuffer.slice(); };
 
 // ─── DASHBOARD SUB-TABS ─────────────────────────
-const DASH_SUBS = ['q3-2026','q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
+const DASH_SUBS = ['q3-2026','forecast','q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
 let _histChartsReady = false;
 
 let _q2CanalReady = false;
@@ -2651,6 +2726,102 @@ function removeQ2Deal(i) {
   renderQ2Deals();
   renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
   if (typeof updateChurnCards === 'function') updateChurnCards();
+}
+
+// ─── FORECAST (pipeline de possíveis clientes — trimestre atual) ────
+// Não entra em meta/realizado: é só acompanhamento até o contrato fechar de verdade.
+let FORECAST_DEALS;
+try {
+  const saved = JSON.parse(localStorage.getItem('forecast_deals') || 'null');
+  FORECAST_DEALS = Array.isArray(saved) ? saved : [];
+} catch(e) { FORECAST_DEALS = []; }
+
+function saveForecastDeals() {
+  try { localStorage.setItem('forecast_deals', JSON.stringify(FORECAST_DEALS)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'forecast_deals', size: JSON.stringify(FORECAST_DEALS).length }, e); }
+}
+
+function updateForecastField(i, field, value) {
+  if (IS_VIEWER) return;
+  if (!FORECAST_DEALS[i]) return;
+  FORECAST_DEALS[i][field] = value;
+  saveForecastDeals();
+  renderForecastDeals();
+}
+
+function addForecastDeal() {
+  FORECAST_DEALS.push({ cliente:'Novo possível cliente', canal:'', prazo:'', mrr:0, valor:0, expectativa:'30 dias' });
+  saveForecastDeals();
+  renderForecastDeals();
+}
+
+function removeForecastDeal(i) {
+  if (!confirm('Remover este possível cliente do forecast?')) return;
+  FORECAST_DEALS.splice(i, 1);
+  saveForecastDeals();
+  renderForecastDeals();
+}
+
+function renderForecastDeals() {
+  const tbody = document.getElementById('forecast-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  const EXPECTATIVA_OPTS  = ['Esta semana','Próxima semana','15 dias','30 dias','Mais de 30 dias'];
+  const EXPECTATIVA_ORDEM = { 'Esta semana':0, 'Próxima semana':1, '15 dias':2, '30 dias':3, 'Mais de 30 dias':4 };
+  const EXPECTATIVA_COR   = { 'Esta semana':'#2E7D32', 'Próxima semana':'#558B2F', '15 dias':'#B8860B', '30 dias':'#C2410C', 'Mais de 30 dias':'#9ca3af' };
+  const FORECAST_CANAL_OPTS = ['UP','REN','OUT','INB','NTW'];
+
+  const indexed = FORECAST_DEALS.map((d, i) => ({ d, i }));
+  indexed.sort((a, b) => (EXPECTATIVA_ORDEM[a.d.expectativa] ?? 99) - (EXPECTATIVA_ORDEM[b.d.expectativa] ?? 99));
+
+  let totalMrr = 0, totalValor = 0, total30d = 0;
+  indexed.forEach(({ d, i }) => {
+    const mrr   = parseFloat(d.mrr) || 0;
+    const valor = parseFloat(d.valor) || 0;
+    totalMrr   += mrr;
+    totalValor += valor;
+    if ((EXPECTATIVA_ORDEM[d.expectativa] ?? 99) <= 3) total30d += valor;
+    const cor = EXPECTATIVA_COR[d.expectativa] || '#9ca3af';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:600;">
+        <span contenteditable="true" class="churn-cell" onblur="updateForecastField(${i},'cliente',this.textContent.trim())">${esc(d.cliente||'')}</span>
+      </td>
+      <td style="text-align:center;">
+        <select class="tag ${canalClass(d.canal)} border-0 cursor-pointer" onchange="updateForecastField(${i},'canal',this.value)">
+          <option value="" ${!d.canal?'selected':''}></option>
+          ${FORECAST_CANAL_OPTS.map(o => `<option ${(d.canal||'').toUpperCase()===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td style="text-align:center;">
+        <span contenteditable="true" class="churn-cell" onblur="updateForecastField(${i},'prazo',this.textContent.trim())">${esc(d.prazo||'')}</span>
+      </td>
+      <td style="font-weight:600;color:#00B8A9;text-align:right;">
+        <span contenteditable="true" class="churn-cell" onblur="updateForecastField(${i},'mrr',parseMoeda(this.textContent))">${fmtBRL(mrr)}</span>
+      </td>
+      <td style="font-weight:600;color:var(--accent);text-align:right;">
+        <span contenteditable="true" class="churn-cell" onblur="updateForecastField(${i},'valor',parseMoeda(this.textContent))">${fmtBRL(valor)}</span>
+      </td>
+      <td style="text-align:center;">
+        <select onchange="updateForecastField(${i},'expectativa',this.value)" class="churn-mes-sel" style="color:${cor};font-weight:600;">
+          ${EXPECTATIVA_OPTS.map(o => `<option ${d.expectativa===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </td>
+      <td class="no-print admin-only" style="text-align:center;">
+        <button onclick="removeForecastDeal(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;background:none;border:none;cursor:pointer;"
+          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setTxt('forecast-total-mrr',    fmtBRL(totalMrr));
+  setTxt('forecast-total-valor',  fmtBRL(totalValor));
+  setTxt('forecast-resumo-qtd',   String(FORECAST_DEALS.length));
+  setTxt('forecast-resumo-mrr',   fmtBRL(totalMrr));
+  setTxt('forecast-resumo-valor', fmtBRL(totalValor));
+  setTxt('forecast-resumo-30d',   fmtBRL(total30d));
 }
 
 // Wrappers legados — mantidos para compatibilidade
@@ -4207,6 +4378,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
         if (Array.isArray(d.q1_deals) && d.q1_deals.length) Q1_DEALS = d.q1_deals;
         if (Array.isArray(d.q2_deals) && d.q2_deals.length) Q2_DEALS = d.q2_deals;
+        if (Array.isArray(d.forecast_deals)) FORECAST_DEALS = d.forecast_deals;
         _migrateQ2ToHistorical();
         if (d.oportunidades_data && typeof d.oportunidades_data === 'object') oportunidadesData = d.oportunidades_data;
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
@@ -4233,6 +4405,7 @@ window.addEventListener('DOMContentLoaded', () => {
         rebuildLineChart();
         renderQ1Deals();
         renderQ2Deals();
+        renderForecastDeals();
         renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
         renderQ2Analytics();
         renderHist2025Table();
@@ -4277,6 +4450,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Render tabelas históricas (não precisam de canvas visível)
   renderQ1Deals();
   renderQ2Deals();
+  renderForecastDeals();
   renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
   renderQ2Analytics();
   renderHist2025Table();
@@ -4445,6 +4619,7 @@ async function publicarSnapshot() {
       churn_rows:       churnRows,
       q1_deals:         Q1_DEALS,
       q2_deals:         Q2_DEALS,
+      forecast_deals:   FORECAST_DEALS,
       oportunidades_data: oportunidadesData,
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
@@ -5613,6 +5788,7 @@ async function _tentarRecuperarDoDataJson() {
     setArr('table_rows',     d.table_rows);
     setArr('q1_deals',       d.q1_deals);
     setArr('q2_deals',       d.q2_deals);
+    setArr('forecast_deals', d.forecast_deals);
     setArr('cadeiras_rows',  d.cadeiras_rows);
     setArr('contratos_rows', d.contratos_rows);
     setArr('churn_rows',     d.churn_rows);
