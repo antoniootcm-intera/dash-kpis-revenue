@@ -122,7 +122,7 @@
       "cliente": "Riachuelo Natal/RN",
       "servico": "RPO",
       "canal": "UP",
-      "valor": 108000,
+      "valor": 18000,
       "data": "21/07",
       "mes": "Jul",
       "alocacoes": "1",
@@ -305,6 +305,36 @@
       "anoCreate": 2026,
       "source": "hs",
       "mensalidade": 16000
+    },
+    {
+      "id": "manual_1788467061745",
+      "cliente": "Radix",
+      "servico": "RPO",
+      "canal": "UP",
+      "valor": 102000,
+      "mensalidade": 17000,
+      "data": "03/09",
+      "mes": "Set",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 10,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
+      "id": "manual_1788467102111",
+      "cliente": "Olist",
+      "servico": "RPO",
+      "canal": "NTW",
+      "valor": 51000,
+      "mensalidade": 17000,
+      "data": "03/09",
+      "mes": "Set",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 10,
+      "ciclo": 0,
+      "source": "manual"
     }
   ],
   "cadeiras_rows": [
@@ -2197,6 +2227,36 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
+    },
+    {
+      "id": "cont_manual_1788467061745",
+      "dealId": "manual_1788467061745",
+      "cliente": "Novo Cliente",
+      "vigencia": "",
+      "inicio": "03/09",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "manual"
+    },
+    {
+      "id": "cont_manual_1788467102111",
+      "dealId": "manual_1788467102111",
+      "cliente": "Novo Cliente",
+      "vigencia": "",
+      "inicio": "03/09",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "manual"
     }
   ],
   "churn_rows": [
@@ -2976,14 +3036,6 @@
   ],
   "forecast_deals": [
     {
-      "cliente": "Localiza",
-      "prazo": "4 meses",
-      "mrr": 15000,
-      "valor": 60000,
-      "expectativa": "Próxima semana",
-      "canal": "REN"
-    },
-    {
       "cliente": "Radix",
       "prazo": "3 meses",
       "mrr": 17000,
@@ -3014,6 +3066,14 @@
       "valor": 51000,
       "expectativa": "Esta semana",
       "canal": "NTW"
+    },
+    {
+      "cliente": "Fiberhome",
+      "canal": "NTW",
+      "prazo": "6 meses",
+      "mrr": 16000,
+      "valor": 96000,
+      "expectativa": "15 dias"
     }
   ],
   "oportunidades_data": {
@@ -3400,7 +3460,8 @@
       "tipo": "Enterprise",
       "cliente": "Riachuelo Natal/RN",
       "canal": "UP",
-      "valor": 108000
+      "valor": 18000,
+      "ciclo": 19
     },
     "62412761486": {
       "mensalidade": 17000,
@@ -3684,7 +3745,7 @@
   },
   "viewer_password_hash": "323af34cd5ffeacc472b4608c2b68209d27552024511649cfe5fb4ed1bcd99ce",
   "okr_state": {
-    "input-realizado": "1331000",
+    "input-realizado": "1394000",
     "input-clientes": "0",
     "input-duracao": "49",
     "cac-gastos": "0",
@@ -3694,5 +3755,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-09-01T19:22:05.091Z"
+  "snapshot_at": "2026-09-08T11:57:16.993Z"
 }
