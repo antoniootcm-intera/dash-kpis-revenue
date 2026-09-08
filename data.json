@@ -3036,14 +3036,6 @@
   ],
   "forecast_deals": [
     {
-      "cliente": "Radix",
-      "prazo": "3 meses",
-      "mrr": 17000,
-      "valor": 102000,
-      "expectativa": "Esta semana",
-      "canal": "UP"
-    },
-    {
       "cliente": "XP",
       "prazo": "3 meses",
       "mrr": 32000,
@@ -3056,16 +3048,8 @@
       "prazo": "3 meses",
       "mrr": 15000,
       "valor": 45000,
-      "expectativa": "15 dias",
+      "expectativa": "30 dias",
       "canal": "UP"
-    },
-    {
-      "cliente": "Olist",
-      "prazo": "3 meses",
-      "mrr": 17000,
-      "valor": 51000,
-      "expectativa": "Esta semana",
-      "canal": "NTW"
     },
     {
       "cliente": "Fiberhome",
@@ -3073,6 +3057,14 @@
       "prazo": "6 meses",
       "mrr": 16000,
       "valor": 96000,
+      "expectativa": "15 dias"
+    },
+    {
+      "cliente": "Facta",
+      "canal": "REN",
+      "prazo": "6 meses",
+      "mrr": 15000,
+      "valor": 90000,
       "expectativa": "15 dias"
     }
   ],
@@ -3755,5 +3747,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-09-08T11:57:16.993Z"
+  "snapshot_at": "2026-09-08T19:12:05.066Z"
 }
