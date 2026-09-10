@@ -61,6 +61,36 @@
       "source": "manual"
     },
     {
+      "id": "manual_1788467061745",
+      "cliente": "Radix",
+      "servico": "RPO",
+      "canal": "UP",
+      "valor": 102000,
+      "mensalidade": 17000,
+      "data": "03/09",
+      "mes": "Set",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 10,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
+      "id": "manual_1788467102111",
+      "cliente": "Olist",
+      "servico": "RPO",
+      "canal": "NTW",
+      "valor": 51000,
+      "mensalidade": 17000,
+      "data": "03/09",
+      "mes": "Set",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 10,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
       "id": "60177879370",
       "cliente": "Odontoprev",
       "servico": "RPO",
@@ -304,37 +334,26 @@
       "mesCreate": "Ago",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
     },
     {
-      "id": "manual_1788467061745",
-      "cliente": "Radix",
+      "id": "64175235365",
+      "cliente": "Facta Promo",
       "servico": "RPO",
-      "canal": "UP",
-      "valor": 102000,
-      "mensalidade": 17000,
-      "data": "03/09",
+      "canal": "Ren",
+      "valor": 90000,
+      "data": "10/09",
       "mes": "Set",
       "alocacoes": "1",
       "tipo": "GG",
-      "semana": 10,
+      "semana": 11,
       "ciclo": 0,
-      "source": "manual"
-    },
-    {
-      "id": "manual_1788467102111",
-      "cliente": "Olist",
-      "servico": "RPO",
-      "canal": "NTW",
-      "valor": 51000,
-      "mensalidade": 17000,
-      "data": "03/09",
-      "mes": "Set",
-      "alocacoes": "1",
-      "tipo": "GG",
-      "semana": 10,
-      "ciclo": 0,
-      "source": "manual"
+      "createdate": "2026-08-20T18:52:21.878Z",
+      "mesCreate": "Ago",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 15000
     }
   ],
   "cadeiras_rows": [
@@ -1613,6 +1632,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_64175235365",
+      "dealId": "64175235365",
+      "servico": "RPO",
+      "cliente": "Facta Promo",
+      "vigencia": "",
+      "dataInicio": "10/09",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -2257,6 +2299,21 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "manual"
+    },
+    {
+      "id": "cont_64175235365",
+      "dealId": "64175235365",
+      "cliente": "Facta Promo",
+      "vigencia": "",
+      "inicio": "10/09",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 90000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "churn_rows": [
@@ -3533,6 +3590,11 @@
       "mes": "Ago",
       "alocacoes": "3",
       "tipo": "Enterprise"
+    },
+    "64175235365": {
+      "mensalidade": 15000,
+      "alocacoes": "1",
+      "tipo": "GG"
     }
   },
   "hs_deleted": [
@@ -3737,9 +3799,9 @@
   },
   "viewer_password_hash": "323af34cd5ffeacc472b4608c2b68209d27552024511649cfe5fb4ed1bcd99ce",
   "okr_state": {
-    "input-realizado": "1394000",
+    "input-realizado": "1484000",
     "input-clientes": "0",
-    "input-duracao": "49",
+    "input-duracao": "48",
     "cac-gastos": "0",
     "chart-meta": "1400000",
     "chart-periodo": "semanas",
@@ -3747,5 +3809,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-09-08T19:12:05.066Z"
+  "snapshot_at": "2026-09-10T21:24:37.249Z"
 }
