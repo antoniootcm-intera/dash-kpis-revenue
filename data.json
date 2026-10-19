@@ -33,6 +33,23 @@
       "source": "hs",
       "mensalidade": 17000,
       "_locked": true
+    },
+    {
+      "id": "66137392498",
+      "cliente": "Cielo",
+      "servico": "RPO",
+      "canal": "Ren",
+      "valor": 102000,
+      "data": "16/10",
+      "mes": "Out",
+      "alocacoes": "",
+      "tipo": "N/D",
+      "semana": 3,
+      "ciclo": 0,
+      "createdate": "2026-10-16T11:56:10.477Z",
+      "mesCreate": "Out",
+      "anoCreate": 2026,
+      "source": "hs"
     }
   ],
   "cadeiras_rows": [
@@ -1110,6 +1127,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_66137392498",
+      "dealId": "66137392498",
+      "servico": "RPO",
+      "cliente": "Cielo",
+      "vigencia": "",
+      "dataInicio": "16/10",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        "",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1562,6 +1602,21 @@
       "cadeiras": null,
       "valorRPO": null,
       "valorTotal": 51000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_66137392498",
+      "dealId": "66137392498",
+      "cliente": "Cielo",
+      "vigencia": "",
+      "inicio": "16/10",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 102000,
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
@@ -3584,9 +3639,9 @@
   },
   "viewer_password_hash": "323af34cd5ffeacc472b4608c2b68209d27552024511649cfe5fb4ed1bcd99ce",
   "okr_state": {
-    "input-realizado": "153000",
+    "input-realizado": "255000",
     "input-clientes": "0",
-    "input-duracao": "72",
+    "input-duracao": "70",
     "cac-gastos": "0",
     "chart-meta": "1800000",
     "chart-periodo": "semanas",
@@ -3594,5 +3649,5 @@
   },
   "realizado_locked": false,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-10-19T19:38:28.980Z"
+  "snapshot_at": "2026-10-19T19:38:44.774Z"
 }
