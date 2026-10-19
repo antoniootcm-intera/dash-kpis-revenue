@@ -116,6 +116,10 @@
   /* Tags — paleta INTERA (roxo, mostarda, preto, teal, cinza) */
   .tag { display:inline-block; padding:2px 8px; border-radius:9999px; font-size:11px; font-weight:600; }
   .tag-upsell    { background:#FAEDC8; color:#8B6914; }   /* mustard */
+  .tag-quente    { background:#FEE2E2; color:#B91C1C; }   /* forecast: quente */
+  .tag-morno     { background:#FFEDD5; color:#C2410C; }   /* forecast: morno */
+  .tag-frio      { background:#DBEAFE; color:#1D4ED8; }   /* forecast: frio */
+  .tag-temp-vazio{ background:#F3F4F6; color:#9CA3AF; }
   .tag-ntw       { background:#F3E5FF; color:#9900FF; }   /* roxo */
   .tag-renovacao { background:#E8D5FF; color:#7A00CC; }   /* roxo escuro */
   .tag-out       { background:#E5E5E5; color:#000000; }   /* preto */
@@ -362,8 +366,9 @@
 
 <!-- Sub-tabs do Dashboard -->
 <div class="dash-subtabs">
-  <button class="dash-sub ds-active" onclick="switchDashSub('q3-2026')">🎯 Q3 2026 — Atual</button>
+  <button class="dash-sub ds-active" onclick="switchDashSub('q3-2026')">🎯 Q4 2026 — Atual</button>
   <button class="dash-sub" onclick="switchDashSub('forecast')">🔮 Forecast</button>
+  <button class="dash-sub" onclick="switchDashSub('q3-hist')">✅ Q3 2026</button>
   <button class="dash-sub" onclick="switchDashSub('q2-2026')">✅ Q2 2026</button>
   <button class="dash-sub" onclick="switchDashSub('q1-2026')">✅ Q1 2026</button>
   <button class="dash-sub" onclick="switchDashSub('anual-2026')">🗓️ Anual 2026</button>
@@ -371,7 +376,7 @@
   <button class="dash-sub" onclick="switchDashSub('comp-tri')">📈 Comparativo Trimestral</button>
 </div>
 
-<!-- ═══ SUB-PAINEL: Q3 2026 (atual) ═══ -->
+<!-- ═══ SUB-PAINEL: trimestre atual (Q4 2026) — id mantido como q3-2026 por compatibilidade ═══ -->
 <div id="dash-sub-q3-2026">
 
 <!-- ══════════════════════════════════════════════
@@ -392,7 +397,7 @@
         <div class="flex flex-wrap justify-between items-start gap-4 mb-3">
           <div>
             <p class="text-xs font-semibold" style="color:var(--text2);">META DE RECEITA (RENOVAÇÃO)</p>
-            <p class="text-2xl font-bold mt-0.5" style="color:var(--black);">R$ <span id="meta-receita-label">1.400.000,00</span></p>
+            <p class="text-2xl font-bold mt-0.5" style="color:var(--black);">R$ <span id="meta-receita-label">1.800.000,00</span></p>
           </div>
           <div class="text-right">
             <p class="text-xs font-semibold" style="color:var(--text2);">REALIZADO</p>
@@ -445,7 +450,7 @@
             <p class="text-xs font-semibold" style="color:var(--text2);">CRESCIMENTO BASE</p>
             <span class="text-xs font-bold text-green-600" id="pct-clientes">0%</span>
           </div>
-          <p class="text-xs mb-1" style="color:#94a3b8;">Meta: +10% de clientes</p>
+          <p class="text-xs mb-1" style="color:#94a3b8;">Meta: +10% de clientes · base em 01/10: 28</p>
           <div class="relative h-2 rounded-full overflow-hidden bg-gray-200">
             <div id="bar-clientes" class="progress-bar h-full rounded-full bg-green-500" style="width:0%;"></div>
           </div>
@@ -491,7 +496,7 @@
         <h3 class="font-semibold text-gray-700">Meta Linear vs Resultado Acumulado</h3>
         <div class="flex gap-3 items-center text-xs no-print">
           <label class="text-gray-500">Meta Total (R$):</label>
-          <input type="number" id="chart-meta" value="2100000" step="10000"
+          <input type="number" id="chart-meta" value="1800000" step="10000"
             class="border rounded px-2 py-1 w-28"
             oninput="rebuildLineChart()" />
           <label class="text-gray-500">Período:</label>
@@ -598,10 +603,10 @@
   </div>
 </section>
 
-<!-- Vendas por Canal Q3 2026 (ao vivo) -->
+<!-- Vendas por Canal Q4 2026 (ao vivo) -->
 <section>
   <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
-    <span class="text-lg font-bold">Vendas por Canal — Q3 2026</span>
+    <span class="text-lg font-bold">Vendas por Canal — Q4 2026</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-4">
     <div id="q3-canal-blocks"></div>
@@ -611,16 +616,16 @@
 <!-- Ticket médio Q3 — por canal e por tipo -->
 <section>
   <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3">
-    <span class="text-lg font-bold">Ticket Médio — Q3 2026</span>
+    <span class="text-lg font-bold">Ticket Médio — Q4 2026</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — Q3 (mensalidade)</h3>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Canal — Q4 (mensalidade)</h3>
         <div class="relative h-52"><canvas id="chartQ3ticketCanal"></canvas></div>
       </div>
       <div>
-        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo de Empresa — Q3 (mensalidade)</h3>
+        <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Ticket Médio por Tipo de Empresa — Q4 (mensalidade)</h3>
         <div class="relative h-52"><canvas id="chartQ3ticketTipo"></canvas></div>
       </div>
     </div>
@@ -630,11 +635,11 @@
 <!-- Conversão Q3 (espelha da aba 📊 Conversão) -->
 <section>
   <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
-    <span class="text-lg font-bold">📊 Conversão — Q3 2026</span>
+    <span class="text-lg font-bold">📊 Conversão — Q4 2026</span>
     <span class="text-blue-200 text-xs">Espelho da aba Conversão · edite os números lá</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
-    <div id="conv-summary-q3"></div>
+    <div id="conv-summary-q3"></div><!-- id mantido; mostra o Q4 -->
   </div>
 </section>
 
@@ -645,7 +650,7 @@
 
 <section>
   <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
-    <span class="text-lg font-bold">🔮 Forecast — Q3 2026</span>
+    <span class="text-lg font-bold">🔮 Forecast — Q4 2026</span>
     <span class="text-blue-200 text-xs">Pipeline de possíveis clientes ainda não fechados</span>
   </div>
   <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
@@ -670,6 +675,12 @@
       </div>
     </div>
 
+    <!-- Quadro de fechamento por prazo -->
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Quadro de fechamento previsto</h3>
+      <div id="forecast-quadro" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"></div>
+    </div>
+
     <!-- Tabela de forecast -->
     <div class="overflow-x-auto">
       <table class="hist-table">
@@ -681,6 +692,7 @@
             <th>MRR Negociado</th>
             <th>Valor Total</th>
             <th>Expectativa de Fechamento</th>
+            <th>Temperatura</th>
             <th class="no-print admin-only" style="width:36px;">✕</th>
           </tr>
         </thead>
@@ -692,6 +704,7 @@
             <td></td>
             <td id="forecast-total-mrr" style="font-weight:700;color:#00B8A9;">R$ 0,00</td>
             <td id="forecast-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
+            <td></td>
             <td></td>
             <td class="no-print admin-only"></td>
           </tr>
@@ -713,6 +726,105 @@
 </section>
 
 </div><!-- /dash-sub-forecast -->
+
+<!-- ═══ SUB-PAINEL: Q3 2026 (histórico — Jul/Ago/Set, fechado) ═══ -->
+<div id="dash-sub-q3-hist" style="display:none" class="space-y-8">
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+    <span class="text-lg font-bold">✅ Q3 2026 — Fechamento</span>
+    <span class="text-blue-200 text-xs">Julho · Agosto · Setembro</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-5">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="rounded-xl p-4 border text-center" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">META</p>
+        <p class="text-lg font-bold" style="color:var(--text);">R$ 1.400.000</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:linear-gradient(135deg,#FAEDC8,#E0B84B);border-color:#D4A017;">
+        <p class="text-xs font-semibold mb-1" style="color:#8B6914;">REALIZADO</p>
+        <p class="text-lg font-bold" style="color:#8B6914;" id="q3-resumo-realizado">R$ 0,00</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#F3E5FF;border-color:#D9A1FF;">
+        <p class="text-xs font-semibold mb-1" style="color:#00786F;">RECEITA CASA</p>
+        <p class="text-lg font-bold" style="color:#00786F;" id="q3-resumo-casa">R$ 0,00</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">UP + REN</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#FAEDC8;border-color:#E0B84B;">
+        <p class="text-xs font-semibold mb-1" style="color:#7A00CC;">RECEITA NOVOS</p>
+        <p class="text-lg font-bold" style="color:#9900FF;" id="q3-resumo-novos">R$ 0,00</p>
+        <p class="text-xs mt-1" style="color:#94a3b8;">NTW + OUT + MKT + INB</p>
+      </div>
+      <div class="rounded-xl p-4 border text-center" style="background:#E8F5E9;border-color:#A5D6A7;">
+        <p class="text-xs font-semibold mb-1" style="color:#2E7D32;">ATINGIMENTO</p>
+        <p class="text-lg font-bold" style="color:#2E7D32;" id="q3-resumo-atingimento">0,00%</p>
+        <div class="relative h-2 rounded-full overflow-hidden mt-2" style="background:#E8F5E9;">
+          <div class="h-full rounded-full" id="q3-resumo-atingimento-bar" style="width:0%;background:linear-gradient(90deg,#4CAF50,#81C784);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OKRs no fechamento -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="rounded-xl p-4 border" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">CRESCIMENTO DA BASE · meta +10%</p>
+        <p class="text-lg font-bold" style="color:#16A34A;">+16,67% <span class="text-xs font-semibold" style="color:var(--muted);">24 → 28 clientes (01/07 → 30/09)</span></p>
+      </div>
+      <div class="rounded-xl p-4 border" style="background:#f8f7ff;border-color:#e0dff7;">
+        <p class="text-xs font-semibold mb-1" style="color:var(--text2);">CADEIRAS COM +5 MESES · meta 80%</p>
+        <p class="text-lg font-bold" style="color:#7A00CC;">74% <span class="text-xs font-semibold" style="color:var(--muted);">34 de 46 cadeiras em 30/09 · início do Q3: 69%</span></p>
+      </div>
+    </div>
+
+    <!-- Tabela de deals Q3 -->
+    <div class="overflow-x-auto">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Serviço</th><th>Canal</th><th>Valor (R$)</th>
+            <th>Mensalidade</th>
+            <th>Data</th><th>Mês</th><th>Alocações</th><th>Tipo</th><th>Semana</th>
+            <th>Ciclo (dias)</th>
+            <th class="no-print admin-only" style="width:36px;">✕</th>
+          </tr>
+        </thead>
+        <tbody id="q3-hist-tbody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="3" style="text-align:left;font-weight:700;">TOTAL Q3 2026</td>
+            <td id="q3-hist-total-valor" style="font-weight:700;color:var(--accent);">R$ 0,00</td>
+            <td id="q3-hist-total-mens" style="font-weight:700;color:#00B8A9;">R$ 0,00</td>
+            <td colspan="5"></td>
+            <td id="q3-hist-ciclo-medio" style="font-weight:700;color:var(--accent);"></td>
+            <td class="no-print admin-only"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="mt-3 admin-only no-print">
+      <button onclick="addQ3Deal()" class="text-sm font-semibold px-3 py-1.5 rounded-lg border-2 transition"
+        style="border-color:var(--accent);color:var(--accent);background:#fff;"
+        onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='#fff'">
+        + Adicionar deal ao Q3
+      </button>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-sm mb-3" style="color:var(--text2);">Vendas por Canal — Q3 2026</h3>
+      <div id="q3-hist-canal-blocks"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+    <span class="text-lg font-bold">📊 Conversão — Q3 2026</span>
+    <span class="text-blue-200 text-xs">Espelho da aba Conversão · edite os números lá</span>
+  </div>
+  <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5">
+    <div id="conv-summary-q3hist"></div>
+  </div>
+</section>
+</div><!-- /dash-sub-q3-hist -->
 
 <!-- ═══ SUB-PAINEL: Q2 2026 (histórico — Abr/Mai/Jun, consolidado) ═══ -->
 <div id="dash-sub-q2-2026" style="display:none" class="space-y-8">
@@ -2469,7 +2581,7 @@ const log = {
 window.__interaLogs = function() { return _logBuffer.slice(); };
 
 // ─── DASHBOARD SUB-TABS ─────────────────────────
-const DASH_SUBS = ['q3-2026','forecast','q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
+const DASH_SUBS = ['q3-2026','forecast','q3-hist','q2-2026','q1-2026','anual-2026','hist-2025','comp-tri'];
 let _histChartsReady = false;
 
 let _q2CanalReady = false;
@@ -2499,6 +2611,9 @@ function switchDashSub(key) {
   }
   if (key === 'q2-2026') {
     setTimeout(renderQ2Analytics, 50);
+  }
+  if (key === 'q3-hist') {
+    setTimeout(() => { renderQ3Deals(); renderConvQuarter('Q3', 'conv-summary-q3hist'); }, 50);
   }
   // Render do painel anual (lazy)
   if (key === 'anual-2026') {
@@ -2662,6 +2777,146 @@ function _migrateQ2ToHistorical() {
   log.info('q2.migrated_to_historical', { deals: Q2_DEALS.length, remaining_table_rows: tableRows.length });
 }
 
+// ─── Q3 2026 DATA (Jul/Ago/Set, congelado ao virar Q4) ────
+let Q3_DEALS;
+try {
+  const saved = JSON.parse(localStorage.getItem('q3_deals') || 'null');
+  Q3_DEALS = Array.isArray(saved) ? saved : [];
+} catch(e) { Q3_DEALS = []; }
+
+function saveQ3Deals() {
+  try { localStorage.setItem('q3_deals', JSON.stringify(Q3_DEALS)); }
+  catch(e) { log.error('localstorage.write.failed', { key:'q3_deals', size: JSON.stringify(Q3_DEALS).length }, e); }
+}
+
+// Deals do 2º semestre: Q3 (histórico) + tableRows (trimestre ao vivo). Usado em
+// tudo que filtra por mês a partir de julho (anual, churn, CAC, conversão).
+function _dealsS2() {
+  return [...(typeof Q3_DEALS !== 'undefined' ? Q3_DEALS : []), ...tableRows];
+}
+
+// Roda uma vez (na virada pra Q4): move os deals de Jul/Ago/Set do tableRows pra
+// Q3_DEALS (histórico) e zera o OKR do trimestre novo — meta Q4 R$ 1,8 mi; os KRs
+// de crescimento da base (+10%) e cadeiras +5 meses (80%) continuam iguais.
+function _migrateQ3ToHistorical() {
+  if (localStorage.getItem('q3_migrated') === 'true') return;
+  if (new Date() < new Date(2026, 9, 1)) return; // só a partir de 01/10/2026
+  if (!tableRows.length && !Q3_DEALS.length) return; // sem dado ainda (ex.: recuperação em andamento)
+  const Q3_MESES = ['Jul','Ago','Set'];
+  if (!Q3_DEALS.length) {
+    const moved = tableRows.filter(r => Q3_MESES.includes(r.mes));
+    if (moved.length) { Q3_DEALS = moved.map(r => ({ ...r })); saveQ3Deals(); }
+  }
+  tableRows = tableRows.filter(r => !Q3_MESES.includes(r.mes));
+  try { localStorage.setItem('table_rows', JSON.stringify(tableRows)); } catch(e) {}
+  try {
+    const okr = JSON.parse(localStorage.getItem('okr_state') || '{}');
+    okr['input-realizado'] = '0';
+    okr['chart-meta']      = '1800000';
+    okr['cac-gastos']      = '0';
+    okr['input-clientes']  = '0';
+    delete okr['input-duracao'];
+    localStorage.setItem('okr_state', JSON.stringify(okr));
+    localStorage.setItem('realizado_locked', 'false');
+    localStorage.removeItem('okr_duracao_q3_fechado'); // cadeiras +5m volta a ser calculado ao vivo
+  } catch(e) {}
+  localStorage.setItem('q3_migrated', 'true');
+  log.info('q3.migrated_to_historical', { deals: Q3_DEALS.length, remaining_table_rows: tableRows.length });
+}
+
+function updateQ3Field(i, field, value) {
+  if (IS_VIEWER) return;
+  if (!Q3_DEALS[i]) return;
+  Q3_DEALS[i][field] = value;
+  saveQ3Deals();
+  renderQ3Deals();
+  if (typeof updateChurnCards === 'function') updateChurnCards();
+  if (_anualReady && typeof renderAnual === 'function') renderAnual();
+}
+
+function addQ3Deal() {
+  Q3_DEALS.push({
+    cliente:'Novo cliente', servico:'RPO', canal:'REN', valor:0, mensalidade:0, ciclo:0,
+    data:'', mes:'Jul', alocacoes:'1', tipo:'Enterprise', semana:''
+  });
+  saveQ3Deals();
+  renderQ3Deals();
+}
+
+function removeQ3Deal(i) {
+  if (!confirm('Remover este deal do Q3?')) return;
+  Q3_DEALS.splice(i, 1);
+  saveQ3Deals();
+  renderQ3Deals();
+  if (typeof updateChurnCards === 'function') updateChurnCards();
+}
+
+const META_Q3_2026 = 1_400_000;
+
+function renderQ3Deals() {
+  const tbody = document.getElementById('q3-hist-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  let totalMens = 0, totalValor = 0, ciclosArr = [];
+  const CANAIS_OPTS = ['UP','NTW','OUT','INB','REN'];
+  const SERVICO_OPTS = ['RPO','Staffing','Hunting'];
+  const TIPO_OPTS = ['Enterprise','GG','SMB'];
+  const MESES_OPTS = ['Jul','Ago','Set'];
+  const indexed = Q3_DEALS.map((d, i) => ({ d, i }));
+  indexed.sort((a, b) => _parseDataDDMM(a.d.data) - _parseDataDDMM(b.d.data));
+  indexed.forEach(({ d, i }) => {
+    const mens  = parseFloat(d.mensalidade)||0;
+    const val   = parseFloat(d.valor)||0;
+    const ciclo = parseInt(d.ciclo)||0;
+    totalMens += mens; totalValor += val;
+    if (ciclo > 0) ciclosArr.push(ciclo);
+    const mensCor  = mens > 0 ? '#0284c7' : '#9ca3af';
+    const cicloCor = ciclo > 0 ? 'var(--accent)' : '#9ca3af';
+    const sel = (campo, opts, atual, up) => `<select onchange="updateQ3Field(${i},'${campo}',this.value)" class="churn-mes-sel">
+          ${opts.map(o => `<option ${(up ? (atual||'').toUpperCase() : atual)===o?'selected':''}>${o}</option>`).join('')}
+        </select>`;
+    const cel = (campo, conteudo, conv) => `<span contenteditable="true" class="churn-cell" onblur="updateQ3Field(${i},'${campo}',${conv})">${conteudo}</span>`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;font-weight:600;">${cel('cliente', esc(d.cliente||''), 'this.textContent.trim()')}</td>
+      <td style="text-align:center;">${sel('servico', SERVICO_OPTS, d.servico)}</td>
+      <td style="text-align:center;">${sel('canal', CANAIS_OPTS, d.canal, true)}</td>
+      <td style="font-weight:600;color:var(--accent);text-align:right;">${cel('valor', fmtBRL(val), 'parseMoeda(this.textContent)')}</td>
+      <td style="font-weight:600;color:${mensCor};text-align:right;">${cel('mensalidade', mens > 0 ? fmtBRL(mens) : 'R$ 0,00', 'parseMoeda(this.textContent)')}</td>
+      <td style="text-align:center;">${cel('data', esc(d.data||''), 'this.textContent.trim()')}</td>
+      <td style="text-align:center;">${sel('mes', MESES_OPTS, d.mes)}</td>
+      <td style="text-align:center;">${cel('alocacoes', esc(String(d.alocacoes||'')), 'this.textContent.trim()')}</td>
+      <td style="text-align:center;">${sel('tipo', TIPO_OPTS, d.tipo)}</td>
+      <td style="text-align:center;">${cel('semana', esc(String(d.semana||'')), 'this.textContent.trim()')}</td>
+      <td style="font-weight:600;color:${cicloCor};text-align:center;">${cel('ciclo', ciclo > 0 ? ciclo : '0', 'parseInt(this.textContent)||0')}</td>
+      <td class="no-print admin-only" style="text-align:center;">
+        <button onclick="removeQ3Deal(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;background:none;border:none;cursor:pointer;"
+          onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setTxt('q3-hist-total-mens', fmtBRL(totalMens));
+  setTxt('q3-hist-total-valor', fmtBRL(totalValor));
+  const m = ciclosArr.length ? Math.round(ciclosArr.reduce((a,b)=>a+b,0) / ciclosArr.length) : 0;
+  setTxt('q3-hist-ciclo-medio', m > 0 ? (m + ' d') : '—');
+
+  let casa = 0, novos = 0;
+  Q3_DEALS.forEach(d => {
+    const v = parseFloat(d.valor) || 0;
+    if (CANAIS_CASA.has((d.canal || '').toUpperCase())) casa += v; else novos += v;
+  });
+  const realizado = casa + novos;
+  const ating = META_Q3_2026 > 0 ? (realizado / META_Q3_2026) * 100 : 0;
+  setTxt('q3-resumo-realizado', fmtBRL(realizado));
+  setTxt('q3-resumo-casa', fmtBRL(casa));
+  setTxt('q3-resumo-novos', fmtBRL(novos));
+  setTxt('q3-resumo-atingimento', fmt(ating, 2) + '%');
+  const bar = document.getElementById('q3-resumo-atingimento-bar');
+  if (bar) bar.style.width = Math.min(ating, 100) + '%';
+  renderCanalBreakdown(Q3_DEALS, 'q3-hist-canal-blocks');
+}
+
 function saveQ1Deals() {
   try { localStorage.setItem('q1_deals', JSON.stringify(Q1_DEALS)); }
   catch(e) { log.error('localstorage.write.failed', { key:'q1_deals', size: JSON.stringify(Q1_DEALS).length }, e); }
@@ -2762,6 +3017,60 @@ function removeForecastDeal(i) {
   renderForecastDeals();
 }
 
+// Quadro (uma coluna por prazo de fechamento) — mesma base da tabela abaixo.
+function _renderForecastQuadro(opts, cores) {
+  const el = document.getElementById('forecast-quadro');
+  if (!el) return;
+  const titulos = { 'Esta semana':'Esta semana', 'Próxima semana':'Próxima semana', '15 dias':'Em até 15 dias',
+                    '30 dias':'Em até 30 dias', 'Mais de 30 dias':'Depois de 30 dias' };
+  el.innerHTML = opts.map(op => {
+    const ordemTemp = { Quente: 0, Morno: 1, Frio: 2 };
+    const itens = FORECAST_DEALS.filter(d => (d.expectativa || '30 dias') === op)
+      .sort((a, b) => ((ordemTemp[a.temperatura] ?? 3) - (ordemTemp[b.temperatura] ?? 3))
+                   || ((parseFloat(b.valor) || 0) - (parseFloat(a.valor) || 0)));
+    const totV = itens.reduce((s, d) => s + (parseFloat(d.valor) || 0), 0);
+    const totM = itens.reduce((s, d) => s + (parseFloat(d.mrr) || 0), 0);
+    // tons mais escuros que os da tabela, pra o texto branco do cabeçalho ter contraste
+    const cor = ({ ...cores, '15 dias':'#A16207', 'Mais de 30 dias':'#6B7280' })[op] || '#6B7280';
+    const cards = itens.length ? itens.map(d => `
+      <div class="rounded-lg p-3 border" style="background:#fff;border-color:#e5e7eb;">
+        <div class="flex items-start justify-between gap-2">
+          <span class="font-semibold text-sm" style="color:var(--text);">${esc(d.cliente || '')}</span>
+          <span class="flex gap-1 flex-wrap justify-end">
+            ${d.temperatura ? `<span class="tag ${_tempClass(d.temperatura)}">${_tempLabel(d.temperatura)}</span>` : ''}
+            ${d.canal ? `<span class="tag ${canalClass(d.canal)}">${esc(d.canal)}</span>` : ''}
+          </span>
+        </div>
+        <div class="text-xs mt-1" style="color:var(--muted);">${esc(d.prazo || 'prazo a definir')}</div>
+        <div class="flex justify-between gap-2 text-xs mt-2" style="color:var(--text2);">
+          <span>MRR</span><strong style="color:#00786F;white-space:nowrap;">${fmtBRL(parseFloat(d.mrr) || 0)}</strong>
+        </div>
+        <div class="flex justify-between gap-2 text-xs" style="color:var(--text2);">
+          <span>Total</span><strong style="color:var(--accent);white-space:nowrap;">${fmtBRL(parseFloat(d.valor) || 0)}</strong>
+        </div>
+      </div>`).join('')
+      : '<p class="text-xs italic text-center py-3" style="color:var(--muted);">Nenhum negócio</p>';
+    return `
+      <div class="rounded-xl border flex flex-col" style="background:#f8f7ff;border-color:#e0dff7;">
+        <div class="px-3 py-2 rounded-t-xl" style="background:${cor};">
+          <p class="text-sm font-bold" style="color:#fff;">${titulos[op] || op}</p>
+          <p class="text-xs" style="color:#fff;opacity:.9;">${itens.length} negócio${itens.length === 1 ? '' : 's'}</p>
+        </div>
+        <div class="px-3 py-2 border-b" style="border-color:#e0dff7;">
+          <p class="text-base font-bold" style="color:var(--text);">${fmtBRL(totV)}</p>
+          <p class="text-xs" style="color:var(--text2);">MRR ${fmtBRL(totM)}</p>
+        </div>
+        <div class="p-2 space-y-2">${cards}</div>
+      </div>`;
+  }).join('');
+}
+
+// Temperatura do fechamento (quente / morno / frio)
+const FORECAST_TEMP_OPTS = ['Quente', 'Morno', 'Frio'];
+const FORECAST_TEMP_ICONE = { Quente: '🔥', Morno: '🌤️', Frio: '❄️' };
+function _tempClass(t) { return { Quente: 'tag-quente', Morno: 'tag-morno', Frio: 'tag-frio' }[t] || 'tag-temp-vazio'; }
+function _tempLabel(t) { return t ? (FORECAST_TEMP_ICONE[t] || '') + ' ' + t : '—'; }
+
 function renderForecastDeals() {
   const tbody = document.getElementById('forecast-tbody');
   if (!tbody) return;
@@ -2808,6 +3117,12 @@ function renderForecastDeals() {
           ${EXPECTATIVA_OPTS.map(o => `<option ${d.expectativa===o?'selected':''}>${o}</option>`).join('')}
         </select>
       </td>
+      <td style="text-align:center;">
+        <select class="tag ${_tempClass(d.temperatura)} border-0 cursor-pointer" onchange="updateForecastField(${i},'temperatura',this.value)">
+          <option value="" ${!d.temperatura?'selected':''}>—</option>
+          ${FORECAST_TEMP_OPTS.map(o => `<option value="${o}" ${d.temperatura===o?'selected':''}>${_tempLabel(o)}</option>`).join('')}
+        </select>
+      </td>
       <td class="no-print admin-only" style="text-align:center;">
         <button onclick="removeForecastDeal(${i})" style="color:#fca5a5;font-weight:700;font-size:13px;background:none;border:none;cursor:pointer;"
           onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#fca5a5'">✕</button>
@@ -2822,6 +3137,7 @@ function renderForecastDeals() {
   setTxt('forecast-resumo-mrr',   fmtBRL(totalMrr));
   setTxt('forecast-resumo-valor', fmtBRL(totalValor));
   setTxt('forecast-resumo-30d',   fmtBRL(total30d));
+  _renderForecastQuadro(EXPECTATIVA_OPTS, EXPECTATIVA_COR);
 }
 
 // Wrappers legados — mantidos para compatibilidade
@@ -3099,6 +3415,13 @@ function renderCompTriTable() {
   const sums = { 2023:{t:0,c:0,n:0}, 2024:{t:0,c:0,n:0}, 2025:{t:0,c:0,n:0,meta:0}, 2026:{t:0,c:0,n:0} };
   const metaKeys = ['Q1','Q2','Q3','Q4'];
 
+  // 2026: calculado dos negócios de cada trimestre (Q4 = trimestre ao vivo)
+  [[Q1_DEALS, 0], [Q2_DEALS, 1], [Q3_DEALS, 2], [tableRows.filter(r => ['Out','Nov','Dez'].includes(r.mes)), 3]].forEach(([arr, qi]) => {
+    let t = 0, c = 0;
+    (arr || []).forEach(d => { const v = parseFloat(d.valor) || 0; t += v; if (CANAIS_CASA.has((d.canal || '').toUpperCase())) c += v; });
+    if (t > 0) { COMP_TRI[2026].total[qi] = t; COMP_TRI[2026].casa[qi] = c; COMP_TRI[2026].novos[qi] = t - c; }
+  });
+
   labels.forEach((q, qi) => {
     const g = (yr, field) => COMP_TRI[yr][field][qi];
     let v26 = g(2026,'total'), c26 = g(2026,'casa'), n26 = g(2026,'novos');
@@ -3115,14 +3438,15 @@ function renderCompTriTable() {
     }
 
     [2023,2024,2025,2026].forEach(y => {
-      const t = y===2026 ? (qi<=1?v26:null) : g(y,'total');
-      const c = y===2026 ? (qi<=1?c26:null) : g(y,'casa');
-      const n = y===2026 ? (qi<=1?n26:null) : g(y,'novos');
+      const t = y===2026 ? v26 : g(y,'total');
+      const c = y===2026 ? c26 : g(y,'casa');
+      const n = y===2026 ? n26 : g(y,'novos');
       sums[y].t += t||0; sums[y].c += c||0; sums[y].n += n||0;
     });
 
     const meta25 = METAS_TRI_2025[q] || 0;
     sums[2025].meta += meta25;
+    if (v26 !== null) sums[2025].tMesmosQs = (sums[2025].tMesmosQs || 0) + (g(2025,'total') || 0);
     const real25 = g(2025,'total');
     const ating25 = meta25 ? ((real25/meta25*100)).toFixed(0) : '—';
     const ating25cls = meta25 && real25 >= meta25 ? 'qb-green' : 'qb-red';
@@ -3133,9 +3457,9 @@ function renderCompTriTable() {
     const dlbl  = delta !== null ? `${dsign}${delta}%` : 'em andamento';
 
     const cell = (yr) => {
-      const t = yr===2026 ? (qi<=1 ? v26 : null) : g(yr,'total');
-      const c = yr===2026 ? (qi<=1 ? c26 : null) : g(yr,'casa');
-      const n = yr===2026 ? (qi<=1 ? n26 : null) : g(yr,'novos');
+      const t = yr===2026 ? v26 : g(yr,'total');
+      const c = yr===2026 ? c26 : g(yr,'casa');
+      const n = yr===2026 ? n26 : g(yr,'novos');
       if (t === null) return '<span style="color:var(--muted);">—</span>';
       return `<div style="font-weight:600;">${fmtBRL(t)}</div>
         <div style="font-size:10px;margin-top:2px;">
@@ -3165,7 +3489,9 @@ function renderCompTriTable() {
   document.getElementById('comp-total-2024').innerHTML = fmtTot(2024);
   document.getElementById('comp-total-2025').innerHTML = fmtTot(2025);
   document.getElementById('comp-total-2026').innerHTML = fmtTot(2026);
-  const totalDelta = sums[2025].t ? ((sums[2026].t / sums[2025].t - 1) * 100).toFixed(1) : null;
+  // Compara só os trimestres que 2026 já tem (senão o ano parcial vira queda contra 2025 inteiro)
+  const base25 = sums[2025].tMesmosQs || 0;
+  const totalDelta = base25 ? ((sums[2026].t / base25 - 1) * 100).toFixed(1) : null;
   const tdcls = totalDelta !== null && parseFloat(totalDelta) >= 0 ? 'qb-green' : 'qb-red';
   document.getElementById('comp-delta-total').innerHTML = totalDelta !== null
     ? `<span class="q-badge ${tdcls}">${parseFloat(totalDelta)>=0?'+':''}${totalDelta}%</span>` : '';
@@ -3537,7 +3863,7 @@ function renderQ2TicketCharts() {
     { tooltipFmt: (v, idx) => 'R$ ' + v.toLocaleString('pt-BR') + '  ·  ' + _plContratos(ttCounts[idx]) });
 
   // Conversão Q3 (espelho)
-  renderConvQuarter('Q3', 'conv-summary-q3');
+  renderConvQuarter('Q4', 'conv-summary-q3');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3558,7 +3884,7 @@ function _getAllDeals2026() {
     valor: parseFloat(d.valor)||0, mensalidade: parseFloat(d.mensalidade)||0,
     ciclo: parseInt(d.ciclo)||0, mes: d.mes, quarter: 'Q2'
   }));
-  tableRows.forEach(r => {
+  _dealsS2().forEach(r => {
     const mes = r.mes;
     let quarter = 'Q?';
     if (['Abr','Mai','Jun'].includes(mes)) quarter = 'Q2';
@@ -4329,7 +4655,7 @@ function initHistoricalCharts() {
 }
 
 // ─── CONSTANTS ──────────────────────────────────
-const META_RECEITA = 1_400_000; // Q3 2026 — meta global de renovação
+const META_RECEITA = 1_800_000; // Q4 2026 — meta global
 let PIPELINE_ID  = localStorage.getItem('hs_pipeline') || '873229319';
 // IDs reais do pipeline "RPO - Vendas e Renovação"
 const STAGE_FECHADO  = '1308217885'; // NEGÓCIO FECHADO
@@ -4378,8 +4704,12 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
         if (Array.isArray(d.q1_deals) && d.q1_deals.length) Q1_DEALS = d.q1_deals;
         if (Array.isArray(d.q2_deals) && d.q2_deals.length) Q2_DEALS = d.q2_deals;
+        if (Array.isArray(d.q3_deals) && d.q3_deals.length) Q3_DEALS = d.q3_deals;
         if (Array.isArray(d.forecast_deals)) FORECAST_DEALS = d.forecast_deals;
+        if (d.cadeiras_extra_q && typeof d.cadeiras_extra_q === 'object') _cadeirasExtraQ = d.cadeiras_extra_q;
+        if (d.okr_duracao_q3_fechado) localStorage.setItem('okr_duracao_q3_fechado', d.okr_duracao_q3_fechado);
         _migrateQ2ToHistorical();
+        _migrateQ3ToHistorical();
         if (d.oportunidades_data && typeof d.oportunidades_data === 'object') oportunidadesData = d.oportunidades_data;
         if (d.hs_overrides)  hsOverrides = d.hs_overrides;
         if (d.hs_deleted)    hsDeleted   = new Set(d.hs_deleted);
@@ -4405,6 +4735,7 @@ window.addEventListener('DOMContentLoaded', () => {
         rebuildLineChart();
         renderQ1Deals();
         renderQ2Deals();
+        renderQ3Deals();
         renderForecastDeals();
         renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
         renderQ2Analytics();
@@ -4439,6 +4770,22 @@ window.addEventListener('DOMContentLoaded', () => {
   renderCadeiras();
   renderContratos();
   if (_limparContratosDuplicadosUmaVez() > 0) renderContratos();
+  if (_adicionarContratosFaltantesUmaVez() > 0) renderContratos();
+  if (_encerrarContratosVencidosUmaVez() > 0) renderContratos();
+  _corrigirChurnDeloitteProjetoUmaVez();
+  if (_reconciliarCarteira20261005() > 0) { renderContratos(); renderCadeiras(); }
+  if (_fundirGlobalNoGPEUmaVez() > 0) { renderContratos(); renderCadeiras(); }
+  if (_preencherValoresContratosUmaVez() > 0) renderContratos();
+  if (_boticarioCreditoSemValorUmaVez() > 0) renderContratos();
+  _csuChurnJunhoUmaVez();
+  if (_riachueloNatalUmMesUmaVez() > 0) { renderTable(); renderContratos(); }
+  _limparMarcacoesManuaisCadeirasUmaVez();
+  if (_separarCieloTechUmaVez() > 0) renderContratos();
+  _fecharQ3UmaVez();
+  _auditoriaCasaRenUpUmaVez();
+  if (_lancarCieloCaianeRenUmaVez() > 0) { renderTable(); updateCicloChart(); rebuildLineChart(); }
+  renderCadeiras(); // +3m/+5m pela duração
+  _backupLocalEmDisco('load');
 
   // Popula gráficos a partir dos dados salvos (não precisa recarregar HubSpot)
   if (tableRows.length > 0) {
@@ -4450,6 +4797,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Render tabelas históricas (não precisam de canvas visível)
   renderQ1Deals();
   renderQ2Deals();
+  renderQ3Deals();
   renderForecastDeals();
   renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
   renderQ2Analytics();
@@ -4472,6 +4820,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function lockRealizado() {
+  // O restore do OKR ao abrir a página dispara 'input' em todos os campos; isso não é
+  // edição manual e travava o Realizado em toda carga (o HubSpot nunca atualizava).
+  if (typeof _restoring !== 'undefined' && _restoring) return;
   realizadoLocked = true;
   localStorage.setItem('realizado_locked', 'true');
   updateLockIcon();
@@ -4482,7 +4833,7 @@ function unlockRealizado() {
   localStorage.setItem('realizado_locked', 'false');
   updateLockIcon();
   // Recalcula a partir da tabela atual
-  const total = tableRows.filter(r => r.source === 'hs').reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
+  const total = tableRows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0);
   if (total > 0) { document.getElementById('input-realizado').value = Math.round(total); updateOKR('receita', total); }
 }
 
@@ -4619,7 +4970,11 @@ async function publicarSnapshot() {
       churn_rows:       churnRows,
       q1_deals:         Q1_DEALS,
       q2_deals:         Q2_DEALS,
+      q3_deals:         Q3_DEALS,
       forecast_deals:   FORECAST_DEALS,
+      deals_ignorados:  [..._dealsIgnorados()],
+      cadeiras_extra_q: _cadeirasExtraQ,
+      okr_duracao_q3_fechado: localStorage.getItem('okr_duracao_q3_fechado') || '',
       oportunidades_data: oportunidadesData,
       hs_overrides:     hsOverrides,
       hs_deleted:       [...hsDeleted],
@@ -5251,7 +5606,9 @@ function processDeals(deals) {
     }
 
     // Data de fechamento
-    const closeRaw = props['hs_date_entered_' + STAGE_FECHADO]
+    // Contrato Renovado conta na data em que entrou nesse estágio (não na do fechamento original)
+    const closeRaw = (isRen ? props['hs_date_entered_' + STAGE_RENOVADO] : '')
+                  || props['hs_date_entered_' + STAGE_FECHADO]
                   || props['hs_date_entered_' + STAGE_RENOVADO]
                   || props.closedate || '';
     const closeDate = closeRaw ? new Date(closeRaw) : new Date();
@@ -5302,7 +5659,8 @@ function processDeals(deals) {
   // Helper: extrai timestamp da data de fechamento bruta (mesma lógica do build acima)
   const getCloseTs = (d) => {
     const props = d.properties || {};
-    const raw = props['hs_date_entered_' + STAGE_FECHADO]
+    const raw = (props.dealstage === STAGE_RENOVADO ? props['hs_date_entered_' + STAGE_RENOVADO] : '')
+             || props['hs_date_entered_' + STAGE_FECHADO]
              || props['hs_date_entered_' + STAGE_RENOVADO]
              || props.closedate || '';
     if (!raw) return null;
@@ -5312,7 +5670,18 @@ function processDeals(deals) {
 
   // Mapa deal-id → close date (pra checar regra de "só hoje" pra deals novos)
   const closeTsById = {};
-  deals.forEach(d => { closeTsById[String(d.id)] = getCloseTs(d); });
+  const renovadoById = {};
+  deals.forEach(d => {
+    closeTsById[String(d.id)] = getCloseTs(d);
+    renovadoById[String(d.id)] = (d.properties || {}).dealstage === STAGE_RENOVADO;
+  });
+  const inicioTrimestre = getQuarterStart();
+  // Negócio já lançado à mão (mesmo cliente, canal e valor no trimestre) não entra de novo pelo HubSpot
+  const _nomeBase = c => (c || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\*/g, '').trim().toLowerCase();
+  const jaLancadoManual = row => tableRows.some(r => r.source !== 'hs'
+    && _nomeBase(r.cliente) === _nomeBase(row.cliente)
+    && (r.canal || '').toUpperCase() === (row.canal || '').toUpperCase()
+    && (parseFloat(r.valor) || 0) === (parseFloat(row.valor) || 0));
 
   let novosIgnoradosPorData = 0;
   const wonRowsFinal = [];
@@ -5331,9 +5700,13 @@ function processDeals(deals) {
       wonRowsFinal.push(row);
       return;
     }
-    // DEAL NOVO (não está em tableRows): só adiciona se fechou hoje (ou futuro)
+    // DEAL NOVO (não está em tableRows): entra se fechou hoje (ou futuro). Deal em
+    // "Contrato Renovado" entra se renovou em qualquer dia do trimestre atual.
     const closeTs = closeTsById[String(row.id)];
-    if (closeTs && closeTs >= inicioHoje) {
+    const renovadoNoTrimestre = renovadoById[String(row.id)] && closeTs && closeTs >= inicioTrimestre;
+    if (jaLancadoManual(row)) {
+      novosIgnoradosPorData++;
+    } else if ((closeTs && closeTs >= inicioHoje) || renovadoNoTrimestre) {
       if (overrides) Object.assign(row, overrides);
       wonRowsFinal.push(row);
     } else {
@@ -5363,8 +5736,8 @@ function processDeals(deals) {
   renderContratos();
 
   // Atualiza realizado apenas se não estiver travado manualmente
-  // (usa wonRowsFinal pra refletir só o que de fato está no dashboard)
-  const totalWon = wonRowsFinal.reduce((s, r) => s + (parseFloat(r.valor)||0), 0);
+  // (soma todos os negócios do trimestre: HubSpot + lançados à mão)
+  const totalWon = tableRows.reduce((s, r) => s + (parseFloat(r.valor)||0), 0);
   if (!realizadoLocked) {
     document.getElementById('input-realizado').value = Math.round(totalWon);
     updateOKR('receita', totalWon);
@@ -5788,7 +6161,11 @@ async function _tentarRecuperarDoDataJson() {
     setArr('table_rows',     d.table_rows);
     setArr('q1_deals',       d.q1_deals);
     setArr('q2_deals',       d.q2_deals);
+    setArr('q3_deals',       d.q3_deals);
     setArr('forecast_deals', d.forecast_deals);
+    setArr('deals_ignorados', d.deals_ignorados);
+    if (d.cadeiras_extra_q) localStorage.setItem('cadeiras_extra_q', JSON.stringify(d.cadeiras_extra_q));
+    if (d.okr_duracao_q3_fechado) localStorage.setItem('okr_duracao_q3_fechado', d.okr_duracao_q3_fechado);
     setArr('cadeiras_rows',  d.cadeiras_rows);
     setArr('contratos_rows', d.contratos_rows);
     setArr('churn_rows',     d.churn_rows);
@@ -5813,6 +6190,7 @@ async function _tentarRecuperarDoDataJson() {
 // chegarem da nuvem.
 if (!IS_VIEWER) {
   _tentarRecuperarDoDataJson().then(() => { _migrateQ2ToHistorical(); });
+  _migrateQ3ToHistorical();
 }
 
 // ════════════════════════════════════════════════
@@ -5925,7 +6303,7 @@ function _novosClientesCACNomes(qOpt) {
   try {
     if (typeof Q2_DEALS !== 'undefined') Q2_DEALS.forEach(add);
   } catch(_) {}
-  try { tableRows.forEach(add); } catch(_) {}
+  try { _dealsS2().forEach(add); } catch(_) {}
   return nomes.sort((a,b) => a.localeCompare(b, 'pt-BR'));
 }
 
@@ -6435,8 +6813,15 @@ function statusColor(v) {
 }
 
 const ATIVO_OU_SAINDO = v => v === 'ATIVO' || v === 'DESALOCAÇÃO';
-function calcMais3(row) { return row.meses.filter(ATIVO_OU_SAINDO).length >= 3; }
-function calcMais5(row) { return row.meses.filter(ATIVO_OU_SAINDO).length >= 5; }
+// +3m / +5m seguem a coluna Duração da cadeira (duração do contrato). Antes contava
+// as colunas de meses do ano, o que inflava: um contrato de 4 meses de 13/08 a 15/12
+// ocupa 5 colunas (Ago–Dez) e aparecia como +5m. Sem duração preenchida, conta as colunas.
+function mesesDeCasa(row) {
+  const dur = parseInt(row.duracao) || 0;
+  return dur || row.meses.filter(ATIVO_OU_SAINDO).length;
+}
+function calcMais3(row) { return mesesDeCasa(row) >= 3; }
+function calcMais5(row) { return mesesDeCasa(row) >= 5; }
 
 // Valor efetivo: usa override manual se existir, senão auto-calcula
 function effectiveMais3(row) { return row.mais3 !== null && row.mais3 !== undefined ? row.mais3 : calcMais3(row); }
@@ -6620,14 +7005,17 @@ function updateCadeirasCards() {
   set('cad-mais5-footer',    mais5);
   set('cad-mais5-pct-footer', pct5 + '%');
 
-  // Atualiza OKR "Duração +5 meses" automaticamente
+  // Atualiza OKR "Duração +5 meses" automaticamente — exceto quando o trimestre
+  // já foi fechado (valor travado no fechamento, ver _fecharQ3UmaVez).
+  const fechado = parseFloat(localStorage.getItem('okr_duracao_q3_fechado'));
   if (total > 0) {
+    const okrPct = isNaN(fechado) ? pct5 : fechado;
     const barD   = document.getElementById('bar-duracao');
     const pctD   = document.getElementById('pct-duracao');
     const inpD   = document.getElementById('input-duracao');
-    if (barD) barD.style.width = pct5 + '%';
-    if (pctD) pctD.textContent = fmt(pct5, 2) + '%';
-    if (inpD && document.activeElement !== inpD) inpD.value = pct5;
+    if (barD) barD.style.width = okrPct + '%';
+    if (pctD) pctD.textContent = fmt(okrPct, 2) + '%';
+    if (inpD && document.activeElement !== inpD) inpD.value = okrPct;
     saveOKRInputs();
   }
 }
@@ -6665,13 +7053,28 @@ function addCadeira() {
 }
 
 function removeCadeira(i) {
+  _ignorarDeals([cadeirasRows[i]?.dealId]);
   cadeirasRows.splice(i, 1);
   renderCadeiras();
   saveCadeirasState();
 }
 
 // Auto-link de deal ganho → cadeira (chamado após processDeals)
+// Deals do HubSpot que NÃO devem recriar linhas em Contratos/Cadeiras. Sem isso,
+// todo "Carregar HubSpot" recriava as linhas removidas ou consolidadas à mão
+// (origem das duplicatas que apareciam nessas abas).
+function _dealsIgnorados() {
+  try { return new Set(JSON.parse(localStorage.getItem('deals_ignorados') || '[]')); }
+  catch(e) { return new Set(); }
+}
+function _ignorarDeals(ids) {
+  const set = _dealsIgnorados();
+  ids.forEach(id => { if (id) set.add(String(id)); });
+  try { localStorage.setItem('deals_ignorados', JSON.stringify([...set])); } catch(e) {}
+}
+
 function linkDealToCadeira(row) {
+  if (_dealsIgnorados().has(String(row.id))) return;
   if (cadeirasRows.some(c => c.dealId === String(row.id))) return;
   const mesIdx = MESES.indexOf(row.mes);
   const meses12 = Array(12).fill('');
@@ -6692,6 +7095,7 @@ function linkDealToCadeira(row) {
 // Auto-cria contrato para cada novo negócio (HubSpot ou manual)
 function linkDealToContrato(row) {
   const dealKey = String(row.id);
+  if (_dealsIgnorados().has(dealKey)) return;
   // não duplica se já existe contrato vinculado a este deal
   if (contratosRows.some(c => c.dealId === dealKey)) return;
   contratosRows.push({
@@ -7005,10 +7409,11 @@ function updateContratosCards() {
   const totalValor = contratosRows.reduce((s,r) => s + (parseFloat(r.valorTotal)||0), 0);
   const cadeiras   = contratosRows.reduce((s,r) => s + (parseInt(r.cadeiras)||0), 0);
 
-  // Contratos únicos: UP não conta (é extensão do mesmo cliente, não um novo contrato)
-  const contratosUnicos = contratosRows.filter(r => !isUpsellContrato(r.cliente));
-  const total           = contratosUnicos.length;
-  const upCount         = contratosRows.length - total;
+  // Contratos únicos: cada nome de cliente conta 1 vez (ex.: Radix com 2 linhas = 1).
+  // Sufixo "UP" é extensão do mesmo cliente e também não conta de novo.
+  const nomeBase = c => (c || '').trim().replace(/\s+UP$/i, '').toLowerCase();
+  const total    = new Set(contratosRows.map(r => nomeBase(r.cliente)).filter(Boolean)).size;
+  const upCount  = contratosRows.length - total;
 
   // Ticket médio por RPO alocado = média dos valores/RPO dos contratos (ignora vazios/zero)
   const valoresRPO = contratosRows.map(r => parseFloat(r.valorRPO)||0).filter(v => v > 0);
@@ -7029,8 +7434,8 @@ function updateContratosCards() {
   const legendaEl = document.getElementById('cont-up-legenda');
   if (legendaEl) {
     legendaEl.textContent = upCount > 0
-      ? `* ${upCount} linha(s) com sufixo "UP" excluída(s) da contagem de contratos — upsell do mesmo cliente não conta como novo vínculo. Nomes com outros sufixos (Tech, Internacional, etc.) contam normalmente.`
-      : '* Linhas com sufixo "UP" no nome do cliente são excluídas da contagem — upsell do mesmo cliente não conta como novo vínculo.';
+      ? `* ${upCount} linha(s) com nome de cliente repetido (ou sufixo "UP") não entram de novo na contagem de contratos — cada cliente conta 1 vez. MRR, valor total e cadeiras somam todas as linhas. Nomes diferentes (Cielo SP, Cielo CO etc.) contam separado.`
+      : '* Cada nome de cliente conta 1 vez na contagem de contratos (linhas repetidas ou com sufixo "UP" não contam de novo).';
   }
 }
 
@@ -7118,6 +7523,7 @@ function removeContrato(i) {
     }
   } catch(e) { log.warn('churn.auto.failed', {}, e); }
 
+  _ignorarDeals([row.dealId]);
   contratosRows.splice(i, 1);
   renderContratos();
   saveContratosState();
@@ -7219,6 +7625,594 @@ function _limparContratosDuplicadosUmaVez() {
   }
   localStorage.setItem('contratos_dedup_hs_v1', 'true');
   return removidos;
+}
+
+// Roda uma vez: adiciona contratos da planilha de controle (29/09/2026) que não
+// tinham nenhuma linha correspondente na aba. Não mexe nas linhas já existentes.
+function _adicionarContratosFaltantesUmaVez() {
+  if (localStorage.getItem('contratos_add_lista_20260929') === 'true') return 0;
+  const novos = [
+    { cliente:'GPE',       vigencia:'fevereiro/2027', inicio:'17/08', fim:'17/02', duracao:6, cadeiras:1 },
+    { cliente:'Olist',     vigencia:'dezembro/2026',  inicio:'03/09', fim:'03/12', duracao:3, cadeiras:1 },
+    { cliente:'Cielo Sul', vigencia:'novembro/2026',  inicio:'11/08', fim:'11/11', duracao:3, cadeiras:1 },
+  ];
+  const existentes = new Set(contratosRows.map(c => (c.cliente || '').trim().toLowerCase()));
+  let adicionados = 0;
+  novos.forEach((n, i) => {
+    if (existentes.has(n.cliente.toLowerCase())) return;
+    contratosRows.push({
+      id: 'cont_lista_' + Date.now() + '_' + i,
+      ...n,
+      valorRPO: null, valorTotal: null,
+      tipoContrato: '', linkContrato: '',
+      source: 'manual'
+    });
+    adicionados++;
+  });
+  if (adicionados > 0) {
+    saveContratosState();
+    log.info('contratos.add_lista_20260929', { adicionados });
+  }
+  localStorage.setItem('contratos_add_lista_20260929', 'true');
+  return adicionados;
+}
+
+// Roda uma vez (29/09/2026): contratos vencidos que não renovaram viram churn na
+// data de fim do contrato e saem da aba. Global (12/05→12/08) sai sem churn —
+// renovou (o contrato novo, de 05/08, continua na lista). Localiza (19/02) fica:
+// venceu mas está em renovação.
+function _encerrarContratosVencidosUmaVez() {
+  if (localStorage.getItem('contratos_churn_vencidos_20260929') === 'true') return 0;
+  const norm = s => (s || '').trim().toLowerCase();
+  const CHURN = {
+    'deloitte projeto':    'Projeto com data final',
+    'renner corp':         'Fim de contrato',
+    'renner corp up':      'Fim de contrato',
+    'ebanx internacional': 'Fim de contrato',
+  };
+  const ehRennerVarejo4m = r => norm(r.cliente) === 'renner varejo' && r.inicio === '22/05';
+  const ehGlobalAntigo   = r => norm(r.cliente) === 'global' && r.inicio === '12/05';
+
+  let removidos = 0;
+  for (let idx = contratosRows.length - 1; idx >= 0; idx--) {
+    const r = contratosRows[idx];
+    const motivo = CHURN[norm(r.cliente)] || (ehRennerVarejo4m(r) ? 'Fim de contrato' : null);
+    if (!motivo && !ehGlobalAntigo(r)) continue;
+
+    if (motivo) {
+      const dataChurn = r.fim || '';
+      const mesIdx = (parseInt(dataChurn.split('/')[1], 10) || 1) - 1;
+      const cadeiras = parseInt(r.cadeiras) || 1;
+      const jaExiste = churnRows.some(c => norm(c.cliente) === norm(r.cliente) && c.dataChurn === dataChurn);
+      if (!jaExiste) {
+        churnRows.push({
+          id:            'churn_' + Date.now() + '_' + idx,
+          cliente:       r.cliente.trim(),
+          tipo:          'logo',
+          mes:           MESES_CHURN[mesIdx],
+          dataChurn,
+          cadeiras,
+          mrrPerdido:    (parseFloat(r.valorRPO) || 0) * cadeiras,
+          contratoTotal: parseFloat(r.valorTotal) || 0,
+          motivo,
+        });
+      }
+    }
+    contratosRows.splice(idx, 1);
+    removidos++;
+  }
+  if (removidos > 0) {
+    saveContratosState();
+    saveChurnState();
+    log.info('contratos.churn_vencidos_20260929', { removidos });
+  }
+  localStorage.setItem('contratos_churn_vencidos_20260929', 'true');
+  return removidos;
+}
+
+// Roda uma vez: o churn do Deloitte Projeto entrou com 1 cadeira (dado da linha do
+// HubSpot), mas o projeto era de 4 cadeiras (4 × R$16k no mês = os R$64k do contrato).
+function _corrigirChurnDeloitteProjetoUmaVez() {
+  if (localStorage.getItem('churn_fix_deloitte_projeto_4cad') === 'true') return 0;
+  let corrigidos = 0;
+  churnRows.forEach(c => {
+    if ((c.cliente || '').trim().toLowerCase() !== 'deloitte projeto' || c.dataChurn !== '15/07') return;
+    c.cadeiras   = 4;
+    c.mrrPerdido = 64000;
+    corrigidos++;
+  });
+  if (corrigidos > 0) saveChurnState();
+  localStorage.setItem('churn_fix_deloitte_projeto_4cad', 'true');
+  return corrigidos;
+}
+
+// Manda uma cópia dos dados (sem tokens) pro servidor local, que grava em
+// backups/latest.json. Protege contra perda do localStorage do navegador.
+// Só funciona no intera-server (localhost:8080); em outro servidor falha calado.
+function _backupLocalEmDisco(label) {
+  if (IS_VIEWER) return;
+  if (!['localhost', '127.0.0.1'].includes(location.hostname)) return;
+  const ls = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e) { return null; } };
+  const snap = {
+    label, at: new Date().toISOString(),
+    table_rows: tableRows, cadeiras_rows: cadeirasRows, contratos_rows: contratosRows,
+    churn_rows: churnRows, q1_deals: Q1_DEALS, q2_deals: Q2_DEALS, q3_deals: Q3_DEALS, forecast_deals: FORECAST_DEALS,
+    oportunidades_data: oportunidadesData, hs_overrides: hsOverrides, hs_deleted: [...hsDeleted],
+    cac_state: cacState, okr_state: ls('okr_state'), deals_ignorados: [...(_dealsIgnorados())],
+    cadeiras_extra_q: _cadeirasExtraQ,
+    okr_duracao_q3_fechado: localStorage.getItem('okr_duracao_q3_fechado') || '',
+  };
+  fetch('/__backup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(snap) })
+    .catch(() => {});
+}
+
+// Roda uma vez (05/10/2026): alinha Contratos, Cadeiras e o churn do Q3 com a
+// planilha de controle (contratos ativos em 05/10 + churns de Jul/Ago/Set).
+// Valor/RPO, tipo de contrato e link vêm da linha antiga correspondente; o
+// histórico mês a mês das cadeiras renovadas é preservado (OKR "+5 meses").
+// Estado anterior fica em localStorage['backup_pre_carteira_20261005'].
+function _reconciliarCarteira20261005() {
+  const FLAG = 'carteira_reconciliada_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+
+  const n = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+  const is = re => r => re.test(n(r.cliente));
+  const CUR = 9; // outubro/2026
+  const NOME_MES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+  // fim = data de fim efetiva (última coluna da planilha)
+  const LISTA = [
+    { c:'Deloitte',                 cad:1, ini:'22/10/2025', dur:12, fim:'22/10/2026', rpo:15000, old: is(/^deloitte$/) },
+    { c:'Facta Promotora',          cad:1, ini:'16/03/2026', dur:12, fim:'16/03/2027', rpo:15000, old: is(/^facta promotora$/) },
+    { c:'Boticário',                cad:1, ini:'11/05/2026', dur:5,  fim:'16/10/2026', rpo:null,  old: r => /botic/.test(n(r.cliente)) && r.inicio === '11/05', fam:/botic/ },
+    { c:'Venturus',                 cad:1, ini:'09/04/2026', dur:6,  fim:'09/10/2026', rpo:15000, old: is(/^venturus/) },
+    { c:'Cielo',                    cad:1, ini:'11/05/2026', dur:12, fim:'11/05/2027', rpo:17000, old: r => n(r.cliente) === 'cielo ne' || (n(r.cliente) === 'cielo' && /2027/.test(r.vigencia || '')), fam:/^cielo( ne)?$/ },
+    { c:'Cielo SP',                 cad:1, ini:'18/05/2026', dur:6,  fim:'10/12/2026', rpo:17000, old: is(/^cielo sp/) },
+    { c:'Doctoralia',               cad:1, ini:'12/05/2026', dur:6,  fim:'12/11/2026', rpo:16000, old: is(/^doctoralia/) },
+    { c:'Renner Varejo',            cad:3, ini:'27/05/2026', dur:6,  fim:'30/11/2026', rpo:16000, old: r => n(r.cliente) === 'renner varejo up' || (n(r.cliente) === 'renner varejo' && r.inicio === '25/05'), fam:/^renner varejo/ },
+    { c:'Cielo CO',                 cad:1, ini:'01/06/2026', dur:6,  fim:'05/12/2026', rpo:17000, old: is(/^cielo co/) },
+    { c:'Riachuelo',                cad:4, ini:'24/06/2026', dur:5,  fim:'28/11/2026', rpo:16000, old: is(/^riachuelo$/), fam:/^riachuelo( up)?$/ },
+    { c:'ABI',                      cad:6, ini:'16/05/2026', dur:5,  fim:'23/10/2026', rpo:14000, old: is(/^(ab-?inbev|abinbev|abi)$/), fam:/^(ab-?inbev|abinbev|abi)$/ },
+    { c:'Facta Promotora Tech',     cad:1, ini:'17/03/2026', dur:6,  fim:'17/09/2026', rpo:15000, old: is(/^facta (promotora )?tech/), fam:/^facta (promotora )?tech/ },
+    { c:'Caffeine Army',            cad:1, ini:'18/06/2026', dur:6,  fim:'23/12/2026', rpo:16000, old: r => n(r.cliente) === 'caffeine army' && r.inicio === '14/06', fam:/^caffeine army$/ },
+    { c:'Banco Inter',              cad:1, ini:'22/07/2026', dur:12, fim:'08/08/2027', rpo:17000, deal:'63433823759', fam:/^banco inter/ },
+    { c:'Riachuelo Estágio',        cad:1, ini:'13/07/2026', dur:3,  fim:'13/10/2026', rpo:17000, old: is(/^riachuelo estagio/), fam:/^riachuelo estagio/ },
+    { c:'Cielo Mesa ARVI',          cad:1, ini:'15/07/2026', dur:3,  fim:'15/10/2026', rpo:17000, deal:'62412761486' },
+    { c:'Cielo',                    cad:1, ini:'27/07/2026', dur:3,  fim:'28/10/2026', rpo:17000, deal:'62929981759' },
+    { c:'Caffeine Army MKT/Growth', cad:1, ini:'24/07/2026', dur:3,  fim:'25/10/2026', rpo:15000, deal:'62929981802' },
+    { c:'Jeitto',                   cad:1, ini:'20/07/2026', dur:6,  fim:'20/01/2027', rpo:15000, old: is(/^jeitto/), fam:/^jeitto/ },
+    { c:'Riachuelo Natal',          cad:1, ini:'29/07/2026', dur:6,  fim:'01/02/2027', rpo:18000, old: is(/natal/), fam:/natal/ },
+    { c:'Odontoprev',               cad:1, ini:'03/08/2026', dur:3,  fim:'04/11/2026', rpo:17000, old: is(/^odontoprev/), fam:/^odontoprev/ },
+    { c:'GPE',                      cad:1, ini:'17/08/2026', dur:6,  fim:'17/02/2027', rpo:null,  old: is(/^gpe/) },
+    { c:'Radix',                    cad:3, ini:'10/08/2026', dur:6,  fim:'02/03/2027', rpo:17000, deal:'62929981839' },
+    { c:'Banco Inter',              cad:1, ini:'10/08/2026', dur:6,  fim:'10/02/2027', rpo:17000, deal:'63433823762' },
+    { c:'Cielo Sul',                cad:1, ini:'11/08/2026', dur:3,  fim:'11/11/2026', rpo:17000, deal:'63676952321', old: is(/^cielo sul/) },
+    { c:'Ebanx',                    cad:1, ini:'17/08/2026', dur:4,  fim:'17/12/2026', rpo:17000, old: is(/^ebanx$/), fam:/^ebanx$/ },
+    { c:'RNP',                      cad:1, ini:'11/08/2026', dur:6,  fim:'11/02/2027', rpo:13500, old: r => n(r.cliente) === 'rnp' && parseFloat(r.valorRPO) > 0, fam:/^rnp$/ },
+    { c:'Olist',                    cad:1, ini:'03/09/2026', dur:3,  fim:'03/12/2026', rpo:17000, old: is(/^olist/) },
+    { c:'Boticário',                cad:3, ini:'13/08/2026', dur:4,  fim:'15/12/2026', rpo:16000, deal:'63717556601' },
+    { c:'Localiza',                 cad:1, ini:'31/08/2026', dur:4,  fim:'31/12/2026', rpo:null,  fam:/^localiza$/ },
+    { c:'Radix',                    cad:2, ini:'01/09/2026', dur:6,  fim:'06/03/2027', rpo:17000 },
+  ];
+  // Global: renovado (início 05/08), fora da planilha — mantém a linha como está.
+  const ehGlobalRenovado = r => r.dealId === '63027950407' || (n(r.cliente) === 'global' && (r.inicio === '05/08' || r.dataInicio === '05/08'));
+
+  // Churn do Q3 por mês (planilha). Valores das linhas já existentes são mantidos
+  // onde fizer sentido (motivo, tipo, data).
+  const CHURN_Q3 = [
+    { cliente:'Alloha',              mes:'Jul', cad:1, mrr:0,     total:0,      data:'',      motivo:'Fim de contrato',        tipo:'logo' },
+    { cliente:'Deloitte Projeto',    mes:'Jul', cad:4, mrr:64000, total:64000,  data:'15/07', motivo:'Projeto com data final', tipo:'logo' },
+    { cliente:'Renner Corp',         mes:'Ago', cad:3, mrr:48000, total:144000, data:'08/08', motivo:'Fim de contrato',        tipo:'logo' },
+    { cliente:'Riachuelo Natal',     mes:'Ago', cad:1, mrr:18000, total:108000, data:'',      motivo:'Fim de contrato',        tipo:'downgrade' },
+    { cliente:'Ebanx Internacional', mes:'Set', cad:1, mrr:17000, total:51000,  data:'04/09', motivo:'Fim de contrato',        tipo:'logo' },
+    { cliente:'Banco Inter',         mes:'Set', cad:1, mrr:17000, total:102000, data:'',      motivo:'Fim de contrato',        tipo:'logo' },
+  ];
+
+  const antes = {
+    at: new Date().toISOString(),
+    contratos_rows: JSON.parse(JSON.stringify(contratosRows)),
+    cadeiras_rows:  JSON.parse(JSON.stringify(cadeirasRows)),
+    churn_rows:     JSON.parse(JSON.stringify(churnRows)),
+  };
+  try { localStorage.setItem('backup_pre_carteira_20261005', JSON.stringify(antes)); } catch(e) {}
+  _backupLocalEmDisco('pre-carteira-20261005');
+
+  // ── Contratos ──
+  const contUsados = new Set();
+  const acharContrato = t => {
+    let idx = t.deal ? contratosRows.findIndex((r, i) => !contUsados.has(i) && r.dealId === t.deal) : -1;
+    if (idx < 0 && t.old) idx = contratosRows.findIndex((r, i) => !contUsados.has(i) && t.old(r));
+    if (idx >= 0) contUsados.add(idx);
+    return idx >= 0 ? contratosRows[idx] : null;
+  };
+  const ddmm = d => d.slice(0, 5);
+  const vigDe = d => { const [, m, a] = d.split('/').map(Number); return NOME_MES[m - 1] + '/' + a; };
+
+  const novosContratos = LISTA.map((t, k) => {
+    const o = acharContrato(t);
+    const rpo = (o && parseFloat(o.valorRPO) > 0) ? parseFloat(o.valorRPO) : t.rpo;
+    t._contrato = o;
+    return {
+      id:           'cont_cart_' + k,
+      dealId:       (o && o.dealId) || t.deal || undefined,
+      cliente:      t.c,
+      vigencia:     vigDe(t.fim),
+      inicio:       ddmm(t.ini),
+      fim:          ddmm(t.fim),
+      duracao:      t.dur,
+      cadeiras:     t.cad,
+      valorRPO:     rpo || null,
+      valorTotal:   rpo ? rpo * t.cad * t.dur : null,
+      tipoContrato: (o && o.tipoContrato) || '',
+      linkContrato: (o && o.linkContrato) || '',
+      source:       'manual',
+    };
+  });
+  contratosRows.forEach((r, i) => { if (!contUsados.has(i) && ehGlobalRenovado(r)) novosContratos.push(r); });
+
+  // ── Cadeiras ── (uma linha por cadeira; herda o histórico da cadeira que continuou)
+  const ATIVA = v => v === 'ATIVO' || v === 'DESALOCAÇÃO';
+  const cadUsadas = new Set();
+  const novasCadeiras = [];
+  LISTA.forEach((t, k) => {
+    const [, mi, ai] = t.ini.split('/').map(Number);
+    const [, mf, af] = t.fim.split('/').map(Number);
+    const s = ai < 2026 ? 0 : mi - 1;
+    let e = af > 2026 ? 12 : mf - 1;
+    if (e < CUR) e = CUR; // venceu mas segue ativo (em renovação)
+    const fam = t.fam || new RegExp('^' + n(t.c).replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '$');
+    for (let j = 0; j < t.cad; j++) {
+      let hist = null;
+      if (s > 0) {
+        let melhor = -1;
+        cadeirasRows.forEach((r, i) => {
+          if (cadUsadas.has(i) || !fam.test(n(r.cliente)) || !Array.isArray(r.meses)) return;
+          if (!ATIVA(r.meses[s - 1]) && !ATIVA(r.meses[s])) return;
+          const qtd = r.meses.filter(ATIVA).length;
+          if (melhor < 0 || qtd > cadeirasRows[melhor].meses.filter(ATIVA).length) melhor = i;
+        });
+        if (melhor >= 0) { cadUsadas.add(melhor); hist = cadeirasRows[melhor]; }
+      }
+      const meses = Array(12).fill('DESALOCADO');
+      for (let m = 0; m < 12; m++) {
+        if (m < s)        meses[m] = (hist && hist.meses[m]) || 'DESALOCADO';
+        else if (m < e)   meses[m] = 'ATIVO';
+        else if (m === e) meses[m] = 'DESALOCAÇÃO';
+      }
+      const row = {
+        id:         'cad_cart_' + k + '_' + j,
+        servico:    (hist && hist.servico) || 'RPO',
+        cliente:    t.c,
+        vigencia:   vigDe(t.fim),
+        dataInicio: ddmm(t.fim),
+        duracao:    t.dur,
+        meses,
+        source:     'manual',
+      };
+      if (hist && hist.mais3 != null) row.mais3 = hist.mais3;
+      if (hist && hist.mais5 != null) row.mais5 = hist.mais5;
+      const dealId = (hist && hist.dealId) || (j === 0 && t._contrato && t._contrato.dealId) || (j === 0 && t.deal);
+      if (dealId) row.dealId = dealId;
+      novasCadeiras.push(row);
+    }
+  });
+  cadeirasRows.forEach((r, i) => { if (!cadUsadas.has(i) && ehGlobalRenovado(r)) novasCadeiras.push(r); });
+  novasCadeiras.sort((a, b) => (a.cliente || '').localeCompare(b.cliente || '', 'pt-BR'));
+
+  // ── Churn Q3 ──
+  const Q3 = ['Jul', 'Ago', 'Set'];
+  const churnUsado = new Set();
+  const churnQ3 = CHURN_Q3.map((t, k) => {
+    const idx = churnRows.findIndex((c, i) => !churnUsado.has(i) && Q3.includes(c.mes) && n(c.cliente) === n(t.cliente));
+    const o = idx >= 0 ? churnRows[idx] : null;
+    if (idx >= 0) churnUsado.add(idx);
+    return {
+      id:            (o && o.id) || ('churn_cart_' + k),
+      cliente:       t.cliente,
+      tipo:          (o && o.tipo) || t.tipo,
+      mes:           t.mes,
+      dataChurn:     (o && o.dataChurn) || t.data,
+      cadeiras:      t.cad,
+      mrrPerdido:    t.mrr,
+      contratoTotal: t.total,
+      motivo:        (o && o.motivo && o.motivo !== 'Removido do controle de contratos') ? o.motivo : t.motivo,
+    };
+  });
+  const novoChurn = churnRows.filter(c => !Q3.includes(c.mes)).concat(churnQ3);
+
+  // Nenhum deal já conhecido recria linha ao carregar o HubSpot de novo.
+  _ignorarDeals([
+    ...contratosRows.map(r => r.dealId),
+    ...cadeirasRows.map(r => r.dealId),
+    ...tableRows.map(r => r.id).filter(id => id && !String(id).startsWith('manual_')),
+  ]);
+
+  contratosRows = novosContratos;
+  cadeirasRows  = novasCadeiras;
+  churnRows     = novoChurn;
+  saveContratosState();
+  saveCadeirasState();
+  saveChurnState();
+  localStorage.setItem(FLAG, 'true');
+  log.info('carteira.reconciliada_20261005', { contratos: contratosRows.length, cadeiras: cadeirasRows.length, churnQ3: churnQ3.length });
+  return 1;
+}
+
+// Roda uma vez: "Global" e "GPE" são o mesmo contrato. Tira as linhas Global de
+// Contratos e Cadeiras e passa o valor do deal (R$15k/mês, 6m = R$90k) pro GPE,
+// só se o GPE ainda estiver sem valor/RPO.
+function _fundirGlobalNoGPEUmaVez() {
+  const FLAG = 'global_fundido_gpe_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  const ehGlobal = r => (r.cliente || '').trim().toLowerCase() === 'global';
+  const ehGPE    = r => (r.cliente || '').trim().toLowerCase() === 'gpe';
+  const global   = contratosRows.find(ehGlobal);
+  const rpoGlobal = (global && parseFloat(global.valorRPO) > 0) ? parseFloat(global.valorRPO) : 15000;
+
+  const gpe = contratosRows.find(ehGPE);
+  if (gpe) {
+    if (!(parseFloat(gpe.valorRPO) > 0)) {
+      gpe.valorRPO   = rpoGlobal;
+      gpe.valorTotal = rpoGlobal * (parseInt(gpe.cadeiras) || 1) * (parseInt(gpe.duracao) || 6);
+    }
+    if (!gpe.dealId && global && global.dealId) gpe.dealId = global.dealId;
+    if (!gpe.tipoContrato && global && global.tipoContrato) gpe.tipoContrato = global.tipoContrato;
+    if (!gpe.linkContrato && global && global.linkContrato) gpe.linkContrato = global.linkContrato;
+  }
+  const antesC = contratosRows.length, antesK = cadeirasRows.length;
+  contratosRows = contratosRows.filter(r => !ehGlobal(r));
+  cadeirasRows  = cadeirasRows.filter(r => !ehGlobal(r));
+  saveContratosState();
+  saveCadeirasState();
+  localStorage.setItem(FLAG, 'true');
+  log.info('contratos.global_fundido_gpe', { contratosRemovidos: antesC - contratosRows.length, cadeirasRemovidas: antesK - cadeirasRows.length });
+  return 1;
+}
+
+// Roda uma vez: contratos ainda sem valor/RPO recebem a mensalidade do deal
+// fechado mais recente com o mesmo nome de cliente (Q3; se não houver, Q2 e Q1).
+// Valor total = RPO × cadeiras × duração.
+function _preencherValoresContratosUmaVez() {
+  const FLAG = 'contratos_valores_deal_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  const n = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+  const quando = d => { const [dd, mm] = (d.data || '0/0').split('/').map(Number); return (mm || 0) * 100 + (dd || 0); };
+  const fontes = [tableRows, Q2_DEALS, Q1_DEALS];
+  let preenchidos = 0;
+  contratosRows.forEach(c => {
+    if (parseFloat(c.valorRPO) > 0) return;
+    for (const deals of fontes) {
+      const d = (deals || [])
+        .filter(r => n(r.cliente) === n(c.cliente) && parseFloat(r.mensalidade) > 0)
+        .sort((a, b) => quando(b) - quando(a))[0];
+      if (!d) continue;
+      c.valorRPO   = parseFloat(d.mensalidade);
+      c.valorTotal = c.valorRPO * (parseInt(c.cadeiras) || 1) * (parseInt(c.duracao) || 1);
+      preenchidos++;
+      break;
+    }
+  });
+  if (preenchidos) saveContratosState();
+  localStorage.setItem(FLAG, 'true');
+  log.info('contratos.valores_do_deal', { preenchidos });
+  return preenchidos;
+}
+
+// Roda uma vez: as cadeiras reconstruídas em 05/10 herdaram marcações manuais de
+// +3m/+5m das cadeiras antigas; com a regra pela duração elas ficaram obsoletas.
+function _limparMarcacoesManuaisCadeirasUmaVez() {
+  const FLAG = 'cadeiras_mais_manual_limpo_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  let limpos = 0;
+  cadeirasRows.forEach(r => {
+    if (!String(r.id || '').startsWith('cad_cart_')) return;
+    if (r.mais3 != null || r.mais5 != null) { delete r.mais3; delete r.mais5; limpos++; }
+  });
+  if (limpos) saveCadeirasState();
+  localStorage.setItem(FLAG, 'true');
+  return limpos;
+}
+
+// Roda uma vez: Boticário II (início 11/05, 5m) foi uso de crédito antigo — sem
+// MRR nem valor. Limpa o valor que o preenchimento automático colocaria.
+function _boticarioCreditoSemValorUmaVez() {
+  const FLAG = 'boticario_credito_sem_valor_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  let n = 0;
+  contratosRows.forEach(c => {
+    if (!/botic/i.test(c.cliente || '') || c.inicio !== '11/05') return;
+    c.valorRPO = null; c.valorTotal = null; c.credito = true; n++;
+  });
+  if (n) saveContratosState();
+  localStorage.setItem(FLAG, 'true');
+  return n;
+}
+
+// Roda uma vez: CSU foi churn de junho (saiu do Q3 na reconciliação de 05/10).
+function _csuChurnJunhoUmaVez() {
+  const FLAG = 'csu_churn_junho_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  let csu = churnRows.find(c => (c.cliente || '').trim().toLowerCase() === 'csu');
+  if (!csu) {
+    let antigo = null;
+    try {
+      const pre = JSON.parse(localStorage.getItem('backup_pre_carteira_20261005') || 'null');
+      antigo = (pre && pre.churn_rows || []).find(c => (c.cliente || '').trim().toLowerCase() === 'csu');
+    } catch(e) {}
+    csu = antigo || { id:'churn_csu', cliente:'CSU', tipo:'logo', cadeiras:2, mrrPerdido:32000, contratoTotal:192000, motivo:'Fim de contrato' };
+    churnRows.push(csu);
+  }
+  csu.mes = 'Jun';
+  csu.dataChurn = '';
+  if (csu.motivo === 'Removido do controle de contratos') csu.motivo = 'Fim de contrato';
+  saveChurnState();
+  localStorage.setItem(FLAG, 'true');
+  return 1;
+}
+
+// Roda uma vez: Riachuelo Natal durou só 1 mês — entrou em julho (R$18k, segue
+// no Q3 como negócio fechado) e saiu em agosto. Sai de Contratos/Cadeiras (não é
+// mais ativo) e o churn de agosto fica com MRR e valor total = R$18k.
+function _riachueloNatalUmMesUmaVez() {
+  const FLAG = 'riachuelo_natal_1mes_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  const ehNatal = r => /^riachuelo.*natal/i.test((r.cliente || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim());
+  _ignorarDeals([...contratosRows, ...cadeirasRows].filter(ehNatal).map(r => r.dealId).filter(Boolean));
+  contratosRows = contratosRows.filter(r => !ehNatal(r));
+  cadeirasRows  = cadeirasRows.filter(r => !ehNatal(r));
+  let churn = churnRows.find(c => ehNatal(c) && ['Jul', 'Ago', 'Set'].includes(c.mes));
+  if (!churn) { churn = { id: 'churn_natal', cliente: 'Riachuelo Natal', dataChurn: '', motivo: 'Fim de contrato' }; churnRows.push(churn); }
+  Object.assign(churn, { mes: 'Ago', tipo: 'logo', cadeiras: 1, mrrPerdido: 18000, contratoTotal: 18000 });
+  // Cadeira nova em julho: o "+ Cad novas" do Churn só conta UP com "*" no nome
+  // (upsell de nova vertente). Vai também em hsOverrides pra sobreviver ao HubSpot.
+  tableRows.filter(ehNatal).forEach(r => {
+    if ((r.cliente || '').includes('*')) return;
+    r.cliente = (r.cliente || '').trim() + '*';
+    if (r.id) {
+      if (!hsOverrides[r.id]) hsOverrides[r.id] = {};
+      hsOverrides[r.id].cliente = r.cliente;
+    }
+  });
+  try { localStorage.setItem('hs_overrides', JSON.stringify(hsOverrides)); } catch(e) {}
+  saveContratosState(); saveCadeirasState(); saveChurnState(); saveTableState();
+  localStorage.setItem(FLAG, 'true');
+  return 1;
+}
+
+// Roda uma vez: os dois contratos "Cielo" são contas diferentes — o de 27/07 (3m,
+// expansão) passa a se chamar "Cielo Tech" em Contratos e Cadeiras.
+function _separarCieloTechUmaVez() {
+  const FLAG = 'cielo_tech_separado_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  let n = 0;
+  contratosRows.forEach(c => {
+    if ((c.cliente || '').trim().toLowerCase() === 'cielo' && c.inicio === '27/07') { c.cliente = 'Cielo Tech'; n++; }
+  });
+  cadeirasRows.forEach(r => {
+    if ((r.cliente || '').trim().toLowerCase() === 'cielo' && r.vigencia === 'outubro/2026' && r.dataInicio === '28/10') { r.cliente = 'Cielo Tech'; n++; }
+  });
+  if (n) { saveContratosState(); saveCadeirasState(); }
+  localStorage.setItem(FLAG, 'true');
+  return n;
+}
+
+// Roda uma vez: fechamento do Q3/2026.
+// • Crescimento da base: 24 clientes ativos em 01/07 → 28 em 30/09 = +16,67%
+//   (cada nome de cliente conta 1 vez, mesma regra da aba Contratos).
+//   Saíram 5 (Alloha, Deloitte Projeto, Renner Corp, Ebanx Internacional,
+//   Stefanini); entraram 9 (Banco Inter, Riachuelo Estágio, Cielo Mesa ARVI,
+//   Cielo Tech, Caffeine Army MKT/Growth, Odontoprev, Radix, Cielo Sul, Olist). Stellantis
+//   seguiu ativo até 04/10 (acréscimos) — churn de outubro, fora do Q3.
+// • Churn: Stefanini 31/08 (Q3) e Stellantis 04/10 (Q4).
+// • Cadeiras +5 meses no fechamento (30/09): 34 de 46 = 74% (as 45 ativas hoje +
+//   Stellantis, 6m). Fica travado no OKR do Q3 (okr_duracao_q3_fechado).
+// • Churn Q3: 19 cadeiras novas no trimestre (contratos Novo/Expansão/Resgate
+//   iniciados em Jul–Set). A regra automática só pega parte delas (canal UP sem
+//   "*" fica fora), então o restante entra no campo manual de cadeiras do Q3.
+function _fecharQ3UmaVez() {
+  const FLAG = 'q3_fechado_20261005';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  const CRESC_BASE_Q3 = 16.67;
+  const CAD_NOVAS_Q3  = 19;
+  const DURACAO_Q3    = 74;
+
+  const jaNoQ4 = localStorage.getItem('q3_migrated') === 'true';
+  const inp = document.getElementById('input-clientes');
+  if (inp && !jaNoQ4) {
+    inp.value = CRESC_BASE_Q3;
+    inp.dispatchEvent(new Event('input'));
+    saveOKRInputs();
+  }
+
+  const auto = _cadeirasNovasAutoQ('Q3').count;
+  _cadeirasExtraQ.Q3 = {
+    count: Math.max(0, CAD_NOVAS_Q3 - auto),
+    descricao: 'Expansões do Q3 fora da regra automática: Riachuelo Estágio 1, Cielo Mesa ARVI 1, Cielo Tech 1, Caffeine Army MKT/Growth 1, Banco Inter 2, Cielo Sul 1, Boticário 3, Radix 3',
+  };
+  _saveCadeirasExtraQ();
+
+  const novoChurn = (cliente, mes, dataChurn, cadeiras, mrrPerdido, contratoTotal) => {
+    if (churnRows.some(c => (c.cliente || '').trim().toLowerCase() === cliente.toLowerCase() && c.mes === mes)) return;
+    churnRows.push({ id: 'churn_' + cliente.toLowerCase() + '_' + mes, cliente, tipo: 'logo', mes, dataChurn,
+                     cadeiras, mrrPerdido, contratoTotal, motivo: 'Fim de contrato' });
+  };
+  novoChurn('Stefanini',  'Ago', '31/08', 1, 14960, 179520);
+  novoChurn('Stellantis', 'Out', '04/10', 1, 16000, 96000);
+
+  if (!jaNoQ4) localStorage.setItem('okr_duracao_q3_fechado', String(DURACAO_Q3));
+
+  // Banco Inter segue cliente (2 contratos ativos): o churn de setembro foi de
+  // uma expansão, não saída da conta → downgrade (não entra no net new de contas).
+  churnRows.forEach(c => {
+    if (c.mes === 'Set' && (c.cliente || '').trim().toLowerCase() === 'banco inter') c.tipo = 'downgrade';
+  });
+  saveChurnState();
+
+  localStorage.setItem(FLAG, 'true');
+  log.info('q3.fechado', { crescimentoBase: CRESC_BASE_Q3, cadNovasAuto: auto, cadNovasManual: _cadeirasExtraQ.Q3.count });
+  return 1;
+}
+
+// Roda uma vez (auditoria da Receita da Casa, 08/10/2026): 3 negócios estavam
+// como Upsell mas foram renovação. Com isso REN/UP por trimestre batem com a
+// auditoria — Q1: REN 451.500 / UP 345.000 · Q2: REN 1.059.000 / UP 842.000
+// (Q3 já batia: REN 515.000 / UP 663.000).
+function _auditoriaCasaRenUpUmaVez() {
+  const FLAG = 'auditoria_casa_ren_up_20261008';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  const alvo = (deals, re, data, valor) => deals.find(d =>
+    re.test((d.cliente || '').trim()) && d.data === data && (parseFloat(d.valor) || 0) === valor &&
+    ['UP', 'UPSELL'].includes((d.canal || '').toUpperCase()));
+  let n = 0;
+  [[Q1_DEALS, /botic/i, '19/01', 204000],
+   [Q2_DEALS, /^cielo$/i, '28/04', 204000],
+   [Q2_DEALS, /^caffeine army/i, '14/06', 96000]].forEach(([deals, re, data, valor]) => {
+    const d = alvo(deals, re, data, valor);
+    if (d) { d.canal = 'REN'; n++; }
+  });
+  if (n) { saveQ1Deals(); saveQ2Deals(); }
+  localStorage.setItem(FLAG, 'true');
+  log.info('auditoria.casa_ren_up', { reclassificados: n });
+  return n;
+}
+
+// Roda uma vez (13/10/2026): renovação Cielo (Caiane) em "Contrato Renovado" no
+// HubSpot entra como negócio fechado do Q4. Lançada à mão; o HubSpot não duplica
+// (mesmo cliente + canal + valor).
+function _lancarCieloCaianeRenUmaVez() {
+  const FLAG = 'cielo_caiane_ren_20261013';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  if (new Date() < new Date(2026, 9, 1)) return 0;
+  const ja = tableRows.some(r => /^cielo/i.test((r.cliente || '').trim()) && (r.canal || '').toUpperCase() === 'REN'
+                                  && (parseFloat(r.valor) || 0) === 51000);
+  if (!ja) {
+    const hoje = new Date(2026, 9, 13);
+    tableRows.push({
+      id: 'manual_cielo_caiane_ren_20261013',
+      cliente: 'Cielo', servico: 'RPO', canal: 'REN',
+      valor: 51000, mensalidade: 17000,
+      data: '13/10', mes: 'Out', alocacoes: '1', tipo: 'Enterprise',
+      semana: getSemana(hoje), ciclo: 0,
+      source: 'manual',
+    });
+    saveTableState();
+    // O Realizado do Q4 ficou "travado" por um bug de carregamento (não por edição):
+    // se ainda está zerado, destrava pra voltar a somar os negócios sozinho.
+    const inpR = document.getElementById('input-realizado');
+    if (realizadoLocked && inpR && !(parseFloat(inpR.value) > 0)) {
+      realizadoLocked = false;
+      localStorage.setItem('realizado_locked', 'false');
+      updateLockIcon();
+    }
+    if (!realizadoLocked) {
+      const total = tableRows.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+      const inp = document.getElementById('input-realizado');
+      if (inp) { inp.value = Math.round(total); updateOKR('receita', total); }
+    }
+  }
+  localStorage.setItem(FLAG, 'true');
+  log.info('q4.cielo_caiane_ren', { adicionado: !ja });
+  return ja ? 0 : 1;
 }
 
 function _removerContratosHSRedundantes() {
@@ -7596,7 +8590,7 @@ function getNovosClientesNomesPorQuarter(q) {
       .filter(d => MESES_POR_Q.Q2.includes(d.mes) && isNovoLogo(d))
       .forEach(d => add(d.cliente));
   } else {
-    tableRows
+    _dealsS2()
       .filter(r => MESES_POR_Q[q].includes(r.mes) && isNovoLogo(r))
       .forEach(r => add(r.cliente));
   }
@@ -7702,7 +8696,7 @@ function getReceitaPorMes(mes) {
     };
   }
   // Q3 em diante — usa tableRows (aba ao vivo)
-  const rows = tableRows.filter(r => r.mes === mes);
+  const rows = _dealsS2().filter(r => r.mes === mes);
   return {
     cadeiras: rows.reduce((s,r) => s + (parseInt(r.alocacoes)||0), 0),
     receitaTotal: rows.reduce((s,r) => s + (parseFloat(r.valor)||0), 0),
@@ -7745,7 +8739,7 @@ function getNovosClientesPorQuarter(q) {
       .filter(d => MESES_POR_Q.Q2.includes(d.mes) && isNovoLogo(d))
       .forEach(d => clientes.add((d.cliente||'').trim().toLowerCase()));
   } else {
-    tableRows
+    _dealsS2()
       .filter(r => MESES_POR_Q[q].includes(r.mes) && isNovoLogo(r))
       .forEach(r => clientes.add((r.cliente||'').trim().toLowerCase()));
   }
@@ -7803,7 +8797,7 @@ function _cadeirasNovasAutoQ(q) {
       else seen.get(key).alocacoes += allocOf(d);
     });
   } else {
-    (tableRows||[]).forEach(r => {
+    _dealsS2().forEach(r => {
       if (!meses.includes(r.mes)) return;
       if (!isNovoLogo(r)) return;
       const nm = (r.cliente||'').trim();
@@ -7887,7 +8881,7 @@ function renderChurnSaldo(byQ) {
           if (d.mes === mes && isNovoLogo(d)) total += allocOf(d);
         });
       } else {
-        (tableRows||[]).forEach(r => { if (r.mes === mes && isNovoLogo(r)) total += allocOf(r); });
+        _dealsS2().forEach(r => { if (r.mes === mes && isNovoLogo(r)) total += allocOf(r); });
       }
       return total;
     };
@@ -8299,7 +9293,8 @@ function _refreshConvMirrors() {
   try {
     if (document.getElementById('conv-summary-q1'))    renderConvQuarter('Q1', 'conv-summary-q1');
     if (document.getElementById('conv-summary-q2'))    renderConvQuarter('Q2', 'conv-summary-q2');
-    if (document.getElementById('conv-summary-q3'))    renderConvQuarter('Q3', 'conv-summary-q3');
+    if (document.getElementById('conv-summary-q3'))    renderConvQuarter('Q4', 'conv-summary-q3');
+    if (document.getElementById('conv-summary-q3hist')) renderConvQuarter('Q3', 'conv-summary-q3hist');
     if (document.getElementById('conv-summary-anual')) renderConvAnual('conv-summary-anual');
   } catch(e) { log.warn('conv.mirror.refresh.failed', {}, e); }
 }
@@ -8401,7 +9396,7 @@ function getFechadosCount(key, filtroDim, filtroVal) {
     });
   }
   if (usaTb) {
-    tableRows.forEach(r => {
+    _dealsS2().forEach(r => {
       if (!meses.includes(r.mes)) return;
       if (!mesmoPeriodo(r)) return;
       if (filtroDim === 'canais' && (r.canal||'').toUpperCase() !== filtroVal.toUpperCase()) return;
@@ -9245,7 +10240,7 @@ function sincronizarFechadosNaTrilha() {
     }
   } catch(_){}
   try {
-    tableRows.forEach(r => {
+    _dealsS2().forEach(r => {
       // Filtra deals que não sejam de 2026 (anoCreate explícito ou createdate)
       const ano = r.anoCreate || (r.createdate ? new Date(r.createdate).getFullYear() : null);
       if (ano && ano !== 2026) return;
