@@ -1511,11 +1511,11 @@
       "cliente": "Radix",
       "vigencia": "março/2027",
       "inicio": "10/08",
-      "fim": "02/03",
-      "duracao": 6,
+      "fim": "10/11",
+      "duracao": 3,
       "cadeiras": 3,
       "valorRPO": 17000,
-      "valorTotal": 306000,
+      "valorTotal": 153000,
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "manual"
@@ -1525,11 +1525,11 @@
       "cliente": "Radix UP",
       "vigencia": "março/2027",
       "inicio": "01/09",
-      "fim": "06/03",
-      "duracao": 6,
+      "fim": "01/12",
+      "duracao": 3,
       "cadeiras": 2,
       "valorRPO": 17000,
-      "valorTotal": 204000,
+      "valorTotal": 102000,
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "manual"
@@ -1568,7 +1568,7 @@
       "dealId": "66137392498",
       "cliente": "Cielo Fortaleza",
       "vigencia": "",
-      "inicio": "16/10",
+      "inicio": "",
       "fim": "",
       "duracao": 6,
       "cadeiras": 1,
@@ -3618,6 +3618,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": false,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-10-21T13:16:08.886Z"
+  "active_tab": "contratos",
+  "snapshot_at": "2026-10-21T14:33:00.309Z"
 }
