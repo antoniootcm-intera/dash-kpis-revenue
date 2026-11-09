@@ -4890,7 +4890,36 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Sincroniza Gastos/CAC do header com a aba CAC já no boot
   setTimeout(() => { try { calcCAC(); } catch(_) {} }, 100);
+
+  // Rotina diária (18h): o LaunchAgent com.intera.autopublicar abre
+  // localhost:8080/?autopublicar=1 → puxa o HubSpot e publica na nuvem.
+  if (new URLSearchParams(location.search).get('autopublicar') === '1') {
+    history.replaceState(null, '', location.pathname); // recarregar a aba não republica
+    setTimeout(_autoPublicar, 2500);
+  }
 });
+
+async function _autoPublicar() {
+  const log = (etapa, extra) => {
+    fetch('/__autolog', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ etapa, extra: extra || '', at: new Date().toISOString() }) }).catch(() => {});
+  };
+  log('inicio');
+  if (localStorage.getItem('hs_token')) {
+    try { await fetchHubSpot(); } catch (e) { log('hubspot-erro', String(e && e.message || e)); }
+    log('hubspot', document.getElementById('sync-status')?.textContent || '');
+    await new Promise(r => setTimeout(r, 1500));
+  } else {
+    log('hubspot-sem-token');
+  }
+  if (!localStorage.getItem('gh_token')) { log('publicar-sem-token'); return; }
+  const ok = await publicarSnapshot();
+  const msg = document.getElementById('sync-status')?.textContent || '';
+  log(ok ? 'publicado' : 'publicar-falhou', msg);
+  _backupLocalEmDisco(ok ? 'autopublicado' : 'autopublicar-falhou');
+  if (ok) setStatus('✓ Rotina 18h: HubSpot atualizado e publicado às ' + new Date().toLocaleTimeString('pt-BR') + '. Esta aba fecha sozinha.', 'green');
+  setTimeout(() => { try { window.close(); } catch (_) {} }, 20000);
+}
 
 function lockRealizado() {
   // O restore do OKR ao abrir a página dispara 'input' em todos os campos; isso não é
@@ -5080,12 +5109,15 @@ async function publicarSnapshot() {
 
       await pushFile('index.html', toB64(htmlSource), `dash update ${tsLabel}`);
       setStatus('✓ Publicado (data.json + index.html)! Link atualiza em ~30s → antoniootcm-intera.github.io/dash-kpis-revenue/', 'green');
+      return true;
     } else {
       // Fallback: publicou só dados. Avisa o usuário pra subir HTML via git/script.
       setStatus('⚠ data.json publicado. index.html NÃO foi atualizado (fetch local falhou). Use ./publicar.sh do terminal pra subir o HTML.', 'orange');
+      return true;
     }
   } catch(e) {
     setStatus('✗ Falha: ' + e.message, 'red');
+    return false;
   } finally {
     btn.innerHTML = orig;
     btn.disabled  = false;
