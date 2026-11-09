@@ -50,7 +50,8 @@
       "mesCreate": "Out",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 15000
+      "mensalidade": 15000,
+      "_locked": true
     },
     {
       "id": "66137392498",
@@ -1978,6 +1979,17 @@
       "mrrPerdido": 34000,
       "contratoTotal": 85000,
       "motivo": "Fim de contrato"
+    },
+    {
+      "id": "churn_stellantis_out",
+      "cliente": "Stellantis",
+      "tipo": "logo",
+      "mes": "Out",
+      "dataChurn": "04/10",
+      "cadeiras": 1,
+      "mrrPerdido": 16000,
+      "contratoTotal": 96000,
+      "motivo": "Fim de contrato"
     }
   ],
   "q1_deals": [
@@ -3706,6 +3718,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": false,
-  "active_tab": "churn",
-  "snapshot_at": "2026-11-09T17:27:50.572Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-11-09T17:35:48.421Z"
 }
