@@ -2,7 +2,7 @@
   "table_rows": [
     {
       "id": "manual_cielo_caiane_ren_20261013",
-      "cliente": "Cielo Sul",
+      "cliente": "Cielo POA",
       "servico": "RPO",
       "canal": "REN",
       "valor": 102000,
@@ -35,6 +35,24 @@
       "_locked": true
     },
     {
+      "id": "65730733631",
+      "cliente": "Caffeine Army",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 45000,
+      "data": "23/10",
+      "mes": "Out",
+      "alocacoes": "1",
+      "tipo": "SMB",
+      "semana": 4,
+      "ciclo": 0,
+      "createdate": "2026-10-05T20:16:38.541Z",
+      "mesCreate": "Out",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 15000
+    },
+    {
       "id": "66137392498",
       "cliente": "Cielo Fortaleza",
       "servico": "RPO",
@@ -50,7 +68,46 @@
       "mesCreate": "Out",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 17000
+      "mensalidade": 17000,
+      "_locked": true
+    },
+    {
+      "id": "66440424985",
+      "cliente": "Renner",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 144000,
+      "data": "03/11",
+      "mes": "Nov",
+      "alocacoes": "3",
+      "tipo": "Enterprise",
+      "semana": 5,
+      "ciclo": 0,
+      "createdate": "2026-10-21T14:49:16.478Z",
+      "mesCreate": "Out",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 16000,
+      "_locked": true
+    },
+    {
+      "id": "67158952880",
+      "cliente": "FiberHome",
+      "servico": "RPO",
+      "canal": "INB",
+      "valor": 51000,
+      "data": "30/10",
+      "mes": "Out",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 5,
+      "ciclo": 0,
+      "createdate": "2026-10-30T18:03:56.425Z",
+      "mesCreate": "Out",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 17000,
+      "_locked": true
     }
   ],
   "cadeiras_rows": [
@@ -58,8 +115,8 @@
       "id": "cad_cart_10_0",
       "servico": "Staffing",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "23/10",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "23/12",
       "duracao": 5,
       "meses": [
         "ATIVO",
@@ -71,9 +128,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO"
       ],
       "source": "manual",
       "dealId": "60715092874"
@@ -82,8 +139,8 @@
       "id": "cad_cart_10_1",
       "servico": "Staffing",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "23/10",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "23/12",
       "duracao": 5,
       "meses": [
         "ATIVO",
@@ -95,9 +152,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO"
       ],
       "source": "manual"
     },
@@ -105,8 +162,8 @@
       "id": "cad_cart_10_2",
       "servico": "Staffing",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "23/10",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "23/12",
       "duracao": 5,
       "meses": [
         "ATIVO",
@@ -118,9 +175,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO"
       ],
       "source": "manual"
     },
@@ -128,8 +185,8 @@
       "id": "cad_cart_10_3",
       "servico": "Staffing",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "23/10",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "23/12",
       "duracao": 5,
       "meses": [
         "ATIVO",
@@ -141,9 +198,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO"
       ],
       "source": "manual"
     },
@@ -151,8 +208,8 @@
       "id": "cad_cart_10_4",
       "servico": "Staffing",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "23/10",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "23/12",
       "duracao": 5,
       "meses": [
         "DESALOCADO",
@@ -164,9 +221,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO"
       ],
       "source": "manual"
     },
@@ -174,8 +231,8 @@
       "id": "cad_cart_10_5",
       "servico": "Staffing",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "23/10",
+      "vigencia": "dezembro/2026",
+      "dataInicio": "23/12",
       "duracao": 5,
       "meses": [
         "DESALOCADO",
@@ -187,9 +244,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "DESALOCAÇÃO"
       ],
       "source": "manual"
     },
@@ -362,8 +419,8 @@
       "id": "cad_cart_17_0",
       "servico": "RPO",
       "cliente": "Caffeine Army MKT/Growth",
-      "vigencia": "outubro/2026",
-      "dataInicio": "25/10",
+      "vigencia": "janeiro/2027",
+      "dataInicio": "25/01",
       "duracao": 3,
       "meses": [
         "DESALOCADO",
@@ -375,9 +432,9 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "ATIVO"
       ],
       "source": "manual",
       "dealId": "62929981802"
@@ -406,30 +463,6 @@
       "source": "manual"
     },
     {
-      "id": "cad_cart_16_0",
-      "servico": "RPO",
-      "cliente": "Cielo Tech",
-      "vigencia": "outubro/2026",
-      "dataInicio": "28/10",
-      "duracao": 3,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
-      ],
-      "source": "manual",
-      "dealId": "62412761486"
-    },
-    {
       "id": "cad_cart_8_0",
       "servico": "RPO",
       "cliente": "Cielo CO",
@@ -454,12 +487,12 @@
       "dealId": "60236781075"
     },
     {
-      "id": "cad_cart_15_0",
+      "id": "cad_hs_66137392498",
+      "dealId": "66137392498",
       "servico": "RPO",
-      "cliente": "Cielo Mesa ARVI",
-      "vigencia": "outubro/2026",
-      "dataInicio": "15/10",
-      "duracao": 3,
+      "cliente": "Cielo Fortaleza",
+      "vigencia": "abril/2027",
+      "dataInicio": "16/04",
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -467,22 +500,22 @@
         "DESALOCADO",
         "DESALOCADO",
         "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "DESALOCAÇÃO",
         "DESALOCADO",
-        "DESALOCADO"
+        "DESALOCADO",
+        "DESALOCADO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO"
       ],
-      "source": "manual",
-      "dealId": "62412761486"
+      "source": "hs",
+      "duracao": 6
     },
     {
       "id": "cad_cart_5_0",
       "servico": "RPO",
-      "cliente": "Cielo SP",
-      "vigencia": "dezembro/2026",
-      "dataInicio": "10/12",
+      "cliente": "Cielo POA",
+      "vigencia": "junho/2027",
+      "dataInicio": "10/06",
       "duracao": 6,
       "meses": [
         "DESALOCADO",
@@ -496,17 +529,17 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO"
+        "ATIVO"
       ],
       "source": "manual",
       "dealId": "60234055077"
     },
     {
-      "id": "cad_cart_24_0",
+      "id": "cad_cart_16_0",
       "servico": "RPO",
-      "cliente": "Cielo Sul",
-      "vigencia": "novembro/2026",
-      "dataInicio": "11/11",
+      "cliente": "Cielo Tech",
+      "vigencia": "janeiro/2027",
+      "dataInicio": "29/01",
       "duracao": 3,
       "meses": [
         "DESALOCADO",
@@ -515,22 +548,22 @@
         "DESALOCADO",
         "DESALOCADO",
         "DESALOCADO",
-        "DESALOCADO",
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "ATIVO"
       ],
       "source": "manual",
-      "dealId": "63676952321"
+      "dealId": "62412761486"
     },
     {
       "id": "cad_cart_0_0",
       "servico": "RPO",
       "cliente": "Deloitte",
-      "vigencia": "outubro/2026",
-      "dataInicio": "22/10",
+      "vigencia": "novembro/2026",
+      "dataInicio": "13/11",
       "duracao": 12,
       "meses": [
         "ATIVO",
@@ -542,35 +575,11 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
+        "ATIVO",
         "DESALOCAÇÃO",
-        "DESALOCADO",
         "DESALOCADO"
       ],
       "source": "manual"
-    },
-    {
-      "id": "cad_cart_6_0",
-      "servico": "RPO",
-      "cliente": "Doctoralia",
-      "vigencia": "novembro/2026",
-      "dataInicio": "12/11",
-      "duracao": 6,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO"
-      ],
-      "source": "manual",
-      "dealId": "59186379620"
     },
     {
       "id": "cad_cart_25_0",
@@ -622,8 +631,8 @@
       "id": "cad_cart_11_0",
       "servico": "RPO",
       "cliente": "Facta Promotora Tech",
-      "vigencia": "setembro/2026",
-      "dataInicio": "17/09",
+      "vigencia": "março/2027",
+      "dataInicio": "17/03",
       "duracao": 6,
       "meses": [
         "ATIVO",
@@ -635,11 +644,35 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO",
+        "ATIVO"
       ],
       "source": "manual"
+    },
+    {
+      "id": "cad_hs_67158952880",
+      "dealId": "67158952880",
+      "servico": "RPO",
+      "cliente": "FiberHome",
+      "vigencia": "janeiro/2027",
+      "dataInicio": "30/01",
+      "meses": [
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "DESALOCADO",
+        "ATIVO",
+        "ATIVO",
+        "ATIVO"
+      ],
+      "source": "hs",
+      "duracao": 3
     },
     {
       "id": "cad_cart_21_0",
@@ -711,30 +744,6 @@
       "source": "manual"
     },
     {
-      "id": "cad_cart_20_0",
-      "servico": "RPO",
-      "cliente": "Odontoprev",
-      "vigencia": "novembro/2026",
-      "dataInicio": "04/11",
-      "duracao": 3,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO"
-      ],
-      "source": "manual",
-      "dealId": "60177879370"
-    },
-    {
       "id": "cad_cart_27_0",
       "servico": "RPO",
       "cliente": "Olist",
@@ -761,9 +770,9 @@
       "id": "cad_cart_22_0",
       "servico": "RPO",
       "cliente": "Radix",
-      "vigencia": "março/2027",
-      "dataInicio": "02/03",
-      "duracao": 6,
+      "vigencia": "dezembro/2026",
+      "dataInicio": "05/12",
+      "duracao": 3,
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -776,7 +785,7 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "ATIVO"
+        "DESALOCAÇÃO"
       ],
       "source": "manual",
       "dealId": "62929981839"
@@ -785,9 +794,9 @@
       "id": "cad_cart_22_1",
       "servico": "RPO",
       "cliente": "Radix",
-      "vigencia": "março/2027",
-      "dataInicio": "02/03",
-      "duracao": 6,
+      "vigencia": "dezembro/2026",
+      "dataInicio": "29/12",
+      "duracao": 3,
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -800,7 +809,7 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "ATIVO"
+        "DESALOCAÇÃO"
       ],
       "source": "manual"
     },
@@ -808,9 +817,9 @@
       "id": "cad_cart_22_2",
       "servico": "RPO",
       "cliente": "Radix",
-      "vigencia": "março/2027",
-      "dataInicio": "02/03",
-      "duracao": 6,
+      "vigencia": "janeiro/2027",
+      "dataInicio": "01/01",
+      "duracao": 3,
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -820,52 +829,6 @@
         "DESALOCADO",
         "DESALOCADO",
         "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO"
-      ],
-      "source": "manual"
-    },
-    {
-      "id": "cad_cart_30_0",
-      "servico": "RPO",
-      "cliente": "Radix",
-      "vigencia": "março/2027",
-      "dataInicio": "06/03",
-      "duracao": 6,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO"
-      ],
-      "source": "manual"
-    },
-    {
-      "id": "cad_cart_30_1",
-      "servico": "RPO",
-      "cliente": "Radix",
-      "vigencia": "março/2027",
-      "dataInicio": "06/03",
-      "duracao": 6,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
         "ATIVO",
         "ATIVO",
         "ATIVO",
@@ -877,9 +840,9 @@
       "id": "cad_cart_7_0",
       "servico": "RPO",
       "cliente": "Renner Varejo",
-      "vigencia": "novembro/2026",
-      "dataInicio": "30/11",
-      "duracao": 6,
+      "vigencia": "fevereiro/2027",
+      "dataInicio": "28/02",
+      "duracao": 3,
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -891,8 +854,8 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO"
       ],
       "source": "manual",
       "dealId": "60177578299"
@@ -901,9 +864,9 @@
       "id": "cad_cart_7_1",
       "servico": "RPO",
       "cliente": "Renner Varejo",
-      "vigencia": "novembro/2026",
-      "dataInicio": "30/11",
-      "duracao": 6,
+      "vigencia": "fevereiro/2027",
+      "dataInicio": "28/02",
+      "duracao": 3,
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -915,8 +878,8 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO"
       ],
       "source": "manual"
     },
@@ -924,9 +887,9 @@
       "id": "cad_cart_7_2",
       "servico": "RPO",
       "cliente": "Renner Varejo",
-      "vigencia": "novembro/2026",
-      "dataInicio": "30/11",
-      "duracao": 6,
+      "vigencia": "fevereiro/2027",
+      "dataInicio": "28/02",
+      "duracao": 3,
       "meses": [
         "DESALOCADO",
         "DESALOCADO",
@@ -938,8 +901,8 @@
         "ATIVO",
         "ATIVO",
         "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO"
+        "ATIVO",
+        "ATIVO"
       ],
       "source": "manual",
       "dealId": "60486922796"
@@ -1037,30 +1000,6 @@
       "source": "manual"
     },
     {
-      "id": "cad_cart_14_0",
-      "servico": "RPO",
-      "cliente": "Riachuelo Estágio",
-      "vigencia": "outubro/2026",
-      "dataInicio": "13/10",
-      "duracao": 3,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
-      ],
-      "source": "manual",
-      "dealId": "62045631125"
-    },
-    {
       "id": "cad_cart_26_0",
       "servico": "RPO",
       "cliente": "RNP",
@@ -1082,84 +1021,15 @@
         "ATIVO"
       ],
       "source": "manual"
-    },
-    {
-      "id": "cad_cart_3_0",
-      "servico": "RPO",
-      "cliente": "Venturus",
-      "vigencia": "outubro/2026",
-      "dataInicio": "09/10",
-      "duracao": 6,
-      "meses": [
-        "DESALOCADO",
-        "DESALOCADO",
-        "DESALOCADO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "ATIVO",
-        "DESALOCAÇÃO",
-        "DESALOCADO",
-        "DESALOCADO"
-      ],
-      "source": "manual"
-    },
-    {
-      "id": "cad_hs_65211167512",
-      "dealId": "65211167512",
-      "servico": "RPO",
-      "cliente": "Cielo Tech",
-      "vigencia": "",
-      "dataInicio": "09/10",
-      "meses": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "ATIVO",
-        "",
-        ""
-      ],
-      "source": "hs"
-    },
-    {
-      "id": "cad_hs_66137392498",
-      "dealId": "66137392498",
-      "servico": "RPO",
-      "cliente": "Cielo",
-      "vigencia": "",
-      "dataInicio": "16/10",
-      "meses": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "ATIVO",
-        "",
-        ""
-      ],
-      "source": "hs"
     }
   ],
   "contratos_rows": [
     {
       "id": "cont_cart_11",
       "cliente": "Facta Promotora Tech",
-      "vigencia": "setembro/2026",
-      "inicio": "17/03",
-      "fim": "17/09",
+      "vigencia": "março/2027",
+      "inicio": "17/09",
+      "fim": "17/03",
       "duracao": 6,
       "cadeiras": 1,
       "valorRPO": 15000,
@@ -1172,9 +1042,9 @@
       "id": "cont_cart_10",
       "dealId": "60715092874",
       "cliente": "ABI",
-      "vigencia": "outubro/2026",
+      "vigencia": "dezembro/2026",
       "inicio": "16/05",
-      "fim": "23/10",
+      "fim": "23/12",
       "duracao": 5,
       "cadeiras": 6,
       "valorRPO": 14000,
@@ -1202,9 +1072,9 @@
       "id": "cont_cart_17",
       "dealId": "62929981802",
       "cliente": "Caffeine Army MKT/Growth",
-      "vigencia": "outubro/2026",
-      "inicio": "24/07",
-      "fim": "25/10",
+      "vigencia": "janeiro/2027",
+      "inicio": "25/10",
+      "fim": "25/01",
       "duracao": 3,
       "cadeiras": 1,
       "valorRPO": 15000,
@@ -1217,9 +1087,9 @@
       "id": "cont_cart_16",
       "dealId": "62929981759",
       "cliente": "Cielo Tech",
-      "vigencia": "outubro/2026",
-      "inicio": "27/07",
-      "fim": "28/10",
+      "vigencia": "janeiro/2027",
+      "inicio": "29/10",
+      "fim": "29/01",
       "duracao": 3,
       "cadeiras": 1,
       "valorRPO": 17000,
@@ -1231,9 +1101,9 @@
     {
       "id": "cont_cart_0",
       "cliente": "Deloitte",
-      "vigencia": "outubro/2026",
+      "vigencia": "novembro/2026",
       "inicio": "22/10",
-      "fim": "22/10",
+      "fim": "13/11",
       "duracao": 12,
       "cadeiras": 1,
       "valorRPO": 15000,
@@ -1243,61 +1113,16 @@
       "source": "manual"
     },
     {
-      "id": "cont_cart_24",
-      "dealId": "63676952321",
-      "cliente": "Cielo Sul",
-      "vigencia": "novembro/2026",
-      "inicio": "11/08",
-      "fim": "11/11",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 51000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
-      "id": "cont_cart_6",
-      "dealId": "59186379620",
-      "cliente": "Doctoralia",
-      "vigencia": "novembro/2026",
-      "inicio": "12/05",
-      "fim": "12/11",
-      "duracao": 6,
-      "cadeiras": 1,
-      "valorRPO": 16000,
-      "valorTotal": 96000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
-      "source": "manual"
-    },
-    {
-      "id": "cont_cart_20",
-      "dealId": "60177879370",
-      "cliente": "Odontoprev",
-      "vigencia": "novembro/2026",
-      "inicio": "03/08",
-      "fim": "04/11",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 51000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
       "id": "cont_cart_7",
       "dealId": "60177578299",
       "cliente": "Renner Varejo",
-      "vigencia": "novembro/2026",
-      "inicio": "27/05",
-      "fim": "30/11",
-      "duracao": 6,
+      "vigencia": "fevereiro/2027",
+      "inicio": "30/11",
+      "fim": "28/02",
+      "duracao": 3,
       "cadeiras": 3,
       "valorRPO": 16000,
-      "valorTotal": 288000,
+      "valorTotal": 144000,
       "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "manual"
@@ -1364,10 +1189,10 @@
     {
       "id": "cont_cart_5",
       "dealId": "60234055077",
-      "cliente": "Cielo SP",
-      "vigencia": "dezembro/2026",
-      "inicio": "18/05",
-      "fim": "10/12",
+      "cliente": "Cielo POA",
+      "vigencia": "junho/2027",
+      "inicio": "10/12",
+      "fim": "10/06",
       "duracao": 6,
       "cadeiras": 1,
       "valorRPO": 17000,
@@ -1417,21 +1242,6 @@
       "tipoContrato": "Contrato Assinado",
       "linkContrato": "",
       "source": "manual"
-    },
-    {
-      "id": "cont_65211167512",
-      "dealId": "65211167512",
-      "cliente": "Cielo Tech",
-      "vigencia": "janeiro/2027",
-      "inicio": "29/10",
-      "fim": "29/01",
-      "duracao": 3,
-      "cadeiras": 1,
-      "valorRPO": 17000,
-      "valorTotal": 51000,
-      "tipoContrato": "Ordem de Compra",
-      "linkContrato": "",
-      "source": "hs"
     },
     {
       "id": "cont_cart_18",
@@ -1506,35 +1316,6 @@
       "source": "manual"
     },
     {
-      "id": "cont_cart_22",
-      "dealId": "62929981839",
-      "cliente": "Radix",
-      "vigencia": "março/2027",
-      "inicio": "10/08",
-      "fim": "10/11",
-      "duracao": 3,
-      "cadeiras": 3,
-      "valorRPO": 17000,
-      "valorTotal": 153000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
-      "id": "cont_cart_30",
-      "cliente": "Radix UP",
-      "vigencia": "março/2027",
-      "inicio": "01/09",
-      "fim": "01/12",
-      "duracao": 3,
-      "cadeiras": 2,
-      "valorRPO": 17000,
-      "valorTotal": 102000,
-      "tipoContrato": "Contrato Assinado",
-      "linkContrato": "",
-      "source": "manual"
-    },
-    {
       "id": "cont_cart_4",
       "cliente": "Cielo",
       "vigencia": "maio/2027",
@@ -1567,9 +1348,9 @@
       "id": "cont_66137392498",
       "dealId": "66137392498",
       "cliente": "Cielo Fortaleza",
-      "vigencia": "",
-      "inicio": "",
-      "fim": "",
+      "vigencia": "abril/2027",
+      "inicio": "16/10",
+      "fim": "16/04",
       "duracao": 6,
       "cadeiras": 1,
       "valorRPO": 17000,
@@ -1577,6 +1358,217 @@
       "tipoContrato": "Ordem de Compra",
       "linkContrato": "",
       "source": "hs"
+    },
+    {
+      "id": "cont_67158952880",
+      "dealId": "67158952880",
+      "cliente": "FiberHome",
+      "vigencia": "janeiro/2027",
+      "inicio": "30/10",
+      "fim": "30/01",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
+    },
+    {
+      "id": "cont_radix_0",
+      "dealId": "62929981839",
+      "cliente": "Radix",
+      "vigencia": "dezembro/2026",
+      "inicio": "05/09",
+      "fim": "05/12",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "manual"
+    },
+    {
+      "id": "cont_radix_1",
+      "cliente": "Radix",
+      "vigencia": "dezembro/2026",
+      "inicio": "29/09",
+      "fim": "29/12",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "manual"
+    },
+    {
+      "id": "cont_radix_2",
+      "cliente": "Radix",
+      "vigencia": "janeiro/2027",
+      "inicio": "01/10",
+      "fim": "01/01",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "manual"
+    }
+  ],
+  "contratos_encerrados": [
+    {
+      "id": "cont_cart_17",
+      "dealId": "62929981802",
+      "cliente": "Caffeine Army MKT/Growth",
+      "vigencia": "outubro/2026",
+      "inicio": "24/07",
+      "fim": "25/10",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 45000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "renovado",
+      "historico": true,
+      "dataSaida": "25/10",
+      "mesSaida": "Out"
+    },
+    {
+      "id": "cont_cart_7",
+      "dealId": "60177578299",
+      "cliente": "Renner Varejo",
+      "vigencia": "novembro/2026",
+      "inicio": "27/05",
+      "fim": "30/11",
+      "duracao": 6,
+      "cadeiras": 3,
+      "valorRPO": 16000,
+      "valorTotal": 288000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "renovado",
+      "historico": true,
+      "dataSaida": "30/11",
+      "mesSaida": "Nov"
+    },
+    {
+      "id": "cont_cart_16",
+      "dealId": "62929981759",
+      "cliente": "Cielo Tech",
+      "vigencia": "outubro/2026",
+      "inicio": "27/07",
+      "fim": "28/10",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "renovado",
+      "historico": true,
+      "dataSaida": "28/10",
+      "mesSaida": "Out"
+    },
+    {
+      "id": "cont_cart_5",
+      "dealId": "60234055077",
+      "cliente": "Cielo SP",
+      "vigencia": "dezembro/2026",
+      "inicio": "18/05",
+      "fim": "10/12",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 102000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "renovado",
+      "historico": true,
+      "dataSaida": "10/12",
+      "mesSaida": "Dez"
+    },
+    {
+      "id": "cont_cart_20",
+      "dealId": "60177879370",
+      "cliente": "Odontoprev",
+      "vigencia": "novembro/2026",
+      "inicio": "03/08",
+      "fim": "04/11",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "churn",
+      "churnId": "churn_reconc_cont_cart_20",
+      "dataSaida": "04/11",
+      "mesSaida": "Nov"
+    },
+    {
+      "id": "cont_cart_24",
+      "dealId": "63676952321",
+      "cliente": "Cielo Sul",
+      "vigencia": "novembro/2026",
+      "inicio": "11/08",
+      "fim": "11/11",
+      "duracao": 3,
+      "cadeiras": 1,
+      "valorRPO": 17000,
+      "valorTotal": 51000,
+      "tipoContrato": "Ordem de Compra",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "churn",
+      "churnId": "churn_reconc_cont_cart_24",
+      "dataSaida": "11/11",
+      "mesSaida": "Nov"
+    },
+    {
+      "id": "cont_cart_6",
+      "dealId": "59186379620",
+      "cliente": "Doctoralia",
+      "vigencia": "novembro/2026",
+      "inicio": "12/05",
+      "fim": "12/11",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 16000,
+      "valorTotal": 96000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "https://drive.google.com/file/d/1fCghxZ4SP8pRU4lydgcM3rFIh0hmeL40/view?usp=sharing",
+      "source": "manual",
+      "status": "churn",
+      "churnId": "churn_reconc_cont_cart_6",
+      "dataSaida": "12/11",
+      "mesSaida": "Nov"
+    },
+    {
+      "id": "cont_cart_11",
+      "cliente": "Facta Promotora Tech",
+      "vigencia": "setembro/2026",
+      "inicio": "17/03",
+      "fim": "17/09",
+      "duracao": 6,
+      "cadeiras": 1,
+      "valorRPO": 15000,
+      "valorTotal": 90000,
+      "tipoContrato": "Contrato Assinado",
+      "linkContrato": "",
+      "source": "manual",
+      "status": "renovado",
+      "historico": true,
+      "dataSaida": "17/09",
+      "mesSaida": "Set"
     }
   ],
   "churn_rows": [
@@ -1942,6 +1934,50 @@
       "mrrPerdido": 17000,
       "contratoTotal": 51000,
       "motivo": "Projeto com data final"
+    },
+    {
+      "id": "churn_reconc_cont_cart_20",
+      "cliente": "Odontoprev",
+      "tipo": "logo",
+      "mes": "Nov",
+      "dataChurn": "04/11",
+      "cadeiras": 1,
+      "mrrPerdido": 17000,
+      "contratoTotal": 51000,
+      "motivo": "Fim de contrato"
+    },
+    {
+      "id": "churn_reconc_cont_cart_24",
+      "cliente": "Cielo Sul",
+      "tipo": "logo",
+      "mes": "Nov",
+      "dataChurn": "11/11",
+      "cadeiras": 1,
+      "mrrPerdido": 17000,
+      "contratoTotal": 51000,
+      "motivo": "Fim de contrato"
+    },
+    {
+      "id": "churn_reconc_cont_cart_6",
+      "cliente": "Doctoralia",
+      "tipo": "logo",
+      "mes": "Nov",
+      "dataChurn": "12/11",
+      "cadeiras": 1,
+      "mrrPerdido": 16000,
+      "contratoTotal": 96000,
+      "motivo": "Fim de contrato"
+    },
+    {
+      "id": "churn_reconc_radix",
+      "cliente": "Radix",
+      "tipo": "downgrade",
+      "mes": "Nov",
+      "dataChurn": "",
+      "cadeiras": 2,
+      "mrrPerdido": 34000,
+      "contratoTotal": 85000,
+      "motivo": "Fim de contrato"
     }
   ],
   "q1_deals": [
@@ -2815,9 +2851,10 @@
       "cliente": "Fiberhome",
       "canal": "NTW",
       "prazo": "6 meses",
-      "mrr": 16000,
-      "valor": 96000,
-      "expectativa": "Mais de 30 dias"
+      "mrr": 17000,
+      "valor": 51000,
+      "expectativa": "Esta semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Deloitte",
@@ -2825,7 +2862,8 @@
       "prazo": "1 mes",
       "mrr": 48000,
       "valor": 48000,
-      "expectativa": "Próxima semana"
+      "expectativa": "Esta semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Localiza",
@@ -2833,7 +2871,8 @@
       "prazo": "4 meses",
       "mrr": 15000,
       "valor": 60000,
-      "expectativa": "Próxima semana"
+      "expectativa": "Esta semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Grupo Boticário",
@@ -2841,7 +2880,8 @@
       "prazo": "6 meses",
       "mrr": 17000,
       "valor": 102000,
-      "expectativa": "Mais de 30 dias"
+      "expectativa": "Mais de 30 dias",
+      "temperatura": "Morno"
     },
     {
       "cliente": "Deloitte",
@@ -2849,7 +2889,8 @@
       "prazo": "12 meses",
       "mrr": 15000,
       "valor": 180000,
-      "expectativa": "Mais de 30 dias"
+      "expectativa": "Próxima semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Radix",
@@ -2857,7 +2898,8 @@
       "prazo": "2 meses",
       "mrr": 16000,
       "valor": 32000,
-      "expectativa": "Próxima semana"
+      "expectativa": "Esta semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Deloitte Service Now",
@@ -2865,7 +2907,8 @@
       "prazo": "3 meses",
       "mrr": 16000,
       "valor": 48000,
-      "expectativa": "Próxima semana"
+      "expectativa": "Esta semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Odontoprev",
@@ -2873,15 +2916,35 @@
       "prazo": "3 meses",
       "mrr": 17000,
       "valor": 51000,
-      "expectativa": "Esta semana"
+      "expectativa": "Próxima semana",
+      "temperatura": "Quente"
     },
     {
       "cliente": "Caffeine Army",
       "canal": "REN",
-      "prazo": "6 meses",
+      "prazo": "3 meses",
       "mrr": 15000,
-      "valor": 90000,
-      "expectativa": "15 dias"
+      "valor": 45000,
+      "expectativa": "Esta semana",
+      "temperatura": "Quente"
+    },
+    {
+      "cliente": "Renner",
+      "canal": "REN",
+      "prazo": "3 meses",
+      "mrr": 48000,
+      "valor": 144000,
+      "expectativa": "30 dias",
+      "temperatura": "Morno"
+    },
+    {
+      "cliente": "Riachuelo",
+      "canal": "REN",
+      "prazo": "4 meses",
+      "mrr": 16000,
+      "valor": 320000,
+      "expectativa": "30 dias",
+      "temperatura": "Quente"
     }
   ],
   "deals_ignorados": [
@@ -2911,7 +2974,10 @@
     "61111846200",
     "60177802569",
     "60524924470",
-    "60486922796"
+    "60486922796",
+    "65730733631",
+    "66440424985",
+    "65211167512"
   ],
   "cadeiras_extra_q": {
     "Q3": {
@@ -3405,6 +3471,28 @@
       "alocacoes": "1",
       "tipo": "Enterprise",
       "canal": "UP"
+    },
+    "67158952880": {
+      "canal": "INB",
+      "mensalidade": 17000,
+      "alocacoes": "1",
+      "tipo": "GG"
+    },
+    "66440424985": {
+      "valor": 144000,
+      "mensalidade": 16000,
+      "alocacoes": "3",
+      "tipo": "Enterprise",
+      "canal": "REN"
+    },
+    "65730733631": {
+      "data": "23/10",
+      "semana": 4,
+      "mes": "Out",
+      "mensalidade": 15000,
+      "tipo": "SMB",
+      "alocacoes": "1",
+      "canal": "REN"
     }
   },
   "hs_deleted": [
@@ -3609,15 +3697,15 @@
   },
   "viewer_password_hash": "e00ef35b38629774fde1de278f2464d26001678b3d0e091e75034d5333de6d31",
   "okr_state": {
-    "input-realizado": "255000",
+    "input-realizado": "495000",
     "input-clientes": "0",
-    "input-duracao": "70",
+    "input-duracao": "62",
     "cac-gastos": "0",
     "chart-meta": "1800000",
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": false,
-  "active_tab": "contratos",
-  "snapshot_at": "2026-10-21T14:33:00.309Z"
+  "active_tab": "churn",
+  "snapshot_at": "2026-11-09T17:27:50.572Z"
 }
