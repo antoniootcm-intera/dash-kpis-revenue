@@ -114,6 +114,7 @@
   .bg-blue-500  { background: var(--accent) !important; }
 
   /* Tags — paleta INTERA (roxo, mostarda, preto, teal, cinza) */
+  [hidden] { display:none !important; }
   .tag { display:inline-block; padding:2px 8px; border-radius:9999px; font-size:11px; font-weight:600; }
   .tag-upsell    { background:#FAEDC8; color:#8B6914; }   /* mustard */
   .tag-quente    { background:#FEE2E2; color:#B91C1C; }   /* forecast: quente */
@@ -1857,7 +1858,75 @@
       </div>
     </div>
   </section>
+
+  <!-- ── Contratos encerrados no ano (churn + renovados) ── -->
+  <section>
+    <div class="bg-blue-700 text-white rounded-t-xl px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+      <span class="text-lg font-bold">🗂️ Contratos encerrados — 2026</span>
+      <span class="text-blue-200 text-xs">Churns do ano (aba Churn) + contratos que saíram por renovação</span>
+    </div>
+    <div class="bg-white border border-t-0 border-gray-200 rounded-b-xl p-5 space-y-4">
+      <div id="cont-enc-resumo" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+      <div class="flex gap-2 flex-wrap no-print">
+        <button class="filt-dur-btn active-filt" id="cont-enc-f-all" onclick="filtrarEncerrados('all')">Todos</button>
+        <button class="filt-dur-btn" id="cont-enc-f-churn" onclick="filtrarEncerrados('churn')">🔴 Churn</button>
+        <button class="filt-dur-btn" id="cont-enc-f-renovado" onclick="filtrarEncerrados('renovado')">🔁 Renovados</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th>Saída</th><th>Cliente</th><th>Data</th><th>Mês</th><th>Cadeiras</th>
+              <th>MRR</th><th>Valor do contrato</th><th>Motivo</th>
+              <th class="no-print admin-only" style="width:60px;">Desfazer</th>
+            </tr>
+          </thead>
+          <tbody id="cont-enc-tbody"></tbody>
+        </table>
+      </div>
+      <p class="text-xs italic" style="color:var(--muted);">Ao clicar no ✕ de um contrato ativo, o dashboard pergunta se foi churn ou renovação. Churn entra na aba Churn; renovação só sai da lista de ativos, sem churn.</p>
+    </div>
+  </section>
 </div><!-- /panel-contratos -->
+
+<!-- Modal: saída de contrato (✕ no Controle de Contratos) -->
+<div id="modal-saida-contrato" class="no-print" hidden
+     style="position:fixed;inset:0;background:rgba(17,17,17,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:16px;max-width:520px;width:100%;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,.25);">
+    <p class="text-lg font-bold" style="color:var(--text);">Por que este contrato está saindo?</p>
+    <p class="text-sm mt-1" id="msc-cliente" style="color:var(--text2);"></p>
+    <div class="space-y-2 mt-4">
+      <label class="flex gap-3 items-start p-3 rounded-lg border cursor-pointer" style="border-color:#e5e7eb;">
+        <input type="radio" name="msc-opcao" value="churn" checked onchange="_mscAtualizar()" style="margin-top:3px;">
+        <span><strong>🔴 Churn</strong><br><span class="text-xs" style="color:var(--muted);">O cliente não renovou. Registra na aba Churn.</span></span>
+      </label>
+      <label class="flex gap-3 items-start p-3 rounded-lg border cursor-pointer" style="border-color:#e5e7eb;">
+        <input type="radio" name="msc-opcao" value="renovado" onchange="_mscAtualizar()" style="margin-top:3px;">
+        <span><strong>🔁 Contrato renovado</strong><br><span class="text-xs" style="color:var(--muted);">Sai dos ativos sem churn (o contrato novo entra pelo HubSpot ou à mão).</span></span>
+      </label>
+      <label class="flex gap-3 items-start p-3 rounded-lg border cursor-pointer" style="border-color:#e5e7eb;">
+        <input type="radio" name="msc-opcao" value="erro" onchange="_mscAtualizar()" style="margin-top:3px;">
+        <span><strong>🗑️ Lançamento errado / duplicado</strong><br><span class="text-xs" style="color:var(--muted);">Apaga a linha sem registrar nada.</span></span>
+      </label>
+    </div>
+    <div id="msc-churn-campos" class="grid grid-cols-3 gap-2 mt-4">
+      <label class="text-xs" style="color:var(--text2);">Data do churn
+        <input id="msc-data" type="text" placeholder="dd/mm" class="border rounded px-2 py-1 w-full mt-1 text-sm"></label>
+      <label class="text-xs" style="color:var(--text2);">Tipo
+        <select id="msc-tipo" class="border rounded px-2 py-1 w-full mt-1 text-sm"><option value="logo">Logo</option><option value="downgrade">Downgrade</option></select></label>
+      <label class="text-xs" style="color:var(--text2);">Motivo
+        <select id="msc-motivo" class="border rounded px-2 py-1 w-full mt-1 text-sm"></select></label>
+    </div>
+    <div id="msc-ren-campos" class="mt-4" hidden>
+      <label class="text-xs" style="color:var(--text2);">Data da renovação
+        <input id="msc-data-ren" type="text" placeholder="dd/mm" class="border rounded px-2 py-1 w-full mt-1 text-sm"></label>
+    </div>
+    <div class="flex justify-end gap-2 mt-5">
+      <button onclick="_mscFechar()" class="text-sm font-semibold px-4 py-2 rounded-lg border" style="border-color:#d1d5db;background:#fff;">Cancelar</button>
+      <button onclick="_mscConfirmar()" class="text-sm font-semibold px-4 py-2 rounded-lg" style="background:var(--accent);color:#fff;">Confirmar</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════════════
      PAINEL CHURN
@@ -4701,6 +4770,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (Array.isArray(d.table_rows))     tableRows      = d.table_rows;
         if (Array.isArray(d.cadeiras_rows))  cadeirasRows   = d.cadeiras_rows;
         if (Array.isArray(d.contratos_rows)) contratosRows  = d.contratos_rows;
+        if (Array.isArray(d.contratos_encerrados)) contratosEncerrados = d.contratos_encerrados;
         if (Array.isArray(d.churn_rows))     { churnRows = d.churn_rows; _migrateChurnTipo(); }
         if (Array.isArray(d.q1_deals) && d.q1_deals.length) Q1_DEALS = d.q1_deals;
         if (Array.isArray(d.q2_deals) && d.q2_deals.length) Q2_DEALS = d.q2_deals;
@@ -4784,6 +4854,9 @@ window.addEventListener('DOMContentLoaded', () => {
   _fecharQ3UmaVez();
   _auditoriaCasaRenUpUmaVez();
   if (_lancarCieloCaianeRenUmaVez() > 0) { renderTable(); updateCicloChart(); rebuildLineChart(); }
+  if (_reconciliarQ4UmaVez() > 0) { renderContratos(); renderCadeiras(); renderChurn(); }
+  if (_ajusteFactaAbiDeloitteUmaVez() > 0) { renderContratos(); renderCadeiras(); }
+  _churnStellantisOutubroUmaVez();
   renderCadeiras(); // +3m/+5m pela duração
   _backupLocalEmDisco('load');
 
@@ -4967,6 +5040,7 @@ async function publicarSnapshot() {
       table_rows:       tableRows,
       cadeiras_rows:    cadeirasRows,
       contratos_rows:   contratosRows,
+      contratos_encerrados: contratosEncerrados,
       churn_rows:       churnRows,
       q1_deals:         Q1_DEALS,
       q2_deals:         Q2_DEALS,
@@ -6168,6 +6242,7 @@ async function _tentarRecuperarDoDataJson() {
     if (d.okr_duracao_q3_fechado) localStorage.setItem('okr_duracao_q3_fechado', d.okr_duracao_q3_fechado);
     setArr('cadeiras_rows',  d.cadeiras_rows);
     setArr('contratos_rows', d.contratos_rows);
+    setArr('contratos_encerrados', d.contratos_encerrados);
     setArr('churn_rows',     d.churn_rows);
     if (d.oportunidades_data) localStorage.setItem('oportunidades_data', JSON.stringify(d.oportunidades_data));
     if (d.hs_overrides)  localStorage.setItem('hs_overrides', JSON.stringify(d.hs_overrides));
@@ -7394,6 +7469,7 @@ function renderContratos() {
   });
 
   updateContratosCards();
+  renderContratosEncerrados();
 }
 
 // Retorna true se o cliente é um upsell do mesmo CNPJ (sufixo "UP" isolado)
@@ -7483,52 +7559,182 @@ function addContrato() {
   saveContratosState();
 }
 
+// ─── Saída de contrato (✕): pergunta churn / renovado / erro ───
+let contratosEncerrados = [];
+try {
+  const sv = JSON.parse(localStorage.getItem('contratos_encerrados') || '[]');
+  if (Array.isArray(sv)) contratosEncerrados = sv;
+} catch(e) {}
+function saveContratosEncerrados() {
+  try { localStorage.setItem('contratos_encerrados', JSON.stringify(contratosEncerrados)); } catch(e) {}
+}
+
+let _mscIdx = null;
+function _hojeDDMM() {
+  const h = new Date();
+  return String(h.getDate()).padStart(2,'0') + '/' + String(h.getMonth()+1).padStart(2,'0');
+}
 function removeContrato(i) {
   const row = contratosRows[i];
   if (!row) return;
-  const nome = (row.cliente || '').trim() || 'este contrato';
-  if (!confirm('Remover ' + nome + ' dos contratos ativos?\n\nIsso vai registrar automaticamente um churn na data de hoje.')) return;
+  _mscIdx = i;
+  document.getElementById('msc-cliente').textContent =
+    (row.cliente || 'Contrato') + (row.cadeiras ? ' · ' + row.cadeiras + ' cadeira(s)' : '') + (row.fim ? ' · fim ' + row.fim : '');
+  document.querySelector('input[name="msc-opcao"][value="churn"]').checked = true;
+  document.getElementById('msc-data').value = _hojeDDMM();
+  document.getElementById('msc-data-ren').value = _hojeDDMM();
+  document.getElementById('msc-tipo').value = 'logo';
+  const sel = document.getElementById('msc-motivo');
+  sel.innerHTML = MOTIVOS_CHURN.concat(['Fim de contrato']).filter((v, k, a) => a.indexOf(v) === k)
+    .map(m => `<option ${m === 'Fim de contrato' ? 'selected' : ''}>${esc(m)}</option>`).join('');
+  _mscAtualizar();
+  document.getElementById('modal-saida-contrato').hidden = false;
+}
+function _mscOpcao() { return (document.querySelector('input[name="msc-opcao"]:checked') || {}).value || 'churn'; }
+function _mscAtualizar() {
+  const op = _mscOpcao();
+  document.getElementById('msc-churn-campos').hidden = op !== 'churn';
+  document.getElementById('msc-ren-campos').hidden = op !== 'renovado';
+}
+function _mscFechar() { document.getElementById('modal-saida-contrato').hidden = true; _mscIdx = null; }
+function _mscConfirmar() {
+  const i = _mscIdx;
+  const row = contratosRows[i];
+  if (!row) { _mscFechar(); return; }
+  const op = _mscOpcao();
+  const nome = (row.cliente || '').trim() || 'Contrato';
+  const snap = JSON.parse(JSON.stringify(row));
 
-  // Registra churn antes de remover
-  try {
-    const hoje = new Date();
-    const mesIdx = hoje.getMonth();
-    const dataChurn = String(hoje.getDate()).padStart(2,'0') + '/' + String(mesIdx+1).padStart(2,'0');
-    const cadeiras = parseInt(row.cadeiras) || 0;
-    const mrr      = (parseFloat(row.valorRPO) || 0) * (cadeiras || 1);
-    const total    = parseFloat(row.valorTotal) || 0;
-
-    // Evita duplicar se já existir um churn pro mesmo cliente nesta data
-    const jaExiste = churnRows.some(c =>
-      (c.cliente || '').trim().toLowerCase() === nome.toLowerCase() &&
-      c.dataChurn === dataChurn
-    );
-
-    if (!jaExiste) {
-      churnRows.push({
-        id:            'churn_' + Date.now(),
-        cliente:       nome,
-        tipo:          'logo',
-        mes:           MESES_CHURN[mesIdx],
-        dataChurn:     dataChurn,
-        cadeiras:      cadeiras || 1,
-        mrrPerdido:    mrr,
-        contratoTotal: total,
-        motivo:        'Removido do controle de contratos',
-      });
-      saveChurnState();
-      log.info('churn.auto_from_contrato', { cliente: nome, mes: MESES_CHURN[mesIdx], cadeiras, mrr });
-    } else {
-      log.info('churn.skip_duplicate', { cliente: nome, dataChurn });
-    }
-  } catch(e) { log.warn('churn.auto.failed', {}, e); }
-
+  if (op === 'churn') {
+    const data = (document.getElementById('msc-data').value || _hojeDDMM()).trim();
+    const mesIdx = Math.min(Math.max((parseInt(data.split('/')[1], 10) || (new Date().getMonth() + 1)) - 1, 0), 11);
+    const cadeiras = parseInt(row.cadeiras) || 1;
+    const churnId = 'churn_' + Date.now();
+    churnRows.push({
+      id: churnId, cliente: nome,
+      tipo: document.getElementById('msc-tipo').value || 'logo',
+      mes: MESES_CHURN[mesIdx], dataChurn: data, cadeiras,
+      mrrPerdido: (parseFloat(row.valorRPO) || 0) * cadeiras,
+      contratoTotal: parseFloat(row.valorTotal) || 0,
+      motivo: document.getElementById('msc-motivo').value || 'Fim de contrato',
+    });
+    saveChurnState();
+    contratosEncerrados.push({ ...snap, status: 'churn', churnId, dataSaida: data, mesSaida: MESES_CHURN[mesIdx] });
+    log.info('contrato.saida.churn', { cliente: nome, data });
+  } else if (op === 'renovado') {
+    const data = (document.getElementById('msc-data-ren').value || _hojeDDMM()).trim();
+    const mesIdx = Math.min(Math.max((parseInt(data.split('/')[1], 10) || (new Date().getMonth() + 1)) - 1, 0), 11);
+    contratosEncerrados.push({ ...snap, status: 'renovado', dataSaida: data, mesSaida: MESES_CHURN[mesIdx] });
+    log.info('contrato.saida.renovado', { cliente: nome, data });
+  } else {
+    log.info('contrato.saida.erro', { cliente: nome });
+  }
+  saveContratosEncerrados();
   _ignorarDeals([row.dealId]);
   contratosRows.splice(i, 1);
-  renderContratos();
   saveContratosState();
+  _mscFechar();
+  renderContratos();
   if (typeof renderChurn === 'function') renderChurn();
   if (typeof renderChurnChart === 'function') renderChurnChart();
+}
+
+// ─── Base de contratos encerrados (churns do ano + renovados) ───
+let _encFiltro = 'all';
+function filtrarEncerrados(f) {
+  _encFiltro = f;
+  ['all','churn','renovado'].forEach(k => document.getElementById('cont-enc-f-' + k)?.classList.toggle('active-filt', k === f));
+  renderContratosEncerrados();
+}
+function _encLinhas() {
+  const snapPorChurn = {};
+  contratosEncerrados.forEach(e => { if (e.churnId) snapPorChurn[e.churnId] = e; });
+  const linhas = churnRows.map(c => ({
+    status: 'churn', cliente: c.cliente, data: c.dataChurn || '', mes: c.mes || '',
+    cadeiras: parseInt(c.cadeiras) || 0, mrr: parseFloat(c.mrrPerdido) || 0, total: parseFloat(c.contratoTotal) || 0,
+    motivo: (c.tipo === 'downgrade' ? 'Downgrade · ' : '') + (c.motivo || ''), churnId: c.id, temSnap: !!snapPorChurn[c.id],
+  }));
+  contratosEncerrados.forEach((e, k) => {
+    if (e.status !== 'renovado') return;
+    const cad = parseInt(e.cadeiras) || 0;
+    linhas.push({ status: 'renovado', cliente: e.cliente, data: e.dataSaida || '', mes: e.mesSaida || '',
+      cadeiras: cad, mrr: (parseFloat(e.valorRPO) || 0) * cad, total: parseFloat(e.valorTotal) || 0,
+      motivo: e.historico ? 'Renovado (atualizado na mesma linha)' : 'Renovado', encIdx: k, temSnap: !e.historico });
+  });
+  const ord = m => { const x = MESES_CHURN.indexOf(m); return x < 0 ? 99 : x; };
+  const dia = d => parseInt((d || '').split('/')[0], 10) || 0;
+  return linhas.sort((a, b) => (ord(a.mes) - ord(b.mes)) || (dia(a.data) - dia(b.data)));
+}
+function renderContratosEncerrados() {
+  const tbody = document.getElementById('cont-enc-tbody');
+  if (!tbody) return;
+  const todas = _encLinhas();
+  const ch = todas.filter(l => l.status === 'churn'), rn = todas.filter(l => l.status === 'renovado');
+  const soma = (arr, k) => arr.reduce((s, l) => s + (l[k] || 0), 0);
+  const res = document.getElementById('cont-enc-resumo');
+  if (res) res.innerHTML = `
+    <div class="rounded-xl p-4 border" style="background:#FEF2F2;border-color:#FECACA;">
+      <p class="text-xs font-semibold" style="color:#991B1B;">CHURN NO ANO</p>
+      <p class="text-lg font-bold" style="color:#B91C1C;">${ch.length} contrato(s) · ${soma(ch,'cadeiras')} cadeira(s)</p>
+      <p class="text-xs" style="color:#991B1B;">MRR perdido ${fmtBRL(soma(ch,'mrr'))} · contratos ${fmtBRL(soma(ch,'total'))}</p>
+    </div>
+    <div class="rounded-xl p-4 border" style="background:#F0FDF4;border-color:#BBF7D0;">
+      <p class="text-xs font-semibold" style="color:#166534;">SAÍRAM POR RENOVAÇÃO</p>
+      <p class="text-lg font-bold" style="color:#15803D;">${rn.length} contrato(s) · ${soma(rn,'cadeiras')} cadeira(s)</p>
+      <p class="text-xs" style="color:#166534;">sem churn — contrato novo segue nos ativos</p>
+    </div>
+    <div class="rounded-xl p-4 border" style="background:#f8f7ff;border-color:#e0dff7;">
+      <p class="text-xs font-semibold" style="color:var(--text2);">TOTAL ENCERRADOS</p>
+      <p class="text-lg font-bold" style="color:var(--text);">${todas.length} contrato(s)</p>
+      <p class="text-xs" style="color:var(--muted);">ativos hoje: ${contratosRows.length}</p>
+    </div>`;
+  const vis = _encFiltro === 'all' ? todas : todas.filter(l => l.status === _encFiltro);
+  tbody.innerHTML = vis.length ? vis.map(l => {
+    const tag = l.status === 'churn'
+      ? '<span class="tag" style="background:#FEE2E2;color:#B91C1C;">🔴 Churn</span>'
+      : '<span class="tag" style="background:#DCFCE7;color:#15803D;">🔁 Renovado</span>';
+    const desfazer = !l.temSnap ? '<span style="color:var(--muted);" title="Churn lançado direto na aba Churn">—</span>'
+      : `<button onclick="${l.status === 'churn' ? `restaurarContratoChurn('${l.churnId}')` : `restaurarContratoRenovado(${l.encIdx})`}"
+           title="Volta o contrato para os ativos" style="color:var(--accent);font-weight:700;background:none;border:none;cursor:pointer;">↩</button>`;
+    return `<tr>
+      <td style="text-align:center;">${tag}</td>
+      <td style="text-align:left;font-weight:600;">${esc(l.cliente || '')}</td>
+      <td style="text-align:center;">${esc(l.data)}</td>
+      <td style="text-align:center;">${esc(l.mes)}</td>
+      <td style="text-align:center;">${l.cadeiras || '—'}</td>
+      <td style="text-align:right;">${l.mrr ? fmtBRL(l.mrr) : '—'}</td>
+      <td style="text-align:right;">${l.total ? fmtBRL(l.total) : '—'}</td>
+      <td style="text-align:left;font-size:12px;">${esc(l.motivo)}</td>
+      <td class="no-print admin-only" style="text-align:center;">${desfazer}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="9" style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Nenhum contrato encerrado.</td></tr>';
+}
+function _voltarParaAtivos(snap) {
+  const r = { ...snap };
+  ['status','churnId','dataSaida','mesSaida'].forEach(k => delete r[k]);
+  contratosRows.push(r);
+  saveContratosState();
+}
+function restaurarContratoChurn(churnId) {
+  if (IS_VIEWER) return;
+  const k = contratosEncerrados.findIndex(e => e.churnId === churnId);
+  if (k < 0) return;
+  if (!confirm('Desfazer o churn de ' + (contratosEncerrados[k].cliente || 'este contrato') + '?\n\nO contrato volta para os ativos e o registro sai da aba Churn.')) return;
+  _voltarParaAtivos(contratosEncerrados[k]);
+  contratosEncerrados.splice(k, 1); saveContratosEncerrados();
+  churnRows = churnRows.filter(c => c.id !== churnId); saveChurnState();
+  renderContratos();
+  if (typeof renderChurn === 'function') renderChurn();
+  if (typeof renderChurnChart === 'function') renderChurnChart();
+}
+function restaurarContratoRenovado(k) {
+  if (IS_VIEWER) return;
+  const e = contratosEncerrados[k];
+  if (!e) return;
+  if (!confirm('Voltar ' + (e.cliente || 'este contrato') + ' para os contratos ativos?')) return;
+  _voltarParaAtivos(e);
+  contratosEncerrados.splice(k, 1); saveContratosEncerrados();
+  renderContratos();
 }
 
 function importarContratosDeCADEIRAS() {
@@ -7735,7 +7941,7 @@ function _backupLocalEmDisco(label) {
   const ls = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e) { return null; } };
   const snap = {
     label, at: new Date().toISOString(),
-    table_rows: tableRows, cadeiras_rows: cadeirasRows, contratos_rows: contratosRows,
+    table_rows: tableRows, cadeiras_rows: cadeirasRows, contratos_rows: contratosRows, contratos_encerrados: contratosEncerrados,
     churn_rows: churnRows, q1_deals: Q1_DEALS, q2_deals: Q2_DEALS, q3_deals: Q3_DEALS, forecast_deals: FORECAST_DEALS,
     oportunidades_data: oportunidadesData, hs_overrides: hsOverrides, hs_deleted: [...hsDeleted],
     cac_state: cacState, okr_state: ls('okr_state'), deals_ignorados: [...(_dealsIgnorados())],
@@ -8215,6 +8421,190 @@ function _lancarCieloCaianeRenUmaVez() {
   return ja ? 0 : 1;
 }
 
+// Roda uma vez (09/11/2026): alinha Contratos e Cadeiras com os negócios do Q4.
+// • Renovações atualizam a linha que já existia (sem linha nova): Caffeine Army
+//   MKT/Growth, Renner Varejo (3 cad), Cielo Tech e Cielo SP → renomeado Cielo POA.
+//   O novo período começa no fim do anterior (mesmo padrão que você usou na Cielo Tech).
+// • Churns: Odontoprev (04/11), Cielo Sul (11/11), Doctoralia (12/11). Cielo Mesa ARVI,
+//   Venturus e Riachuelo Estágio já estavam no churn — só sai a cadeira que sobrou.
+// • Radix: 5 cadeiras viram 3 ativas (3 meses cada, fim 05/12, 29/12 e 01/01/2027)
+//   + churn (downgrade) de 2 cadeiras no Q4.
+// • Novos do Q4 (Cielo Fortaleza, FiberHome): datas e duração preenchidas.
+// Estado anterior: localStorage['backup_pre_reconc_20261109'].
+function _reconciliarQ4UmaVez() {
+  const FLAG = 'reconc_q4_20261109';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  if (!contratosRows.length || !cadeirasRows.length) return 0;
+  try { localStorage.setItem('backup_pre_reconc_20261109', JSON.stringify({ contratosRows, cadeirasRows, churnRows, contratosEncerrados })); } catch(e) {}
+
+  const n = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\*/g, '').trim().toLowerCase();
+  const NOME_MES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const vig = (mes, ano) => NOME_MES[mes - 1] + '/' + ano;
+  const contrato = (id, nome) => contratosRows.find(c => c.id === id) || contratosRows.find(c => n(c.cliente) === n(nome));
+  const tiraContrato = id => { contratosRows = contratosRows.filter(c => c.id !== id); };
+  const tiraCadeiras = pred => { cadeirasRows = cadeirasRows.filter(r => !pred(r)); };
+  // meses da cadeira: preserva o histórico antes de `desde` (0-11); a partir dele, ativo até o fim
+  const mesesAte = (row, desde, fimMes, fimAno) => {
+    if (!Array.isArray(row.meses)) row.meses = Array(12).fill('');
+    for (let m = desde; m < 12; m++) {
+      if (fimAno > 2026 || m < fimMes - 1) row.meses[m] = 'ATIVO';
+      else if (m === fimMes - 1)          row.meses[m] = 'DESALOCAÇÃO';
+      else                                row.meses[m] = 'DESALOCADO';
+    }
+    for (let m = 0; m < desde; m++) if (!row.meses[m]) row.meses[m] = 'DESALOCADO';
+    delete row.mais3; delete row.mais5;
+  };
+  const historicoRenovado = c => contratosEncerrados.push({ ...JSON.parse(JSON.stringify(c)), status: 'renovado', historico: true,
+    dataSaida: c.fim || '', mesSaida: MESES_CHURN[(parseInt((c.fim || '').split('/')[1], 10) || 1) - 1] });
+
+  // ── Renovações (mesma linha) ──
+  const renovar = (idOld, nomeOld, idHs, novo, cadPred, desde) => {
+    const c = contrato(idOld, nomeOld);
+    if (!c) return;
+    historicoRenovado(c);
+    Object.assign(c, novo.contrato);
+    if (idHs) { const hs = contratosRows.find(x => x.id === 'cont_' + idHs); if (hs) tiraContrato(hs.id); _ignorarDeals([idHs]); tiraCadeiras(r => r.dealId === idHs && r.source === 'hs'); }
+    cadeirasRows.filter(cadPred).forEach(r => {
+      Object.assign(r, novo.cadeira);
+      mesesAte(r, desde, novo.fimMes, novo.fimAno);
+    });
+  };
+  renovar('cont_cart_17', 'Caffeine Army MKT/Growth', '65730733631', {
+    contrato: { inicio:'25/10', fim:'25/01', vigencia: vig(1, 2027), duracao:3, cadeiras:1, valorRPO:15000, valorTotal:45000 },
+    cadeira:  { vigencia: vig(1, 2027), dataInicio:'25/01', duracao:3 }, fimMes:1, fimAno:2027,
+  }, r => n(r.cliente) === 'caffeine army mkt/growth', 9);
+  renovar('cont_cart_7', 'Renner Varejo', '66440424985', {
+    contrato: { inicio:'30/11', fim:'28/02', vigencia: vig(2, 2027), duracao:3, cadeiras:3, valorRPO:16000, valorTotal:144000 },
+    cadeira:  { vigencia: vig(2, 2027), dataInicio:'28/02', duracao:3 }, fimMes:2, fimAno:2027,
+  }, r => n(r.cliente) === 'renner varejo', 10);
+  renovar('cont_cart_16', 'Cielo Tech', '65211167512', {
+    contrato: { inicio:'29/10', fim:'29/01', vigencia: vig(1, 2027), duracao:3, cadeiras:1, valorRPO:17000, valorTotal:51000 },
+    cadeira:  { vigencia: vig(1, 2027), dataInicio:'29/01', duracao:3 }, fimMes:1, fimAno:2027,
+  }, r => n(r.cliente) === 'cielo tech' && r.source !== 'hs', 9);
+  renovar('cont_cart_5', 'Cielo SP', null, {
+    contrato: { cliente:'Cielo POA', inicio:'10/12', fim:'10/06', vigencia: vig(6, 2027), duracao:6, cadeiras:1, valorRPO:17000, valorTotal:102000 },
+    cadeira:  { cliente:'Cielo POA', vigencia: vig(6, 2027), dataInicio:'10/06', duracao:6 }, fimMes:6, fimAno:2027,
+  }, r => n(r.cliente) === 'cielo sp', 11);
+
+  // ── Churns ──
+  [['cont_cart_20', 'Odontoprev', '04/11'], ['cont_cart_24', 'Cielo Sul', '11/11'], ['cont_cart_6', 'Doctoralia', '12/11']].forEach(([id, nome, data]) => {
+    const c = contrato(id, nome);
+    if (c) {
+      const cad = parseInt(c.cadeiras) || 1;
+      const churnId = 'churn_reconc_' + id;
+      if (!churnRows.some(x => n(x.cliente) === n(nome) && ['Out','Nov','Dez'].includes(x.mes))) {
+        churnRows.push({ id: churnId, cliente: nome, tipo: 'logo', mes: 'Nov', dataChurn: data, cadeiras: cad,
+          mrrPerdido: (parseFloat(c.valorRPO) || 0) * cad, contratoTotal: parseFloat(c.valorTotal) || 0, motivo: 'Fim de contrato' });
+        contratosEncerrados.push({ ...JSON.parse(JSON.stringify(c)), status: 'churn', churnId, dataSaida: data, mesSaida: 'Nov' });
+      }
+      tiraContrato(c.id);
+    }
+    tiraCadeiras(r => n(r.cliente) === n(nome));
+  });
+  // churns do Q4 já registrados: só sai a cadeira que tinha ficado
+  ['Cielo Mesa ARVI', 'Venturus', 'Riachuelo Estágio'].forEach(nome => tiraCadeiras(r => n(r.cliente) === n(nome)));
+
+  // ── Radix: 3 cadeiras ativas de 3 meses + churn de 2 ──
+  const radixCad = cadeirasRows.filter(r => n(r.cliente) === 'radix');
+  const dealRadix = (contratosRows.find(c => n(c.cliente) === 'radix' && c.dealId) || {}).dealId;
+  const ativasRadix = [
+    { inicio:'05/09', fim:'05/12', fimMes:12, fimAno:2026 },
+    { inicio:'29/09', fim:'29/12', fimMes:12, fimAno:2026 },
+    { inicio:'01/10', fim:'01/01', fimMes:1,  fimAno:2027 },
+  ];
+  contratosRows = contratosRows.filter(c => !/^radix( up)?$/.test(n(c.cliente)));
+  ativasRadix.forEach((a, k) => contratosRows.push({
+    id: 'cont_radix_' + k, dealId: k === 0 ? dealRadix : undefined, cliente: 'Radix',
+    vigencia: vig(a.fimMes, a.fimAno), inicio: a.inicio, fim: a.fim, duracao: 3, cadeiras: 1,
+    valorRPO: 17000, valorTotal: 51000, tipoContrato: 'Contrato Assinado', linkContrato: '', source: 'manual',
+  }));
+  const manterRadix = radixCad.slice(0, 3);
+  tiraCadeiras(r => n(r.cliente) === 'radix' && !manterRadix.includes(r));
+  manterRadix.forEach((r, k) => {
+    const a = ativasRadix[k];
+    Object.assign(r, { vigencia: vig(a.fimMes, a.fimAno), dataInicio: a.fim, duracao: 3 });
+    mesesAte(r, 9, a.fimMes, a.fimAno);
+  });
+  if (!churnRows.some(x => n(x.cliente) === 'radix')) {
+    churnRows.push({ id: 'churn_reconc_radix', cliente: 'Radix', tipo: 'downgrade', mes: 'Nov', dataChurn: '',
+      cadeiras: 2, mrrPerdido: 34000, contratoTotal: 85000, motivo: 'Fim de contrato' });
+  }
+
+  // ── Novos do Q4: completa datas e duração ──
+  const completar = (dealId, nome, inicio, fim, fimMes, fimAno, dur, rpo) => {
+    const c = contratosRows.find(x => x.dealId === dealId);
+    if (c) Object.assign(c, { cliente: nome, inicio, fim, vigencia: vig(fimMes, fimAno), duracao: dur, cadeiras: 1, valorRPO: rpo, valorTotal: rpo * dur });
+    cadeirasRows.filter(r => r.dealId === dealId).forEach(r => {
+      Object.assign(r, { cliente: nome, vigencia: vig(fimMes, fimAno), dataInicio: fim, duracao: dur });
+      mesesAte(r, 9, fimMes, fimAno);
+    });
+  };
+  completar('66137392498', 'Cielo Fortaleza', '16/10', '16/04', 4, 2027, 6, 17000);
+  completar('67158952880', 'FiberHome',       '30/10', '30/01', 1, 2027, 3, 17000);
+
+  cadeirasRows.sort((a, b) => (a.cliente || '').localeCompare(b.cliente || '', 'pt-BR'));
+  saveContratosState(); saveCadeirasState(); saveChurnState(); saveContratosEncerrados();
+  localStorage.setItem(FLAG, 'true');
+  log.info('q4.reconciliado_20261109', { contratos: contratosRows.length, cadeiras: cadeirasRows.length });
+  return 1;
+}
+
+// Roda uma vez (09/11/2026), correções de vigência:
+// • Facta Promotora Tech: renovou no fim do Q3 por mais 6 meses → 17/09 a 17/03/2027.
+// • ABI: vence em 23/12 (não 23/10 — erro de digitação).
+// • Deloitte: segue ativo com acréscimos até 13/11.
+function _ajusteFactaAbiDeloitteUmaVez() {
+  const FLAG = 'ajuste_facta_abi_deloitte_20261109';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  if (!contratosRows.length) return 0;
+  const n = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+  const NOME_MES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const mesesAte = (row, desde, fimMes, fimAno) => {
+    if (!Array.isArray(row.meses)) row.meses = Array(12).fill('');
+    for (let m = desde; m < 12; m++) {
+      if (fimAno > 2026 || m < fimMes - 1) row.meses[m] = 'ATIVO';
+      else if (m === fimMes - 1)          row.meses[m] = 'DESALOCAÇÃO';
+      else                                row.meses[m] = 'DESALOCADO';
+    }
+    delete row.mais3; delete row.mais5;
+  };
+  const ajustar = (nome, contrato, fim, fimMes, fimAno, desde, historico) => {
+    const c = contratosRows.find(x => n(x.cliente) === n(nome));
+    if (c) {
+      if (historico) contratosEncerrados.push({ ...JSON.parse(JSON.stringify(c)), status: 'renovado', historico: true,
+        dataSaida: c.fim || '', mesSaida: MESES_CHURN[(parseInt((c.fim || '').split('/')[1], 10) || 1) - 1] });
+      Object.assign(c, contrato, { fim, vigencia: NOME_MES[fimMes - 1] + '/' + fimAno });
+    }
+    cadeirasRows.filter(r => n(r.cliente) === n(nome)).forEach(r => {
+      Object.assign(r, { vigencia: NOME_MES[fimMes - 1] + '/' + fimAno, dataInicio: fim });
+      if (contrato.duracao) r.duracao = contrato.duracao;
+      mesesAte(r, desde, fimMes, fimAno);
+    });
+  };
+  ajustar('Facta Promotora Tech', { inicio: '17/09', duracao: 6, cadeiras: 1, valorRPO: 15000, valorTotal: 90000 }, '17/03', 3, 2027, 8, true);
+  ajustar('ABI', {}, '23/12', 12, 2026, 9, false);
+  ajustar('Deloitte', {}, '13/11', 11, 2026, 9, false);
+  saveContratosState(); saveCadeirasState(); saveContratosEncerrados();
+  localStorage.setItem(FLAG, 'true');
+  return 1;
+}
+
+// Roda uma vez (09/11/2026): Stellantis saiu em 04/10 (Q4) — o registro de churn
+// de outubro tinha sumido da aba Churn; recoloca.
+function _churnStellantisOutubroUmaVez() {
+  const FLAG = 'churn_stellantis_out_20261109';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  const ja = churnRows.some(c => /^stellantis/i.test((c.cliente || '').trim()) && ['Out','Nov','Dez'].includes(c.mes));
+  if (!ja) {
+    churnRows.push({ id: 'churn_stellantis_out', cliente: 'Stellantis', tipo: 'logo', mes: 'Out', dataChurn: '04/10',
+      cadeiras: 1, mrrPerdido: 16000, contratoTotal: 96000, motivo: 'Fim de contrato' });
+    saveChurnState();
+    if (typeof renderChurn === 'function') renderChurn();
+  }
+  localStorage.setItem(FLAG, 'true');
+  return ja ? 0 : 1;
+}
+
 function _removerContratosHSRedundantes() {
   let removidos = 0;
   const agregados = contratosRows.filter(c => c.source === 'cadeiras');
@@ -8374,6 +8764,7 @@ function changeMotivo(i, val) {
 }
 
 function renderChurn() {
+  if (typeof renderContratosEncerrados === 'function') setTimeout(renderContratosEncerrados, 0);
   const container = document.getElementById('churn-records-container');
   if (!container) return;
 
