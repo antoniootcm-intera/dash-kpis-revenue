@@ -16,6 +16,21 @@
       "source": "manual"
     },
     {
+      "id": "manual_1794335997499",
+      "cliente": "Radix",
+      "servico": "RPO",
+      "canal": "UP",
+      "valor": 32000,
+      "mensalidade": 16000,
+      "data": "10/11",
+      "mes": "Nov",
+      "alocacoes": "1",
+      "tipo": "GG",
+      "semana": 6,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
       "id": "65211167512",
       "cliente": "Cielo Tech",
       "servico": "RPO",
@@ -69,7 +84,8 @@
       "mesCreate": "Out",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 16000
+      "mensalidade": 16000,
+      "_locked": true
     },
     {
       "id": "66137392498",
@@ -127,21 +143,6 @@
       "source": "hs",
       "mensalidade": 17000,
       "_locked": true
-    },
-    {
-      "id": "manual_1794335997499",
-      "cliente": "Radix",
-      "servico": "RPO",
-      "canal": "UP",
-      "valor": 32000,
-      "mensalidade": 16000,
-      "data": "10/11",
-      "mes": "Nov",
-      "alocacoes": "1",
-      "tipo": "GG",
-      "semana": 6,
-      "ciclo": 0,
-      "source": "manual"
     }
   ],
   "cadeiras_rows": [
@@ -3755,7 +3756,7 @@
   },
   "viewer_password_hash": "e00ef35b38629774fde1de278f2464d26001678b3d0e091e75034d5333de6d31",
   "okr_state": {
-    "input-realizado": "543000",
+    "input-realizado": "575000",
     "input-clientes": "0",
     "input-duracao": "60",
     "cac-gastos": "0",
@@ -3764,6 +3765,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": false,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-11-10T19:22:00.546Z"
+  "active_tab": "contratos",
+  "snapshot_at": "2026-11-10T21:00:11.959Z"
 }
