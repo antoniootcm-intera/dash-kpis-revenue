@@ -132,7 +132,7 @@
       "id": "manual_1794335997499",
       "cliente": "Radix",
       "servico": "RPO",
-      "canal": "NTW",
+      "canal": "UP",
       "valor": 32000,
       "mensalidade": 16000,
       "data": "10/11",
@@ -3765,5 +3765,5 @@
   },
   "realizado_locked": false,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-11-10T19:21:45.314Z"
+  "snapshot_at": "2026-11-10T19:22:00.546Z"
 }
