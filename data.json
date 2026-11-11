@@ -2999,6 +2999,15 @@
       "valor": 240000,
       "expectativa": "30 dias",
       "temperatura": "Quente"
+    },
+    {
+      "cliente": "AB InBev",
+      "canal": "REN",
+      "prazo": "6 meses",
+      "mrr": 60000,
+      "valor": 360000,
+      "expectativa": "30 dias",
+      "temperatura": "Morno"
     }
   ],
   "deals_ignorados": [
@@ -3766,5 +3775,5 @@
   },
   "realizado_locked": false,
   "active_tab": "contratos",
-  "snapshot_at": "2026-11-10T21:00:11.959Z"
+  "snapshot_at": "2026-11-11T21:00:09.206Z"
 }
