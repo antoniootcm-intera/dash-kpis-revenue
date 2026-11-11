@@ -4857,6 +4857,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (_reconciliarQ4UmaVez() > 0) { renderContratos(); renderCadeiras(); renderChurn(); }
   if (_ajusteFactaAbiDeloitteUmaVez() > 0) { renderContratos(); renderCadeiras(); }
   _churnStellantisOutubroUmaVez();
+  _forecastAbinbevUmaVez();
   renderCadeiras(); // +3m/+5m pela duração
   _backupLocalEmDisco('load');
 
@@ -4898,6 +4899,19 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(_autoPublicar, 2500);
   }
 });
+
+// Roda uma vez (11/11/2026): proposta de renovação AB InBev (BEES/Haigo) no
+// cenário conservador 4/4 — 4 recrutadores × 6 meses = R$ 360 mil.
+function _forecastAbinbevUmaVez() {
+  const FLAG = 'forecast_abinbev_20261111';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  localStorage.setItem(FLAG, 'true');
+  if (FORECAST_DEALS.some(d => /inbev|^abi\b/i.test(d.cliente || ''))) return 0;
+  FORECAST_DEALS.push({ cliente: 'AB InBev', canal: 'REN', prazo: '6 meses', mrr: 60000, valor: 360000,
+                        expectativa: '30 dias', temperatura: 'Morno' });
+  saveForecastDeals();
+  return 1;
+}
 
 async function _autoPublicar() {
   const log = (etapa, extra) => {
