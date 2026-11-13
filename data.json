@@ -31,6 +31,21 @@
       "source": "manual"
     },
     {
+      "id": "manual_1794586311155",
+      "cliente": "Localiza",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 60000,
+      "mensalidade": 15000,
+      "data": "13/11",
+      "mes": "Nov",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 7,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
       "id": "65211167512",
       "cliente": "Cielo Tech",
       "servico": "RPO",
@@ -1504,6 +1519,21 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "manual"
+    },
+    {
+      "id": "cont_manual_1794586311155",
+      "dealId": "manual_1794586311155",
+      "cliente": "Novo Cliente",
+      "vigencia": "",
+      "inicio": "13/11",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": null,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "manual"
     }
   ],
   "contratos_encerrados": [
@@ -2947,24 +2977,6 @@
   ],
   "forecast_deals": [
     {
-      "cliente": "Deloitte",
-      "canal": "UP",
-      "prazo": "1 mes",
-      "mrr": 48000,
-      "valor": 48000,
-      "expectativa": "Esta semana",
-      "temperatura": "Quente"
-    },
-    {
-      "cliente": "Localiza",
-      "canal": "REN",
-      "prazo": "4 meses",
-      "mrr": 15000,
-      "valor": 60000,
-      "expectativa": "Esta semana",
-      "temperatura": "Quente"
-    },
-    {
       "cliente": "Grupo Boticário",
       "canal": "REN",
       "prazo": "6 meses",
@@ -2983,15 +2995,6 @@
       "temperatura": "Quente"
     },
     {
-      "cliente": "Radix",
-      "canal": "UP",
-      "prazo": "2 meses",
-      "mrr": 16000,
-      "valor": 32000,
-      "expectativa": "Esta semana",
-      "temperatura": "Quente"
-    },
-    {
       "cliente": "Riachuelo",
       "canal": "REN",
       "prazo": "4 meses",
@@ -3007,6 +3010,15 @@
       "mrr": 60000,
       "valor": 360000,
       "expectativa": "30 dias",
+      "temperatura": "Morno"
+    },
+    {
+      "cliente": "Clara",
+      "canal": "NTW",
+      "prazo": "3 meses",
+      "mrr": 17000,
+      "valor": 51000,
+      "expectativa": "15 dias",
       "temperatura": "Morno"
     }
   ],
@@ -3765,7 +3777,7 @@
   },
   "viewer_password_hash": "e00ef35b38629774fde1de278f2464d26001678b3d0e091e75034d5333de6d31",
   "okr_state": {
-    "input-realizado": "575000",
+    "input-realizado": "635000",
     "input-clientes": "0",
     "input-duracao": "60",
     "cac-gastos": "0",
@@ -3773,7 +3785,7 @@
     "chart-periodo": "semanas",
     "input-meta-novos-clientes": "8"
   },
-  "realizado_locked": false,
+  "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-11-12T21:00:10.397Z"
+  "snapshot_at": "2026-11-13T21:00:11.723Z"
 }
