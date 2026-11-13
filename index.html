@@ -4858,6 +4858,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (_ajusteFactaAbiDeloitteUmaVez() > 0) { renderContratos(); renderCadeiras(); }
   _churnStellantisOutubroUmaVez();
   _forecastAbinbevUmaVez();
+  _forecastClaraUmaVez();
   renderCadeiras(); // +3m/+5m pela duração
   _backupLocalEmDisco('load');
 
@@ -4909,6 +4910,19 @@ function _forecastAbinbevUmaVez() {
   if (FORECAST_DEALS.some(d => /inbev|^abi\b/i.test(d.cliente || ''))) return 0;
   FORECAST_DEALS.push({ cliente: 'AB InBev', canal: 'REN', prazo: '6 meses', mrr: 60000, valor: 360000,
                         expectativa: '30 dias', temperatura: 'Morno' });
+  saveForecastDeals();
+  return 1;
+}
+
+// Roda uma vez (13/11/2026): proposta Clara (indicação Lucas Farah) —
+// 1 RPO × 3 meses a R$ 17 mil = R$ 51 mil.
+function _forecastClaraUmaVez() {
+  const FLAG = 'forecast_clara_20261113';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  localStorage.setItem(FLAG, 'true');
+  if (FORECAST_DEALS.some(d => /^clara\b/i.test((d.cliente || '').trim()))) return 0;
+  FORECAST_DEALS.push({ cliente: 'Clara', canal: 'NTW', prazo: '3 meses', mrr: 17000, valor: 51000,
+                        expectativa: '15 dias', temperatura: 'Morno' });
   saveForecastDeals();
   return 1;
 }
@@ -6037,7 +6051,9 @@ function updateTotals() {
 function updateCell(i, key, val) {
   if (IS_VIEWER) return;
   if (key === 'semana') val = normSemana(val);
+  const _antes = tableRows[i] ? tableRows[i][key] : undefined;
   tableRows[i][key] = val;
+  _sincronizarVinculosDaLinha(tableRows[i], key, _antes, val);
   saveOverride(i, key, val);
   // Quando a data muda, recalcula semana e mês automaticamente
   if (key === 'data') {
@@ -6059,6 +6075,50 @@ function updateCell(i, key, val) {
   if (key === 'mensalidade') { updateFunilChart(); updateTotals(); }
   if (key === 'canal')       { updateReceitaCards(); }
   saveTableState();
+  if (['valor','canal','data','mensalidade','cliente'].includes(key)) _atualizarRealizadoPelaTabela();
+}
+
+// Lançar/editar/remover negócio à mão atualiza tudo na hora, igual quando o
+// HubSpot carrega: Realizado + barra do OKR, cards de canal, totais e gráfico.
+// (Se o Realizado estiver travado 🔒 por valor digitado, ele é respeitado.)
+function _atualizarRealizadoPelaTabela() {
+  try { updateTotals(); } catch(_) {}
+  try { updateCicloChart(); updateFunilChart(); } catch(_) {}
+  try { if (typeof _q2CanalReady !== 'undefined' && _q2CanalReady) renderQ2CanalCards(); } catch(_) {}
+  if (realizadoLocked) return;
+  const total = tableRows.reduce((s, r) => s + (parseFloat(r.valor) || 0), 0);
+  const inp = document.getElementById('input-realizado');
+  if (inp) { inp.value = Math.round(total); updateOKR('receita', total); }
+}
+
+// Linha lançada à mão: o contrato e a cadeira criados junto acompanham as
+// edições (cliente, data, valor), a não ser que já tenham sido editados lá.
+function _sincronizarVinculosDaLinha(row, key, antes, depois) {
+  if (!row || row.source === 'hs') return;
+  const id = String(row.id);
+  const mapC = { cliente: 'cliente', data: 'inicio', valor: 'valorTotal', mensalidade: 'valorRPO' };
+  const c = contratosRows.find(x => x.dealId === id);
+  if (c && mapC[key]) {
+    const atual = c[mapC[key]];
+    if (atual === null || atual === '' || atual === undefined || atual == antes || atual === 'Novo Cliente') {
+      c[mapC[key]] = (key === 'valor' || key === 'mensalidade') ? (parseFloat(depois) || null) : depois;
+      saveContratosState(); renderContratos();
+    }
+  }
+  const cad = cadeirasRows.find(x => x.dealId === id);
+  if (cad && (key === 'cliente' || key === 'data')) {
+    const campo = key === 'cliente' ? 'cliente' : 'dataInicio';
+    if (!cad[campo] || cad[campo] == antes || cad[campo] === 'Novo Cliente') {
+      cad[campo] = depois;
+      if (key === 'data') {
+        const mi = MESES.indexOf(mesFromData(depois));
+        if (mi >= 0 && Array.isArray(cad.meses) && cad.meses.filter(Boolean).length <= 1) {
+          cad.meses = Array(12).fill(''); cad.meses[mi] = 'ATIVO';
+        }
+      }
+      saveCadeirasState(); renderCadeiras();
+    }
+  }
 }
 
 // Calcula a semana (1-13) a partir de uma string de data "DD/MM"
@@ -6091,6 +6151,7 @@ function updateCanalTag(i, val) {
   updateCicloChart();
   updateReceitaCards();
   saveTableState();
+  _atualizarRealizadoPelaTabela();
 }
 
 function updateTipoTag(i, val) {
@@ -6124,12 +6185,15 @@ function addRow() {
     source: 'manual'
   };
   tableRows.push(newRow);
-  // Cria contrato automaticamente para o novo negócio
+  // Cria contrato e cadeira automaticamente, igual a um negócio do HubSpot
   linkDealToContrato(newRow);
+  linkDealToCadeira(newRow);
   renderTable();
   renderContratos();
+  renderCadeiras();
   rebuildLineChart();
   saveTableState();
+  _atualizarRealizadoPelaTabela();
 }
 
 function removeRow(i) {
@@ -6138,11 +6202,20 @@ function removeRow(i) {
     hsDeleted.add(String(row.id));
     localStorage.setItem('hs_deleted', JSON.stringify([...hsDeleted]));
   }
+  if (row && row.source !== 'hs' && row.id) {
+    const id = String(row.id);
+    const nC = contratosRows.length, nK = cadeirasRows.length;
+    contratosRows = contratosRows.filter(c => !(c.dealId === id && c.id === 'cont_' + id));
+    cadeirasRows  = cadeirasRows.filter(c => !(c.dealId === id && c.id === 'cad_hs_' + id));
+    if (contratosRows.length !== nC) { saveContratosState(); renderContratos(); }
+    if (cadeirasRows.length  !== nK) { saveCadeirasState();  renderCadeiras(); }
+  }
   tableRows.splice(i, 1);
   renderTable();
   updateCicloChart();
   rebuildLineChart();
   saveTableState();
+  _atualizarRealizadoPelaTabela();
 }
 
 function clearHSRows() {
