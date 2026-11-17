@@ -1561,6 +1561,30 @@
       </div>
     </div>
 
+    <!-- Negócios fechados 2025 -->
+    <div>
+      <h3 class="font-semibold text-sm mb-1" style="color:var(--text2);">Clientes fechados em 2025</h3>
+      <p class="text-xs mb-3" style="color:var(--muted);">Cada negócio fechado no ano, com data e canal. MKT aparece como <strong>INB</strong>, igual aos cards acima.</p>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button class="v25-chip text-xs font-semibold px-3 py-1 rounded-full border" data-q="Todos" onclick="filtrarVendas2025('Todos')">Ano todo</button>
+        <button class="v25-chip text-xs font-semibold px-3 py-1 rounded-full border" data-q="Q1" onclick="filtrarVendas2025('Q1')">Q1</button>
+        <button class="v25-chip text-xs font-semibold px-3 py-1 rounded-full border" data-q="Q2" onclick="filtrarVendas2025('Q2')">Q2</button>
+        <button class="v25-chip text-xs font-semibold px-3 py-1 rounded-full border" data-q="Q3" onclick="filtrarVendas2025('Q3')">Q3</button>
+        <button class="v25-chip text-xs font-semibold px-3 py-1 rounded-full border" data-q="Q4" onclick="filtrarVendas2025('Q4')">Q4</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="hist-table">
+          <thead>
+            <tr><th>Cliente</th><th>Data</th><th>Canal</th><th>Serviço</th><th>Alocações</th><th>Tipo</th><th>Valor</th></tr>
+          </thead>
+          <tbody id="vendas-2025-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row"><td id="vendas-2025-total-label" colspan="6" style="text-align:left;">TOTAL 2025</td><td id="vendas-2025-total" style="font-weight:700;color:var(--accent);"></td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -3456,6 +3480,116 @@ function updateQ2ResumoCards() {
   setW('q2-resumo-atingimento-bar', Math.min(atingimento, 100) + '%');
 }
 
+// Negócios fechados em 2025 (fonte: planilhas trimestrais enviadas em 17/11/2026).
+// Canal: Renovação → REN, Upsell → UP, MKT → INB (mesmo critério dos cards de 2025).
+const VENDAS_2025 = [
+  {"q": "Q1", "cliente": "Digix", "servico": "RPO", "canal": "REN", "valor": 45000, "data": "06/01", "aloc": 1, "tipo": "GG"},
+  {"q": "Q1", "cliente": "KTO", "servico": "RPO", "canal": "REN", "valor": 45000, "data": "06/01", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q1", "cliente": "Ab Inbev", "servico": "Staffing", "canal": "REN", "valor": 150000, "data": "20/01", "aloc": 6, "tipo": "Enterprise"},
+  {"q": "Q1", "cliente": "CERC", "servico": "RPO", "canal": "REN", "valor": 45000, "data": "22/01", "aloc": 1, "tipo": "GG"},
+  {"q": "Q1", "cliente": "Firmly Inc", "servico": "RPO", "canal": "REN", "valor": 25600, "data": "30/01", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q1", "cliente": "Petrorecôncavo", "servico": "RPO", "canal": "REN", "valor": 171000, "data": "07/02", "aloc": 2, "tipo": "Enterprise"},
+  {"q": "Q1", "cliente": "Jeitto", "servico": "RPO", "canal": "REN", "valor": 43500, "data": "10/02", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q1", "cliente": "Instituto Eldorado", "servico": "RPO", "canal": "INB", "valor": 23500, "data": "12/02", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q1", "cliente": "Facta Promotora", "servico": "RPO", "canal": "REN", "valor": 51000, "data": "18/02", "aloc": 1, "tipo": "GG"},
+  {"q": "Q1", "cliente": "Sanar", "servico": "RPO", "canal": "REN", "valor": 39000, "data": "19/02", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q1", "cliente": "Stefanini", "servico": "RPO", "canal": "REN", "valor": 92400, "data": "24/02", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q1", "cliente": "iFood", "servico": "RPO", "canal": "UP", "valor": 97500, "data": "17/03", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q1", "cliente": "Shopper", "servico": "RPO", "canal": "INB", "valor": 51000, "data": "20/03", "aloc": 1, "tipo": "GG"},
+  {"q": "Q1", "cliente": "Jeitto", "servico": "RPO", "canal": "UP", "valor": 43500, "data": "21/03", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q1", "cliente": "CI&T", "servico": "RPO", "canal": "REN", "valor": 48000, "data": "25/03", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q1", "cliente": "Ambev — contratações success fee (11)", "servico": "RPO", "canal": "REN", "valor": 33000, "data": "31/03", "aloc": null, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "CI&T Latam", "servico": "RPO", "canal": "UP", "valor": 46000, "data": "07/04", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "Cora", "servico": "RPO", "canal": "NTW", "valor": 192000, "data": "08/04", "aloc": 2, "tipo": "SMB/Startup"},
+  {"q": "Q2", "cliente": "Digix", "servico": "RPO", "canal": "REN", "valor": 32000, "data": "08/04", "aloc": 1, "tipo": "GG"},
+  {"q": "Q2", "cliente": "Facta Promotora", "servico": "RPO", "canal": "UP", "valor": 51000, "data": "10/04", "aloc": 1, "tipo": "GG"},
+  {"q": "Q2", "cliente": "Deloitte", "servico": "RPO", "canal": "REN", "valor": 84000, "data": "14/04", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "AB InBev", "servico": "RPO", "canal": "UP", "valor": 264000, "data": "22/04", "aloc": null, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "KTO", "servico": "RPO", "canal": "REN", "valor": 51000, "data": "22/04", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q2", "cliente": "XP Inc", "servico": "RPO", "canal": "INB", "valor": 384000, "data": "06/05", "aloc": 6, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "Jeitto", "servico": "RPO", "canal": "UP", "valor": 93000, "data": "12/05", "aloc": 2, "tipo": "SMB/Startup"},
+  {"q": "Q2", "cliente": "Olist", "servico": "RPO", "canal": "NTW", "valor": 51000, "data": "14/05", "aloc": 1, "tipo": "GG"},
+  {"q": "Q2", "cliente": "Facta Promotora", "servico": "RPO", "canal": "REN", "valor": 51000, "data": "16/05", "aloc": 1, "tipo": "GG"},
+  {"q": "Q2", "cliente": "Renner", "servico": "RPO", "canal": "OUT", "valor": 160000, "data": "23/05", "aloc": 2, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "Riachuelo", "servico": "RPO", "canal": "UP", "valor": 51000, "data": "29/05", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "iFood", "servico": "RPO", "canal": "REN", "valor": 68000, "data": "17/06", "aloc": 2, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "Zup", "servico": "RPO", "canal": "OUT", "valor": 48000, "data": "25/06", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q2", "cliente": "AB InBev — contratações (24)", "servico": "RPO", "canal": "REN", "valor": 72000, "data": "30/06", "aloc": null, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "XP Inc", "servico": "RPO", "canal": "UP", "valor": 720000, "data": "10/07", "aloc": 10, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "Jeitto", "servico": "RPO", "canal": "UP", "valor": 234000, "data": "22/07", "aloc": 3, "tipo": "SMB/Startup"},
+  {"q": "Q3", "cliente": "Petrorecôncavo", "servico": "RPO", "canal": "REN", "valor": 180000, "data": "22/07", "aloc": 2, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "Riachuelo", "servico": "RPO", "canal": "REN", "valor": 240000, "data": "23/07", "aloc": 3, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "Facta Promotora", "servico": "RPO", "canal": "UP", "valor": 102000, "data": "31/07", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "VR", "servico": "RPO", "canal": "NTW", "valor": 99000, "data": "31/07", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "KTO", "servico": "RPO", "canal": "REN", "valor": 51000, "data": "31/07", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q3", "cliente": "Olist", "servico": "RPO", "canal": "REN", "valor": 51000, "data": "06/08", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q3", "cliente": "Stefanini", "servico": "RPO", "canal": "UP", "valor": 179520, "data": "07/08", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "Facta Promotora", "servico": "RPO", "canal": "UP", "valor": 51000, "data": "18/08", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "Sanar", "servico": "RPO", "canal": "NTW", "valor": 45000, "data": "25/08", "aloc": 1, "tipo": "GG"},
+  {"q": "Q3", "cliente": "Brasil Paralelo", "servico": "RPO", "canal": "OUT", "valor": 102000, "data": "29/08", "aloc": 1, "tipo": "GG"},
+  {"q": "Q3", "cliente": "AB InBev", "servico": "Staffing", "canal": "REN", "valor": 117000, "data": "09/09", "aloc": 3, "tipo": "Enterprise"},
+  {"q": "Q3", "cliente": "Deloitte", "servico": "RPO", "canal": "UP", "valor": 252000, "data": "30/09", "aloc": 2, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Ebanx", "servico": "RPO", "canal": "NTW", "valor": 54000, "data": "07/10", "aloc": 1, "tipo": "GG"},
+  {"q": "Q4", "cliente": "Renner", "servico": "RPO", "canal": "UP", "valor": 96000, "data": "09/10", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Renner", "servico": "RPO", "canal": "UP", "valor": 96000, "data": "14/10", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "XP Inc", "servico": "RPO", "canal": "UP", "valor": 32000, "data": "23/10", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Digix", "servico": "RPO", "canal": "NTW", "valor": 48000, "data": "24/10", "aloc": 1, "tipo": "GG"},
+  {"q": "Q4", "cliente": "Cora", "servico": "RPO", "canal": "REN", "valor": 64000, "data": "24/10", "aloc": 1, "tipo": "GG"},
+  {"q": "Q4", "cliente": "Woba", "servico": "RPO", "canal": "NTW", "valor": 90000, "data": "11/11", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q4", "cliente": "CSU", "servico": "RPO", "canal": "OUT", "valor": 96000, "data": "19/11", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Grupo Boticário", "servico": "RPO", "canal": "NTW", "valor": 102000, "data": "24/11", "aloc": 2, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "RNP", "servico": "RPO", "canal": "REN", "valor": 81000, "data": "28/11", "aloc": 1, "tipo": "GG"},
+  {"q": "Q4", "cliente": "Facta Tech", "servico": "RPO", "canal": "REN", "valor": 51000, "data": "28/11", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Petrorecôncavo", "servico": "RPO", "canal": "REN", "valor": 90000, "data": "10/12", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Facta Promotora", "servico": "RPO", "canal": "REN", "valor": 180000, "data": "10/12", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "XP Inc", "servico": "RPO", "canal": "REN", "valor": 180000, "data": "12/12", "aloc": 11, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Sanar", "servico": "RPO", "canal": "REN", "valor": 45000, "data": "12/12", "aloc": 1, "tipo": "SMB/Startup"},
+  {"q": "Q4", "cliente": "Riachuelo", "servico": "RPO", "canal": "REN", "valor": 240000, "data": "15/12", "aloc": 3, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "AB InBev", "servico": "RPO", "canal": "REN", "valor": 336000, "data": "18/12", "aloc": 4, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "CSU", "servico": "RPO", "canal": "UP", "valor": 96000, "data": "19/12", "aloc": 1, "tipo": "Enterprise"},
+  {"q": "Q4", "cliente": "Kunumi", "servico": "RPO", "canal": "NTW", "valor": 48000, "data": "19/12", "aloc": 1, "tipo": "SMB/Startup"}
+];
+
+let _vendas2025Q = 'Todos';
+function filtrarVendas2025(q) { _vendas2025Q = q; renderVendas2025(); }
+
+function renderVendas2025() {
+  const tbody = document.getElementById('vendas-2025-tbody');
+  if (!tbody) return;
+  document.querySelectorAll('.v25-chip').forEach(b => {
+    const on = b.dataset.q === _vendas2025Q;
+    b.style.background = on ? 'var(--accent)' : '#fff';
+    b.style.color      = on ? '#fff' : 'var(--text2)';
+  });
+  const qs = _vendas2025Q === 'Todos' ? ['Q1','Q2','Q3','Q4'] : [_vendas2025Q];
+  const badge = c => {
+    const cc = CANAL_COLORS[c] || { bg:'#f3f4f6', bc:'#d1d5db', tc:'#374151' };
+    return `<span style="display:inline-block;padding:1px 8px;border-radius:999px;font-size:10px;font-weight:700;background:${cc.bg};border:1px solid ${cc.bc};color:${cc.tc};">${c}</span>`;
+  };
+  let html = '', total = 0, n = 0;
+  qs.forEach(q => {
+    const itens = VENDAS_2025.filter(d => d.q === q);
+    const sub = itens.reduce((s, d) => s + d.valor, 0);
+    total += sub; n += itens.length;
+    if (qs.length > 1) html += `<tr><td colspan="7" style="text-align:left;background:#f8f7ff;font-weight:700;color:var(--accent2);">${q} 2025 · ${itens.length} negócios · ${fmtBRL(sub)}</td></tr>`;
+    itens.forEach(d => {
+      html += `<tr>
+        <td style="text-align:left;font-weight:600;">${d.cliente}</td>
+        <td style="text-align:center;">${d.data}/2025</td>
+        <td style="text-align:center;">${badge(d.canal)}</td>
+        <td style="text-align:center;">${d.servico}</td>
+        <td style="text-align:center;">${d.aloc ?? '—'}</td>
+        <td style="text-align:center;">${d.tipo}</td>
+        <td style="font-weight:600;">${fmtBRL(d.valor)}</td></tr>`;
+    });
+  });
+  tbody.innerHTML = html;
+  const ft = document.getElementById('vendas-2025-total');
+  if (ft) ft.textContent = fmtBRL(total);
+  const fl = document.getElementById('vendas-2025-total-label');
+  if (fl) fl.textContent = (_vendas2025Q === 'Todos' ? 'TOTAL 2025' : 'TOTAL ' + _vendas2025Q + ' 2025') + ' · ' + n + ' negócios';
+}
+
 function renderHist2025Table() {
   const tbody = document.getElementById('hist-2025-tbody');
   if (!tbody) return;
@@ -4716,6 +4850,7 @@ function initHistoricalCharts() {
   renderQ1Deals();
   renderQ2Deals();
   renderHist2025Table();
+  renderVendas2025();
   renderCompTriTable();
   renderCanalBreakdown(Q1_DEALS, 'q1-canal-blocks');
   renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
@@ -4810,6 +4945,7 @@ window.addEventListener('DOMContentLoaded', () => {
         renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
         renderQ2Analytics();
         renderHist2025Table();
+        renderVendas2025();
         renderCompTriTable();
         renderChurn();
         // Q3 canal cards (Q3 é o painel padrão visível)
@@ -4877,6 +5013,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderCanalBreakdown(Q2_DEALS, 'q2-hist-canal-blocks');
   renderQ2Analytics();
   renderHist2025Table();
+  renderVendas2025();
   renderCompTriTable();
   renderChurn();
 
