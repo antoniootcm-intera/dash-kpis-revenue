@@ -158,6 +158,24 @@
       "source": "hs",
       "mensalidade": 17000,
       "_locked": true
+    },
+    {
+      "id": "68392372827",
+      "cliente": "Cielo CO",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 102000,
+      "data": "19/11",
+      "mes": "Nov",
+      "alocacoes": "1",
+      "tipo": "Enterprise",
+      "semana": 8,
+      "ciclo": 0,
+      "createdate": "2026-11-19T18:13:23.210Z",
+      "mesCreate": "Nov",
+      "anoCreate": 2026,
+      "source": "hs",
+      "mensalidade": 17000
     }
   ],
   "cadeiras_rows": [
@@ -1094,6 +1112,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_68392372827",
+      "dealId": "68392372827",
+      "servico": "RPO",
+      "cliente": "Cielo CO",
+      "vigencia": "",
+      "dataInicio": "19/11",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1534,6 +1575,21 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "manual"
+    },
+    {
+      "id": "cont_68392372827",
+      "dealId": "68392372827",
+      "cliente": "Cielo CO",
+      "vigencia": "",
+      "inicio": "19/11",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": null,
+      "valorTotal": 102000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "hs"
     }
   ],
   "contratos_encerrados": [
@@ -3573,6 +3629,12 @@
       "mensalidade": 16000,
       "alocacoes": "1",
       "tipo": "Enterprise"
+    },
+    "68392372827": {
+      "canal": "REN",
+      "mensalidade": 17000,
+      "alocacoes": "1",
+      "tipo": "Enterprise"
     }
   },
   "hs_deleted": [
@@ -3777,9 +3839,9 @@
   },
   "viewer_password_hash": "e00ef35b38629774fde1de278f2464d26001678b3d0e091e75034d5333de6d31",
   "okr_state": {
-    "input-realizado": "635000",
+    "input-realizado": "737000",
     "input-clientes": "0",
-    "input-duracao": "60",
+    "input-duracao": "59",
     "cac-gastos": "0",
     "chart-meta": "1800000",
     "chart-periodo": "semanas",
@@ -3787,5 +3849,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-11-18T21:00:06.005Z"
+  "snapshot_at": "2026-11-19T18:14:16.925Z"
 }
