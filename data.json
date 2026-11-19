@@ -46,6 +46,21 @@
       "source": "manual"
     },
     {
+      "id": "manual_1795117352008",
+      "cliente": "Riachueli",
+      "servico": "RPO",
+      "canal": "REN",
+      "valor": 32000,
+      "mensalidade": 16000,
+      "data": "19/11",
+      "mes": "Nov",
+      "alocacoes": "2",
+      "tipo": "Enterprise",
+      "semana": 8,
+      "ciclo": 0,
+      "source": "manual"
+    },
+    {
       "id": "65211167512",
       "cliente": "Cielo Tech",
       "servico": "RPO",
@@ -175,7 +190,8 @@
       "mesCreate": "Nov",
       "anoCreate": 2026,
       "source": "hs",
-      "mensalidade": 17000
+      "mensalidade": 17000,
+      "_locked": true
     }
   ],
   "cadeiras_rows": [
@@ -1135,6 +1151,29 @@
         ""
       ],
       "source": "hs"
+    },
+    {
+      "id": "cad_hs_manual_1795117352008",
+      "dealId": "manual_1795117352008",
+      "servico": "RPO",
+      "cliente": "Riachueli",
+      "vigencia": "",
+      "dataInicio": "19/11",
+      "meses": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "ATIVO",
+        ""
+      ],
+      "source": "hs"
     }
   ],
   "contratos_rows": [
@@ -1590,6 +1629,21 @@
       "tipoContrato": "",
       "linkContrato": "",
       "source": "hs"
+    },
+    {
+      "id": "cont_manual_1795117352008",
+      "dealId": "manual_1795117352008",
+      "cliente": "Riachueli",
+      "vigencia": "",
+      "inicio": "19/11",
+      "fim": "",
+      "duracao": null,
+      "cadeiras": null,
+      "valorRPO": 16000,
+      "valorTotal": 32000,
+      "tipoContrato": "",
+      "linkContrato": "",
+      "source": "manual"
     }
   ],
   "contratos_encerrados": [
@@ -3055,8 +3109,8 @@
       "canal": "REN",
       "prazo": "4 meses",
       "mrr": 16000,
-      "valor": 240000,
-      "expectativa": "30 dias",
+      "valor": 32000,
+      "expectativa": "Esta semana",
       "temperatura": "Quente"
     },
     {
@@ -3839,9 +3893,9 @@
   },
   "viewer_password_hash": "e00ef35b38629774fde1de278f2464d26001678b3d0e091e75034d5333de6d31",
   "okr_state": {
-    "input-realizado": "737000",
+    "input-realizado": "769000",
     "input-clientes": "0",
-    "input-duracao": "59",
+    "input-duracao": "57",
     "cac-gastos": "0",
     "chart-meta": "1800000",
     "chart-periodo": "semanas",
@@ -3849,5 +3903,5 @@
   },
   "realizado_locked": true,
   "active_tab": "dashboard",
-  "snapshot_at": "2026-11-19T18:14:16.925Z"
+  "snapshot_at": "2026-11-19T21:00:10.999Z"
 }
