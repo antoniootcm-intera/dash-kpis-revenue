@@ -47,7 +47,7 @@
     },
     {
       "id": "manual_1795117352008",
-      "cliente": "Riachueli",
+      "cliente": "Riachuelo",
       "servico": "RPO",
       "canal": "REN",
       "valor": 32000,
@@ -1156,7 +1156,7 @@
       "id": "cad_hs_manual_1795117352008",
       "dealId": "manual_1795117352008",
       "servico": "RPO",
-      "cliente": "Riachueli",
+      "cliente": "Riachuelo",
       "vigencia": "",
       "dataInicio": "19/11",
       "meses": [
@@ -1633,7 +1633,7 @@
     {
       "id": "cont_manual_1795117352008",
       "dealId": "manual_1795117352008",
-      "cliente": "Riachueli",
+      "cliente": "Riachuelo",
       "vigencia": "",
       "inicio": "19/11",
       "fim": "",
@@ -3089,9 +3089,9 @@
     {
       "cliente": "Grupo Boticário",
       "canal": "REN",
-      "prazo": "6 meses",
-      "mrr": 17000,
-      "valor": 102000,
+      "prazo": "4 meses",
+      "mrr": 16000,
+      "valor": 192000,
       "expectativa": "Mais de 30 dias",
       "temperatura": "Morno"
     },
@@ -3911,6 +3911,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "dashboard",
-  "snapshot_at": "2026-11-23T21:00:12.091Z"
+  "active_tab": "cadeiras",
+  "snapshot_at": "2026-11-24T21:00:09.541Z"
 }
