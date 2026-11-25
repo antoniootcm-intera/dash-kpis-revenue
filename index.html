@@ -4995,6 +4995,7 @@ window.addEventListener('DOMContentLoaded', () => {
   _churnStellantisOutubroUmaVez();
   _forecastAbinbevUmaVez();
   _forecastClaraUmaVez();
+  _forecastEbanxUmaVez();
   renderCadeiras(); // +3m/+5m pela duração
   _backupLocalEmDisco('load');
 
@@ -5051,7 +5052,7 @@ function _forecastAbinbevUmaVez() {
   return 1;
 }
 
-// Roda uma vez (13/11/2026): proposta Clara (indicação Lucas Farah) —
+// Roda uma vez (13/11/2026): proposta Clara (indicação Felipe Farah) —
 // 1 RPO × 3 meses a R$ 17 mil = R$ 51 mil.
 function _forecastClaraUmaVez() {
   const FLAG = 'forecast_clara_20261113';
@@ -5060,6 +5061,18 @@ function _forecastClaraUmaVez() {
   if (FORECAST_DEALS.some(d => /^clara\b/i.test((d.cliente || '').trim()))) return 0;
   FORECAST_DEALS.push({ cliente: 'Clara', canal: 'NTW', prazo: '3 meses', mrr: 17000, valor: 51000,
                         expectativa: '15 dias', temperatura: 'Morno' });
+  saveForecastDeals();
+  return 1;
+}
+
+// Roda uma vez (25/11/2026): renovação Ebanx — 6 meses × R$ 17 mil = R$ 102 mil.
+function _forecastEbanxUmaVez() {
+  const FLAG = 'forecast_ebanx_20261125';
+  if (localStorage.getItem(FLAG) === 'true') return 0;
+  localStorage.setItem(FLAG, 'true');
+  if (FORECAST_DEALS.some(d => /^ebanx\b/i.test((d.cliente || '').trim()))) return 0;
+  FORECAST_DEALS.push({ cliente: 'Ebanx', canal: 'REN', prazo: '6 meses', mrr: 17000, valor: 102000,
+                        expectativa: 'Próxima semana', temperatura: 'Morno' });
   saveForecastDeals();
   return 1;
 }
