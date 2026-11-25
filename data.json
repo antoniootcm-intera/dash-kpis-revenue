@@ -3099,8 +3099,8 @@
       "cliente": "Deloitte",
       "canal": "REN",
       "prazo": "12 meses",
-      "mrr": 15000,
-      "valor": 180000,
+      "mrr": 14000,
+      "valor": 168000,
       "expectativa": "Próxima semana",
       "temperatura": "Quente"
     },
@@ -3120,7 +3120,7 @@
       "mrr": 17000,
       "valor": 51000,
       "expectativa": "Esta semana",
-      "temperatura": "Morno"
+      "temperatura": "Quente"
     },
     {
       "cliente": "Olist",
@@ -3138,6 +3138,15 @@
       "mrr": 15000,
       "valor": 90000,
       "expectativa": "30 dias",
+      "temperatura": "Morno"
+    },
+    {
+      "cliente": "Ebanx",
+      "canal": "REN",
+      "prazo": "6 meses",
+      "mrr": 17000,
+      "valor": 102000,
+      "expectativa": "Próxima semana",
       "temperatura": "Morno"
     }
   ],
@@ -3911,6 +3920,6 @@
     "input-meta-novos-clientes": "8"
   },
   "realizado_locked": true,
-  "active_tab": "cadeiras",
-  "snapshot_at": "2026-11-24T21:00:09.541Z"
+  "active_tab": "dashboard",
+  "snapshot_at": "2026-11-25T21:00:13.157Z"
 }
